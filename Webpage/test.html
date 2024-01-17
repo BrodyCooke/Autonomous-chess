@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loop through Buttons in HTML Table (8x8)</title>
+    <style>
+        .chess-board { border-spacing: 0; border-collapse: collapse; }
+        .chess-board th { padding: .5em; }
+        .chess-board th + th { border-bottom: 1px solid #000; }
+        .chess-board th:first-child,
+        .chess-board td:last-child { border-right: 1px solid #000; }
+        .chess-board tr:last-child td { border-bottom: 1px solid; }
+        .chess-board th:empty { border: none; }
+        .chess-board td { width: 1.5em; height: 1.5em; text-align: center; font-size: 44px; line-height: 0;}
+        .chess-board .light { background: #eee; width: 100px; height: 90px; font-size: 44px; }
+        .chess-board .dark { background: #aaa; width: 100px; height: 90px; font-size: 44px; }
+    </style>
+</head>
+<body>
+
+<table class="chess-board">
+    <!-- Create an 8 by 8 table -->
+    <tr>
+        <th></th>
+        <th>a</th>
+        <th>b</th>
+        <th>c</th>
+        <th>d</th>
+        <th>e</th>
+        <th>f</th>
+        <th>g</th>
+        <th>h</th>
+    <tr>
+        <th>8</th>
+        <td><button id="a8" class="light" onclick="setButton(this)">♜</button></td>
+        <td><button id="b8" class="dark" onclick="setButton(this)">♞</button></td>
+        <td><button id="c8" class="light" onclick="setButton(this)">♝</button></td>
+        <td><button id="d8" class="dark" onclick="setButton(this)">♛</button></td>
+        <td><button id="e8" class="light" onclick="setButton(this)">♚</button></td>
+        <td><button id="f8" class="dark" onclick="setButton(this)">♝</button></td>
+        <td><button id="g8" class="light" onclick="setButton(this)">♞</button></td>
+        <td><button id="h8" class="dark" onclick="setButton(this)">♜</button></td>
+    </tr>
+    <!-- Repeat the above row 7 more times to create an 8 by 8 table -->
+    <tr>
+        <th>7</th>
+        <td><button id="a7" class="dark" onclick="setButton(this)">♟</button></td>
+        <td><button id="b7" class="light" onclick="setButton(this)">♟</button></td>
+        <td><button id="c7" class="dark" onclick="setButton(this)">♟</button></td>
+        <td><button id="d7" class="light" onclick="setButton(this)">♟</button></td>
+        <td><button id="e7" class="dark" onclick="setButton(this)">♟</button></td>
+        <td><button id="f7" class="light" onclick="setButton(this)">♟</button></td>
+        <td><button id="g7" class="dark" onclick="setButton(this)">♟</button></td>
+        <td><button id="h7" class="light" onclick="setButton(this)">♟</button></td>
+    </tr>
+    <tr>
+        <th>6</th>
+        <td><button id="a6" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="b6" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="c6" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="d6" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="e6" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="f6" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="g6" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="h6" class="dark" onclick="setButton(this)"></button></td>
+    </tr>
+    <tr>
+        <th>5</th>
+        <td><button id="a5" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="b5" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="c5" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="d5" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="e5" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="f5" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="g5" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="h5" class="light" onclick="setButton(this)"></button></td>
+    </tr>
+    <tr>
+        <th>4</th>
+        <td><button id="a4" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="b4" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="c4" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="d4" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="e4" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="f4" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="g4" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="h4" class="dark" onclick="setButton(this)"></button></td>
+    </tr>
+    <tr>
+        <th>3</th>
+        <td><button id="a3" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="b3" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="c3" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="d3" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="e3" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="f3" class="light" onclick="setButton(this)"></button></td>
+        <td><button id="g3" class="dark" onclick="setButton(this)"></button></td>
+        <td><button id="h3" class="light" onclick="setButton(this)"></button></td>
+    </tr>
+    <tr>
+        <th>2</th>
+        <td><button id="a2" class="light" onclick="setButton(this)">♙</button></td>
+        <td><button id="b2" class="dark" onclick="setButton(this)">♙</button></td>
+        <td><button id="c2" class="light" onclick="setButton(this)">♙</button></td>
+        <td><button id="d2" class="dark" onclick="setButton(this)">♙</button></td>
+        <td><button id="e2" class="light" onclick="setButton(this)">♙</button></td>
+        <td><button id="f2" class="dark" onclick="setButton(this)">♙</button></td>
+        <td><button id="g2" class="light" onclick="setButton(this)">♙</button></td>
+        <td><button id="h2" class="dark" onclick="setButton(this)">♙</button></td>
+    </tr>
+    <tr>
+        <th>1</th>
+        <td><button id="a1" class="dark" onclick="setButton(this)">♖</button></td>
+        <td><button id="b1" class="light" onclick="setButton(this)">♘</button></td>
+        <td><button id="c1" class="dark" onclick="setButton(this)">♗</button></td>
+        <td><button id="d1" class="light" onclick="setButton(this)">♕</button></td>
+        <td><button id="e1" class="dark" onclick="setButton(this)">♔</button></td>
+        <td><button id="f1" class="light" onclick="setButton(this)">♗</button></td>
+        <td><button id="g1" class="dark" onclick="setButton(this)">♘</button></td>
+        <td><button id="h1" class="light" onclick="setButton(this)">♖</button></td>
+    </tr>
+    
+</table>
+
+<button id="buttonstart" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton2(this)">Start</button>
+<button id="buttonendgame" style= "width: 100px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Start</button>
+
+<script>
+    var orderCounter = 0;
+    var tempholder = ''
+    var buttonid = ''
+
+
+    function setButton2(button) {
+        if(button.textContent == "Start"){
+            sendMessageToServer("Start");
+        }
+
+        orderCounter++;
+        if (orderCounter > 2) {
+            orderCounter = 1;
+        }
+        button.textContent = "Count " + (orderCounter)
+    }
+
+    function setButton3(button) {
+        sendMessageToServer("End");
+    }
+
+    function setButton(button) {
+        // Loop back to 1 after the eighth button is clicked
+        if (orderCounter > 1) {
+            orderCounter = 0;
+            button.textContent = tempholder
+            document.getElementById(buttonid).textContent = ""
+            sendMessageToServer(buttonid + ' ' + button.id);
+        }
+        else {
+            tempholder = button.textContent
+            buttonid = button.id
+        }
+        
+        orderCounter++;
+        document.getElementById("buttonstart").textContent = "Count " + (orderCounter)
+
+        // Send a message to the server
+        
+    }
+
+    function sendMessageToServer(message) {
+                // Make an asynchronous request to the server
+                fetch('/buttonClick', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message }),
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log('Server response:', data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+</script>
+
+</body>
+</html>
