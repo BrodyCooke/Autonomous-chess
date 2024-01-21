@@ -157,7 +157,7 @@
                 }
             }
             // if space not in list if possible moves do nothing
-            //if(move_flag == 0){return;}
+            if(move_flag == 0){return;}
             // reset move flag
             move_flag = 0;
             // check if clicked space is the same as the selected piece
@@ -193,12 +193,13 @@
     function setpossiblemoves(from,piece){
         possible_moves = [];
 
-        possible_moves.push(from);
+        possible_moves.push(from); // add the moving piece to the array
         // if piece is pawn fill the possible_moves array with all the possible moves for pawns
         if ((piece == '♙') || (piece == '♟')){setPawnMoves(possible_moves,from,piece);}
         if((piece == '♖') || (piece == '♜')){setRookMoves(possible_moves,from,piece);}
         if((piece == '♗') || (piece == '♝')){setBishopMoves(possible_moves,from,piece);}
         if((piece == '♕') || (piece == '♛')){setQueenMoves(possible_moves,from,piece);}
+        if((piece == '♘') || (piece == '♞')){setKnightMoves(possible_moves,from,piece);}
 
         // change the color of all the potential move spaces
         for (var i = 1; i < possible_moves.length; i++) {
@@ -397,6 +398,30 @@
         // since the queen can move as both a rook and a bishop can simply call those 2 functions
         setBishopMoves(possible_moves,from,piece);
         setRookMoves(possible_moves,from,piece);
+    }
+
+    function setKnightMoves(possible_moves, from, piece){
+        pieceColor = getColor(piece);
+        col = ((from-1)%8)+1;
+        row = Math.floor((from-1)/8);
+
+        // START ADDING POSSIBLE MOVES
+        // add all 8 possible moves to array
+        movelist = [[col+1,row+2],[col-1,row+2],[col+1,row-2],[col-1,row-2],[col+2,row+1],[col+2,row-1],[col-2,row+1],[col-2,row-1]];
+        // check to see what moves of the possible ones are valid
+        for(var i=0;i<movelist.length;i++){
+            if(movelist[i][0] >= 1 && movelist[i][0] <= 8 && movelist[i][1] >= 0 && movelist[i][1] <= 7){ // if the move is within bounds
+                if(document.getElementById(String(movelist[i][0] + (movelist[i][1]*8))).textContent == ''){
+                    possible_moves.push(String(movelist[i][0] + (movelist[i][1]*8)));
+                }
+                else{
+                    if(getColor(document.getElementById(String(movelist[i][0] + (movelist[i][1]*8))).textContent) !== pieceColor){
+                        possible_moves.push(String(movelist[i][0] + (movelist[i][1]*8)));
+                    }   
+                }
+            }
+            else{;} // move is not in bounds so do nothing
+        }
     }
 
     function getColor(piece){
