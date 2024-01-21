@@ -128,21 +128,17 @@
 <button id="buttonendgame" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton3(this)">End</button>
 
 <script>
-    var orderCounter = 0; // flag to keep track of order of button presses
-    c_spacetomove = '#fbe790'; // color for the possible move spaces
-    possiblemoves= []; // array to hold all possible moves for a piece
-    move_flag = 0; // flag that swaps to 1 if player move was in the list of possible moves
+    var orderCounter = 1; // flag to keep track of order of button presses, goes from 1-2 for first click, 2-1 for second click
+    var c_spacetomove = '#fbe790'; // color for the possible move spaces
+    var possiblemoves= []; // array to hold all possible moves for a piece
+    var move_flag = 0; // flag that swaps to 1 if player move was in the list of possible moves
 
 
     function setButton2(button) {
         if(button.textContent == "Start"){
             sendMessageToServer("Start");
         }
-
-        orderCounter++;
-        if (orderCounter > 2) {
-            orderCounter = 1;
-        }
+        orderCounter = 1;
         button.textContent = "Count " + (orderCounter);
     }
 
@@ -198,10 +194,9 @@
         possible_moves = [];
 
         possible_moves.push(from);
-        console.log(from + ' ' + piece);
-
         // if piece is pawn fill the possible_moves array with all the possible moves for pawns
         if ((piece == '♙') || (piece == '♟')){setPawnMoves(possible_moves,from,piece);}
+        if((piece == '♖') || (piece == '♜')){setRookMoves(possible_moves,from,piece);}
 
 
         // change the color of all the potential move spaces
@@ -216,18 +211,19 @@
         // set dirrection, either up the board or down, so that the possible moves can be multiplied by it
         if (piece == '♙'){dir = 1;}
         else{dir = -1;}
-        color = getColor(piece);
+        pieceColor = getColor(piece);
 
         // START ADDING POSSIBLE MOVES
         // if space ahead is empty add that move
         if(document.getElementById(String(from+(8*dir))).textContent == ''){
             possible_moves.push(from+(8*dir));
-            }
+        }   
         // if there is a piece that can be taken
-        if((document.getElementById(String(from+(8*dir) + 1)).textContent !== '') && (color !== getColor(document.getElementById(String(from+(8*dir) + 1)).textContent))){
+        if((document.getElementById(String(from+(8*dir) + 1)).textContent !== '') && (pieceColor !== getColor(document.getElementById(String(from+(8*dir) + 1)).textContent))){
             possible_moves.push(from+(8*dir) + 1);
         }
-        if((document.getElementById(String(from+(8*dir) - 1)).textContent !== '') && (color !== getColor(document.getElementById(String(from+(8*dir) - 1)).textContent))){
+        if((document.getElementById(String(from+(8*dir) - 1)).textContent !== '') && (pieceColor !== getColor(document.getElementById(String(from+(8*dir) - 1)).textContent))){
+
             possible_moves.push(from+(8*dir) - 1);
         }
         // if piece is in the first row of either side add the optional 2 space move
@@ -241,13 +237,81 @@
 
     }
 
-    function getColor(piece){
-        color = ''
-        if (piece == '♙' || piece == '♖' || piece == '♘' || piece == '♗' || piece == '♕'  || piece == '♔'){
-            color = 'white';
+    function setRookMoves(possible_moves, from, piece){
+        pieceColor = getColor(piece);
+        // START ADDING POSSIBLE MOVES
+        // add moves to the right til you hit something
+        counter = 1;
+        for(var i = ((from-1) % 8); i < 7; i++){
+            if(document.getElementById(String(from+counter)).textContent == ''){
+                possible_moves.push(String((from+counter)));
+            }
+            else{
+                if(getColor(document.getElementById(String(from+counter)).textContent) !== pieceColor){
+                    possible_moves.push(String((from+counter)))
+                }
+                break;
+            }
+            counter++
         }
-        else{color = 'black';}
-        return color;
+
+        // add moves to the left til you hit something
+        counter = 1;
+        for(var i = ((from-1) % 8); i > 0; i--){
+            if(document.getElementById(String(from-counter)).textContent == ''){
+                possible_moves.push(String((from-counter)));
+            }
+            // check if piece hit is a different color
+            else{
+                if(getColor(document.getElementById(String(from-counter)).textContent) !== pieceColor){
+                    possible_moves.push(String((from-counter)))
+                }
+                break;
+            }
+            counter++
+        }
+
+        // add moves up til you hit something
+        counter = 8;
+        for(var i = Math.floor((from-1)/8); i < 7; i++){
+            if(document.getElementById(String(from+counter)).textContent == ''){
+                possible_moves.push(String((from+counter)));
+            }
+            else{
+                if(getColor(document.getElementById(String(from+counter)).textContent) !== pieceColor){
+                    possible_moves.push(String((from+counter)))
+                }
+                break;
+            }
+            counter = counter + 8;
+        }
+
+        // add moves down til you hit something
+        counter = 8;
+        for(var i = Math.floor((from-1)/8); i > 0; i--){
+            if(document.getElementById(String(from-counter)).textContent == ''){
+                possible_moves.push(String((from-counter)));
+            }
+            else{
+                if(getColor(document.getElementById(String(from-counter)).textContent) !== pieceColor){
+                    possible_moves.push(String((from-counter)))
+                }
+                break;
+            }
+            counter = counter + 8;
+        }
+
+
+        return possible_moves;
+    }
+
+    function getColor(piece){
+        colors = ''
+        if (piece == '♙' || piece == '♖' || piece == '♘' || piece == '♗' || piece == '♕'  || piece == '♔'){
+            colors = 'white';
+        }
+        else{colors = 'black';}
+        return colors;
     }
 
     function revertcolor(moves) {
