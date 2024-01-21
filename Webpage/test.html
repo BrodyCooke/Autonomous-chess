@@ -239,66 +239,75 @@
 
     function setRookMoves(possible_moves, from, piece){
         pieceColor = getColor(piece);
+        col = ((from-1)%8)+1
+        row = Math.floor((from-1)/8)
+
         // START ADDING POSSIBLE MOVES
         // add moves to the right til you hit something
-        counter = 1;
-        for(var i = ((from-1) % 8); i < 7; i++){
-            if(document.getElementById(String(from+counter)).textContent == ''){
-                possible_moves.push(String((from+counter)));
+        tempcol = col + 1 // move by 1 to start checking 1 right of the piece
+        temprow = row
+        while(tempcol <= 8){
+            if(document.getElementById(String(tempcol + (temprow*8))).textContent == ''){
+                possible_moves.push(String(tempcol + (temprow*8)));
             }
             else{
-                if(getColor(document.getElementById(String(from+counter)).textContent) !== pieceColor){
-                    possible_moves.push(String((from+counter)))
+                if(getColor(document.getElementById(String(tempcol + (temprow*8))).textContent) !== pieceColor){
+                    possible_moves.push(String(tempcol + (temprow*8)))
                 }
                 break;
             }
-            counter++
+            tempcol++
         }
 
         // add moves to the left til you hit something
-        counter = 1;
-        for(var i = ((from-1) % 8); i > 0; i--){
-            if(document.getElementById(String(from-counter)).textContent == ''){
-                possible_moves.push(String((from-counter)));
+        tempcol = col - 1 // move by 1 to start checking 1 left of the piece
+        temprow = row
+        while(tempcol >= 1){
+            if(document.getElementById(String(tempcol + (temprow*8))).textContent == ''){
+                possible_moves.push(String(tempcol + (temprow*8)));
             }
             // check if piece hit is a different color
             else{
-                if(getColor(document.getElementById(String(from-counter)).textContent) !== pieceColor){
-                    possible_moves.push(String((from-counter)))
+                if(getColor(document.getElementById(String(tempcol + (temprow*8))).textContent) !== pieceColor){
+                    possible_moves.push(String((tempcol + (temprow*8))))
                 }
                 break;
             }
-            counter++
+            tempcol--
         }
 
         // add moves up til you hit something
-        counter = 8;
-        for(var i = Math.floor((from-1)/8); i < 7; i++){
-            if(document.getElementById(String(from+counter)).textContent == ''){
-                possible_moves.push(String((from+counter)));
+        tempcol = col 
+        temprow = row + 1 // move by 1 to start checking 1 above the piece
+        while(temprow <= 7){
+            if(document.getElementById(String(tempcol + (temprow*8))).textContent == ''){
+                possible_moves.push(String(tempcol + (temprow*8)));
             }
+            // check if piece hit is a different color
             else{
-                if(getColor(document.getElementById(String(from+counter)).textContent) !== pieceColor){
-                    possible_moves.push(String((from+counter)))
+                if(getColor(document.getElementById(String(tempcol + (temprow*8))).textContent) !== pieceColor){
+                    possible_moves.push(String((tempcol + (temprow*8))))
                 }
                 break;
             }
-            counter = counter + 8;
+            temprow++
         }
 
         // add moves down til you hit something
-        counter = 8;
-        for(var i = Math.floor((from-1)/8); i > 0; i--){
-            if(document.getElementById(String(from-counter)).textContent == ''){
-                possible_moves.push(String((from-counter)));
+        tempcol = col 
+        temprow = row - 1 // move by 1 to start checking 1 below the piece
+        while(temprow >= 0){
+            if(document.getElementById(String(tempcol + (temprow*8))).textContent == ''){
+                possible_moves.push(String(tempcol + (temprow*8)));
             }
+            // check if piece hit is a different color
             else{
-                if(getColor(document.getElementById(String(from-counter)).textContent) !== pieceColor){
-                    possible_moves.push(String((from-counter)))
+                if(getColor(document.getElementById(String(tempcol + (temprow*8))).textContent) !== pieceColor){
+                    possible_moves.push(String((tempcol + (temprow*8))))
                 }
                 break;
             }
-            counter = counter + 8;
+            temprow--
         }
 
 
