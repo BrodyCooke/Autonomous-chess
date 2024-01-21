@@ -126,12 +126,14 @@
 
 <button id="buttonstart" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton2(this)">Start</button>
 <button id="buttonendgame" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton3(this)">End</button>
+<button id="buttonTurn" style= "width: 200px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Turn: White</button>
 
 <script>
     var orderCounter = 1; // flag to keep track of order of button presses, goes from 1-2 for first click, 2-1 for second click
     var c_spacetomove = '#fbe790'; // color for the possible move spaces
     var possiblemoves= []; // array to hold all possible moves for a piece
     var move_flag = 0; // flag that swaps to 1 if player move was in the list of possible moves
+    var turn_flag = 0 // 0 for white, 1 for black
 
 
     function setButton2(button) {
@@ -139,6 +141,7 @@
             sendMessageToServer("Start");
         }
         orderCounter = 1;
+        turn_flag = 0;
         button.textContent = "Count " + (orderCounter);
     }
 
@@ -157,7 +160,7 @@
                 }
             }
             // if space not in list if possible moves do nothing
-            //if(move_flag == 0){return;}
+            if(move_flag == 0){return;}
             // reset move flag
             move_flag = 0;
             // check if clicked space is the same as the selected piece
@@ -175,11 +178,23 @@
             sendMessageToServer(String(possiblemoves[0]) + ' ' + button.id);
             revertcolor(possiblemoves);
             orderCounter = 0
+            // increment turn counter and update display
+            turn_flag = turn_flag + 1;
+            if(turn_flag > 1){turn_flag = 0;}
+            if(turn_flag == 0){document.getElementById("buttonTurn").textContent = "Turn: white";}
+            else{document.getElementById("buttonTurn").textContent = "Turn: Black";}
         }
         // what happens when the piece thats clicked is selected to be moved
         else {    
             // make sure its not empty
-            if(button.textContent == ''){return}    
+            if(button.textContent == ''){return}
+            // check to make sure its the right turn
+            if(turn_flag == 0){
+                if(getColor(button.textContent) !== 'white'){return;}
+            }
+            if(turn_flag == 1){
+                if(getColor(button.textContent) !== 'black'){return;}
+            }
             //buttonid = button.id;
             // set color for the selected piece space
             button.style.backgroundColor = '#c8a951';
