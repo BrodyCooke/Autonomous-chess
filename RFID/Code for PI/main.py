@@ -15,6 +15,7 @@ while True:
         if stat == reader.OK:
             card = int.from_bytes(bytes(uid),"little",False)
             print(str(card))
+            utime.sleep_ms(100) 
     else:
         print(' ')
 utime.sleep_ms(500) 
