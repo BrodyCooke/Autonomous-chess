@@ -2,6 +2,7 @@ import machine
 from machine import TouchPad, Pin, Timer
 import esp32
 import socket, network
+import time
 
 # Global variables
 temp = esp32.raw_temperature() # measure temperature sensor data
@@ -559,7 +560,7 @@ print('IP Address:', wlan.ifconfig()[0])
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-addr = ('', 8085)
+addr = ('', 8082)
 s.bind(addr)
 s.listen(1)
 
@@ -584,10 +585,15 @@ while True:
             # Send the HTML content as the HTTP response
             response = f"HTTP/1.1 200 OK\nContent-Type: text/html\n\n{html_content}\n"
             client.sendall(response.encode('utf-8'))
-            count = 2
         else:
-            response = f"HTTP/1.1 200 OK\nContent-Type: text/html\n\nThanks\n"
+            response = f"HTTP/1.1 200 OK\nContent-Type: text/html\n\nThanks {count}\n"
             client.sendall(response.encode('utf-8'))
+            
+            #time.sleep(10)
+            response = f"bye {count}"
+
+            client.sendall(response.encode('utf-8'))
+        count = count + 1
         client.close()
             
 
