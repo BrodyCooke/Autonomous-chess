@@ -125,6 +125,8 @@
 <button id="buttonstart" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton2(this)">Start</button>
 <button id="buttonendgame" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton3(this)">End</button>
 <button id="buttonTurn" style= "width: 200px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Turn: White</button>
+<button id="check" style= "width: 200px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Check : 0</button>
+
 
 <script>
     var orderCounter = 1; // flag to keep track of order of button presses, goes from 1-> 2 for first click, 2-> 1 for second click
@@ -132,6 +134,7 @@
     var possiblemoves= []; // Holds button ids, array to hold all possible moves for a piece, index 0 holds the square where the piece to be moved is
     var move_flag = 0; // flag that swaps to 1 if player move was in the list of possible moves
     var turn_flag = 0 // 0 for white, 1 for black
+    var check_flag = 0;
 
 
     function setButton2(button) {
@@ -149,10 +152,11 @@
 
     function setButton(button) {
         // what happens when the clicked space is where the old piece will be moved
-        if (orderCounter > 1) {
+        start = performance.now()
+        if (orderCounter > 1) {  
             // make sure button is in list of possible moves
             for (var i = 0; i < possiblemoves.length; i++) {
-                if(String(possible_moves[i]) == button.id){
+                if(String(possiblemoves[i]) == button.id){
                     move_flag = 1;
                     break;
                 }
@@ -163,7 +167,7 @@
             move_flag = 0;
             // check if clicked space is the same as the selected piece
             if(button.id == String(possiblemoves[0])){
-                revertcolor(possible_moves);
+                revertcolor(possiblemoves);
                 // reset order counter
                 orderCounter = 1;
                 document.getElementById("buttonstart").textContent = "Count " + (orderCounter);
@@ -181,9 +185,11 @@
             if(turn_flag > 1){turn_flag = 0;}
             if(turn_flag == 0){document.getElementById("buttonTurn").textContent = "Turn: white";}
             else{document.getElementById("buttonTurn").textContent = "Turn: Black";}
+            isKingChecked();
+            document.getElementById("check").textContent = ("Check: "+ String(check_flag));
         }
         // what happens when the piece thats clicked is selected to be moved
-        else {    
+        else {  
             // make sure its not empty
             if(button.textContent == ''){return}
             // check to make sure its the right turn
@@ -196,33 +202,88 @@
             //buttonid = button.id;
             // set color for the selected piece space
             button.style.backgroundColor = '#c8a951';
-            possiblemoves = setpossiblemoves(parseInt(button.id),button.textContent);
+            possiblemoves = setpossiblemoves(parseInt(button.id),button.textContent,1);
         }
         
         orderCounter++;
         document.getElementById("buttonstart").textContent = "Count " + (orderCounter);
+        end = performance.now()
+        console.log(String(end-start))
     }
 
-    function setpossiblemoves(from,piece){
-        possible_moves = [];
+    function isKingChecked(){
+        king = '';
+        potential_moves = [];
+        check_flag = 0;
+        for (let i = 1; i <= 64; i++) {
+            if(document.getElementById(String(i)).textContent != ''){
+                potential_moves = setpossiblemoves(i,document.getElementById(String(i)).textContent,0)
+                for (var j = 1; j < potential_moves.length; j++) {
+                    //console.log('i: ' + String(i) + ' ' + String( document.getElementById(String(i)).textContent) + ' j: '+ String(potential_moves[j]) + ' ' + String( document.getElementById(String(potential_moves[j])).textContent))
+                    if(getColor(document.getElementById(String(i)).textContent) == 'black' && document.getElementById(String(potential_moves[j])).textContent == '♔'){
+                        console.log(String(document.getElementById(String(i)).textContent) + ' id: ' + String(i) + ' is checking ' + document.getElementById(String(potential_moves[j])).textContent + ' id: ' + String(j))
+                        
+                        check_flag = 1;
+                    }
+                    if(getColor(document.getElementById(String(i)).textContent) == 'white' && document.getElementById(String(potential_moves[j])).textContent == '♚'){
+                        console.log(String(document.getElementById(String(i)).textContent) + ' id: ' + String(i) + ' is checking ' + document.getElementById(String(potential_moves[j])).textContent + ' id: ' + String(j))
+                        check_flag = 1;
+                    }         
+                }
+            }
+            
+        }
+    }
+    function getColor(piece){
+        color = ''
+        if (piece == '♙' || piece == '♖' || piece == '♘' || piece == '♗' || piece == '♕'  || piece == '♔'){
+            color = 'white';
+        }
+        else{color = 'black';}
+        return color;
+    }
 
-        possible_moves.push(from); // add the moving piece to the array
+    function revertcolor(moves) {
+
+        for (var i = 0; i < moves.length; i++) {
+            if ((moves[i] >= 1 && moves[i] <= 8) || (moves[i] >= 17 && moves[i] <= 24)|| (moves[i] >= 33 && moves[i] <= 40)|| (moves[i] >= 49 && moves[i] <= 56)) {
+                if (moves[i] % 2 == 0) {
+                    document.getElementById(String(moves[i])).style.backgroundColor = '#eee';
+                } else {
+                    document.getElementById(String(moves[i])).style.backgroundColor = '#aaa';
+                }
+            } else {
+                if (moves[i] % 2 == 0) {
+                    document.getElementById(String(moves[i])).style.backgroundColor = '#aaa';
+                } else {
+                    document.getElementById(String(moves[i])).style.backgroundColor = '#eee';
+                }
+            }
+        }
+    }
+
+    function setpossiblemoves(from,piece, changeColorFlag){
+        p_moves = [];
+
+        p_moves.push(from); // add the moving piece to the array
 
         //check what piece it is and set the moves accordingly
-        if((piece == '♙') || (piece == '♟')){setPawnMoves(possible_moves,from,piece);}
-        else if((piece == '♖') || (piece == '♜')){setRookMoves(possible_moves,from,piece);}
-        else if((piece == '♗') || (piece == '♝')){setBishopMoves(possible_moves,from,piece);}
-        else if((piece == '♕') || (piece == '♛')){setQueenMoves(possible_moves,from,piece);}
-        else if((piece == '♘') || (piece == '♞')){setKnightMoves(possible_moves,from,piece);}
-        else if((piece == '♔') || (piece == '♚')){setKingMoves(possible_moves,from,piece);}
+        if((piece == '♙') || (piece == '♟')){setPawnMoves(p_moves,from,piece);}
+        else if((piece == '♖') || (piece == '♜')){setRookMoves(p_moves,from,piece);}
+        else if((piece == '♗') || (piece == '♝')){setBishopMoves(p_moves,from,piece);}
+        else if((piece == '♕') || (piece == '♛')){setQueenMoves(p_moves,from,piece);}
+        else if((piece == '♘') || (piece == '♞')){setKnightMoves(p_moves,from,piece);}
+        else if((piece == '♔') || (piece == '♚')){setKingMoves(p_moves,from,piece);}
         else{throw new Error('Cannot set possible moves, piece is not a chesspiece');}
 
         // change the color of all the potential move spaces
-        for (var i = 1; i < possible_moves.length; i++) {
-            document.getElementById(String(possible_moves[i])).style.backgroundColor = c_spacetomove;
+        if(changeColorFlag == 1){
+            for (var i = 1; i < p_moves.length; i++) {
+                document.getElementById(String(p_moves[i])).style.backgroundColor = c_spacetomove;
+            }
         }
 
-        return possible_moves;;
+        return p_moves;;
     }
 
     function setPawnMoves(possible_moves, from, piece){
@@ -461,34 +522,6 @@
                 }
             }
             else{;} // move is not in bounds so do nothing
-        }
-    }
-
-    function getColor(piece){
-        color = ''
-        if (piece == '♙' || piece == '♖' || piece == '♘' || piece == '♗' || piece == '♕'  || piece == '♔'){
-            color = 'white';
-        }
-        else{color = 'black';}
-        return color;
-    }
-
-    function revertcolor(moves) {
-
-        for (var i = 0; i < moves.length; i++) {
-            if ((moves[i] >= 1 && moves[i] <= 8) || (moves[i] >= 17 && moves[i] <= 24)|| (moves[i] >= 33 && moves[i] <= 40)|| (moves[i] >= 49 && moves[i] <= 56)) {
-                if (moves[i] % 2 == 0) {
-                    document.getElementById(String(moves[i])).style.backgroundColor = '#eee';
-                } else {
-                    document.getElementById(String(moves[i])).style.backgroundColor = '#aaa';
-                }
-            } else {
-                if (moves[i] % 2 == 0) {
-                    document.getElementById(String(moves[i])).style.backgroundColor = '#aaa';
-                } else {
-                    document.getElementById(String(moves[i])).style.backgroundColor = '#eee';
-                }
-            }
         }
     }
 
