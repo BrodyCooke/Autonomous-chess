@@ -125,7 +125,8 @@
 <button id="buttonstart" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton2(this)">Start</button>
 <button id="buttonendgame" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton3(this)">End</button>
 <button id="buttonTurn" style= "width: 200px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Turn: White</button>
-<button id="check" style= "width: 200px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Check : 0</button>
+<button id="check_white" style= "width: 200px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Check : 0</button>
+<button id="check_black" style= "width: 200px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Check : 0</button>
 
 
 <script>
@@ -134,7 +135,8 @@
     var possiblemoves= []; // Holds button ids, array to hold all possible moves for a piece, index 0 holds the square where the piece to be moved is
     var move_flag = 0; // flag that swaps to 1 if player move was in the list of possible moves
     var turn_flag = 0 // 0 for white, 1 for black
-    var check_flag = 0;
+    var check_flag_white = 0;
+    var check_flag_black = 0;
 
 
     function setButton2(button) {
@@ -151,9 +153,22 @@
     }
 
     function setButton(button) {
-        // what happens when the clicked space is where the old piece will be moved
-        start = performance.now()
-        if (orderCounter > 1) {  
+        start = performance.now()  
+        if (orderCounter == 1) { // what happens when the piece thats clicked is selected to be moved 
+            // make sure its not empty
+            if(button.textContent == ''){return}
+            // check to make sure its the right turn
+            if(turn_flag == 0){
+                if(getColor(button.textContent) !== 'white'){return;}
+            }
+            if(turn_flag == 1){
+                if(getColor(button.textContent) !== 'black'){return;}
+            }
+            // set color for the selected piece space
+            button.style.backgroundColor = '#c8a951';
+            possiblemoves = setpossiblemoves(parseInt(button.id),button.textContent,1);
+        }
+        else{ // what happens when the clicked space is where the old piece will be moved
             // make sure button is in list of possible moves
             for (var i = 0; i < possiblemoves.length; i++) {
                 if(String(possiblemoves[i]) == button.id){
@@ -175,8 +190,23 @@
             }
         
             //move the piece by: changing the now clicked button to the old text and removing the text of the old button
+            
             button.textContent = document.getElementById(String(possiblemoves[0])).textContent;
             document.getElementById(String(possiblemoves[0])).textContent = "";
+            isKingChecked()
+            if(turn_flag == 0 && check_flag_white == 1){
+                    document.getElementById(String(possiblemoves[0])).textContent = button.textContent;
+                    button.textContent = '';
+                    return;
+               
+            }
+            else if(turn_flag == 1 && check_flag_black == 1){
+                    document.getElementById(String(possiblemoves[0])).textContent = button.textContent;
+                    button.textContent = '';
+                    return;
+               
+            }
+            if(turn_flag == 0 )
             sendMessageToServer(String(possiblemoves[0]) + ' ' + button.id);
             revertcolor(possiblemoves);
             orderCounter = 0
@@ -185,49 +215,37 @@
             if(turn_flag > 1){turn_flag = 0;}
             if(turn_flag == 0){document.getElementById("buttonTurn").textContent = "Turn: white";}
             else{document.getElementById("buttonTurn").textContent = "Turn: Black";}
-            isKingChecked();
-            document.getElementById("check").textContent = ("Check: "+ String(check_flag));
+            // See if king is checked, this function sets the check_flag to 1 if king is in check
+            //isKingChecked();
+            document.getElementById("check_white").textContent = ("Check w: "+ String(check_flag_white));
+            document.getElementById("check_black").textContent = ("Check b: "+ String(check_flag_black));
         }
-        // what happens when the piece thats clicked is selected to be moved
-        else {  
-            // make sure its not empty
-            if(button.textContent == ''){return}
-            // check to make sure its the right turn
-            if(turn_flag == 0){
-                if(getColor(button.textContent) !== 'white'){return;}
-            }
-            if(turn_flag == 1){
-                if(getColor(button.textContent) !== 'black'){return;}
-            }
-            //buttonid = button.id;
-            // set color for the selected piece space
-            button.style.backgroundColor = '#c8a951';
-            possiblemoves = setpossiblemoves(parseInt(button.id),button.textContent,1);
-        }
+        
         
         orderCounter++;
         document.getElementById("buttonstart").textContent = "Count " + (orderCounter);
         end = performance.now()
-        console.log(String(end-start))
+        //console.log(String(end-start))
     }
 
     function isKingChecked(){
         king = '';
         potential_moves = [];
-        check_flag = 0;
+        check_flag_white = 0;
+        check_flag_black = 0;
         for (let i = 1; i <= 64; i++) {
             if(document.getElementById(String(i)).textContent != ''){
                 potential_moves = setpossiblemoves(i,document.getElementById(String(i)).textContent,0)
                 for (var j = 1; j < potential_moves.length; j++) {
                     //console.log('i: ' + String(i) + ' ' + String( document.getElementById(String(i)).textContent) + ' j: '+ String(potential_moves[j]) + ' ' + String( document.getElementById(String(potential_moves[j])).textContent))
                     if(getColor(document.getElementById(String(i)).textContent) == 'black' && document.getElementById(String(potential_moves[j])).textContent == '♔'){
-                        console.log(String(document.getElementById(String(i)).textContent) + ' id: ' + String(i) + ' is checking ' + document.getElementById(String(potential_moves[j])).textContent + ' id: ' + String(j))
+                        //console.log(String(document.getElementById(String(i)).textContent) + ' id: ' + String(i) + ' is checking ' + document.getElementById(String(potential_moves[j])).textContent + ' id: ' + String(j))
                         
-                        check_flag = 1;
+                        check_flag_white = 1;
                     }
                     if(getColor(document.getElementById(String(i)).textContent) == 'white' && document.getElementById(String(potential_moves[j])).textContent == '♚'){
-                        console.log(String(document.getElementById(String(i)).textContent) + ' id: ' + String(i) + ' is checking ' + document.getElementById(String(potential_moves[j])).textContent + ' id: ' + String(j))
-                        check_flag = 1;
+                        //console.log(String(document.getElementById(String(i)).textContent) + ' id: ' + String(i) + ' is checking ' + document.getElementById(String(potential_moves[j])).textContent + ' id: ' + String(j))
+                        check_flag_black = 1;
                     }         
                 }
             }
