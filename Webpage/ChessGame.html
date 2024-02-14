@@ -204,7 +204,6 @@
         
             button.textContent = document.getElementById(String(possiblemoves[0])).textContent;
             document.getElementById(String(possiblemoves[0])).textContent = "";
-            if(turn_flag == 0 )
             sendMessageToServer(String(possiblemoves[0]) + ' ' + button.id);
             revertcolor(possiblemoves);
             orderCounter = 0;

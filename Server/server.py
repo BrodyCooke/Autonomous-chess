@@ -23,7 +23,7 @@ def index():
         clients.append(client)
 
     if(len(clients) % 2 == 1):
-        return render_template('index.html')
+        return render_template('index1.html')
     elif(len(clients) % 2 == 0):
         client.set_pair(clients[0])
         clients[0].set_pair(client)
