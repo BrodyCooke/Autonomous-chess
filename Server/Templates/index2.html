@@ -191,6 +191,8 @@
             else{document.getElementById("buttonTurn").textContent = "Turn: Black";}
             isKingChecked();
             document.getElementById("check").textContent = ("Check: "+ String(check_flag));
+
+            waitForServer();
         }
         // what happens when the piece thats clicked is selected to be moved
         else {  
@@ -214,7 +216,7 @@
         end = performance.now()
         console.log(String(end-start))
 
-        waitForServer();
+
         }
     }
 

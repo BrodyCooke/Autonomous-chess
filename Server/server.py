@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 from clients import Client
-import json
 
 app = Flask(__name__)
 
@@ -13,6 +12,8 @@ def index():
     # Find or create client instance
     client_ip = request.remote_addr
     client = None
+
+    # Find or create client
     for c in clients:
         if c.ip == client_ip:
             client = c
@@ -20,9 +21,12 @@ def index():
     if not client:
         client = Client(client_ip)
         clients.append(client)
-    if(len(clients) == 1):
+
+    if(len(clients) % 2 == 1):
         return render_template('index.html')
-    else:
+    elif(len(clients) % 2 == 0):
+        client.set_pair(clients[0])
+        clients[0].set_pair(client)
         return render_template('index2.html')
 
 # Route for handling incoming messages from the client
@@ -31,15 +35,12 @@ def message():
     client_ip = request.remote_addr
     message_data = request.json
 
-    # Find or create client instance
+    # Find client instance
     client = None
     for c in clients:
         if c.ip == client_ip:
             client = c
             break
-    if not client:
-        client = Client(client_ip)
-        clients.append(client)
 
     message = message_data['message']
     client.add_message(message)
@@ -59,23 +60,21 @@ def status():
     for c in clients:
         if c.ip == client_ip:
             client = c
-        else:
-            other_client = c
+            break
+
+    other_client = client.get_pair()
     if other_client == None:
-        return jsonify({'status': 'Message sent', 'message': ''})
+        return jsonify({'status': 'no new message', 'message': ''})
         
     message = other_client.get_lastmessage()
     other_client.zero_lastmessage()
-    #message = "56 48"
-    #message = ''
 
     # Check if the client instance exists
     if client:
-        # Here you can customize the response to the client
-        return jsonify({'status': 'Message sent', 'message': message})
+        return jsonify({'status': 'new message', 'message': message})
 
     else:
         return jsonify({'status': 'Error', 'message': 'Client not found'})
         
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000,debug=True)
+    app.run(host='0.0.0.0', port=5000,debug=False)

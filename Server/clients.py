@@ -3,6 +3,8 @@ class Client:
         self.ip = ip
         self.message_history = []
         self.lastmessage = ''
+        self.source = ''
+        self.pair = None
 
     def add_message(self, message):
         self.message_history.append(message)
@@ -16,3 +18,10 @@ class Client:
     
     def zero_lastmessage(self):
         self.lastmessage = ''
+
+    def set_pair(self, _pair):
+        self.pair = _pair
+
+    def get_pair(self):
+        return self.pair
+    
