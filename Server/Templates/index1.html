@@ -146,7 +146,7 @@
 
     function setButton2(button) {
         if(button.textContent == "Start"){
-            sendMessageToServer("Start");
+            sendMoveToServer("Start");
         }
         orderCounter = 1;
         turn_flag = 0;
@@ -154,7 +154,7 @@
     }
 
     function setButton3(button) {
-        sendMessageToServer("End");
+        sendMoveToServer("End");
     }
 
 
@@ -206,7 +206,7 @@
             
                 button.textContent = document.getElementById(String(possiblemoves[0])).textContent;
                 document.getElementById(String(possiblemoves[0])).textContent = "";
-                sendMessageToServer(String(possiblemoves[0]) + ' ' + button.id);
+                sendMoveToServer(String(possiblemoves[0]) + ' ' + button.id);
                 revertcolor(possiblemoves);
                 orderCounter = 0;
                 // increment turn counter and update display
@@ -620,10 +620,10 @@
     }
 
 
-    function sendMessageToServer(message) {
+    function sendMoveToServer(message) {
         
         // Make an asynchronous request to the server
-        fetch('/message', {
+        fetch('/sendmove', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -639,8 +639,8 @@
         });
     }
 
-    function getStatus() {
-        fetch('/status')
+    function ReceiveMoveFromServer() {
+        fetch('/receivemove')
         .then(response => response.json())
         .then(data => {
             //console.log('Server response:', data);
@@ -656,7 +656,7 @@
         console.log("wiating for server")
         var intervalId = window.setInterval(function(){
         // call your function here
-        getStatus()
+        ReceiveMoveFromServer()
         console.log(response['message'])
         if (response['message'] !== '' && typeof response['message'] !== 'undefined'){
             clearInterval(intervalId)

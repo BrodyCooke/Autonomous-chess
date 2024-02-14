@@ -30,7 +30,7 @@ def index():
         return render_template('index2.html')
 
 # Route for handling incoming messages from the client
-@app.route('/message', methods=['POST'])
+@app.route('/sendmove', methods=['POST'])
 def message():
     client_ip = request.remote_addr
     message_data = request.json
@@ -50,7 +50,7 @@ def message():
     return jsonify({'status': 'Message received', 'message': message})
 
 # Route for sending messages back to the client
-@app.route('/status', methods=['GET'])
+@app.route('/receivemove', methods=['GET'])
 def status():
     client_ip = request.remote_addr
 

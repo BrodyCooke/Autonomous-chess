@@ -620,7 +620,7 @@
     function sendMessageToServer(message) {
         
         // Make an asynchronous request to the server
-        fetch('/message', {
+        fetch('/sendmove', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -636,8 +636,8 @@
         });
     }
 
-    function getStatus() {
-        fetch('/status')
+    function ReceiveMoveFromServer() {
+        fetch('/receivemove')
         .then(response => response.json())
         .then(data => {
             //console.log('Server response:', data);
@@ -653,7 +653,7 @@
         console.log("wiating for server")
         var intervalId = window.setInterval(function(){
         // call your function here
-        getStatus()
+        ReceiveMoveFromServer()
         console.log(response['message'])
         if (response['message'] !== '' && typeof response['message'] !== 'undefined'){
             clearInterval(intervalId)
