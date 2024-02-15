@@ -42,20 +42,38 @@ class server:
     
     def receive_move(self):
         '''check status(recive a move)'''
+        start = time.time()
         url = 'http://' + self.SERVER_IP + ':' + self.SERVER_PORT + '/receivemove'
         response = urequests.get(url)
         reply = response.text
         response.close()
-        print(reply)
-        return reply
+        move = ujson.loads(reply)['message']
+        end = time.time()
+        print('Server Response time is: ' ,end-start)
+        return move
     
 if __name__ == "__main__":
-    connWIFI('CookeFamily','P@rty0fF!ve')
+    #connWIFI('CookeFamily','P@rty0fF!ve')
+    '''
+    connWIFI('Chickennuggs','13221322')
     
-    server = server('192.168.1.85','5000')
+    server = server('192.168.188.30','5000')
     server.connect()
-    time.sleep(10)
+    time.sleep(5)
     server.send_move('12 28')
-    time.sleep(10)
-    server.receive_move()
+    time.sleep(5)
+    print(server.receive_move())
+    '''
+    connWIFI('Chickennuggs','13221322')
+    
+    server = server('192.168.188.30','5000')
+    server.connect()
+    while True:
+        move = input("Input a move:")
+        server.send_move(move)
+        recv = server.receive_move()
+        while (recv == ''):
+            recv = server.receive_move()
+            time.sleep(.5)
+        print(recv)
     
