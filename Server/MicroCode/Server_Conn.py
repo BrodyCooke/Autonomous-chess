@@ -76,4 +76,13 @@ if __name__ == "__main__":
             recv = server.receive_move()
             time.sleep(.5)
         print(recv)
+        
+        
+       '''
+    while True:
+        move = input("Input a move:")
+        server.send_move(move)
+        recv = server.apicall()
+        print(recv)
+        '''
     
