@@ -69,19 +69,18 @@ def startup():
     black_type = message_data['black']
 
     #find the first client that is of white type
-    print('White type: ', white_type)
-    print(c.get_type())
     for c in game.get_clients():
         if c.get_type() == white_type:
             white_client = c
             game.set_white(white_client)
             print('setting white')
             break
-    #find the first client that is of black type
+    #find the first client that is of black type and not already white
     for c in game.get_clients():
-        if c.get_type() == black_type:
+        if (c.get_type() == black_type) & (c != game.get_white()):
             black_client = c
             game.set_black(black_client)
+            print('setting black')
             break
 
     return jsonify({'status': 'Message received', 'message': message_data})
@@ -102,6 +101,10 @@ def waiting():
 
     for c in game.get_clients():
         if c.ip == client_ip:
+            print(c)
+            print(game.get_black())
+            print(game.get_white())
+            print(game.get_clients())
             if c == game.get_white():
                 return redirect(url_for('white_player'))
             elif c == game.get_black():

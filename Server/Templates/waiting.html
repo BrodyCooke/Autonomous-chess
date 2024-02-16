@@ -28,22 +28,35 @@
         });
     }
 
-    function waitForServer(){
-        console.log("waiting for server")
-        var intervalId = window.setInterval(function(){
-        // call your function here
+    function waitForServer() {
+        console.log("Waiting for server");
+        var intervalId = window.setInterval(function() {
         fetch('/waiting')
-        .then(response => response.json())
-        .then(data => {
-            console.log('Server response:', data);
-            response = data;
-        })
-        .catch(error => {
-            console.error('Error fetching status:', error);
-        });
-        }, 1000);
-            
-    }
+            .then(response => {
+                if (response.ok) {
+                    // If the response is successful, check for redirection
+                    if (response.redirected) {
+                        console.log('Redirect detected, redirecting to:', response.url);
+                        clearInterval(intervalId); // Stop further requests
+                        window.location.href = response.url; // Redirect the client
+                    } else {
+                        // If no redirection, parse the JSON response
+                        return response.json();
+                    }
+                } else {
+                    throw new Error('Server response not OK');
+                }
+            })
+            .then(data => {
+                console.log('Server response:', data);
+                // Handle data as needed
+            })
+            .catch(error => {
+                console.error('Error fetching status:', error);
+                clearInterval(intervalId); // Stop further requests on error
+            });
+        }, 2000);
+        }
     </script>
 </head>
 <body>

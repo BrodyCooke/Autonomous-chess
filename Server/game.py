@@ -6,6 +6,7 @@ class Game:
         self.p_black = None
         self.spectators = []
         self.clients = []
+        self.endgame = 0
 
     def add_message(self, message):
         self.message_history.append(message)
@@ -46,3 +47,10 @@ class Game:
     
     def get_clients(self):
         return self.clients
+    
+    def set_endgame(self,val):
+        self.endgame == val
+
+    def is_endgame(self):
+        return self.endgame
+    
