@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown Selection</title>
+    <script>
+        identify_to_server();
+
+        function submitForm() {
+            var whiteDropdown = document.getElementById("white");
+            var blackDropdown = document.getElementById("black");
+
+            var selectedWhiteValue = whiteDropdown.options[whiteDropdown.selectedIndex].value;
+            var selectedBlackValue = blackDropdown.options[blackDropdown.selectedIndex].value;
+
+            send_startup(selectedWhiteValue,selectedBlackValue)
+            waitForServer();
+        }
+
+        function send_startup(v1,v2){
+            fetch('/startup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ white: v1, black: v2}),
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Server response:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        }
+
+        function identify_to_server() {
+        
+        // Make an asynchronous request to the server
+        fetch('/identify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: 'webpage' }),
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log('Server response:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        }
+
+        function waitForServer(){
+            console.log("waiting for server")
+            var intervalId = window.setInterval(function(){
+            // call your function here
+            fetch('/waiting')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server response:', data);
+                response = data;
+            })
+            .catch(error => {
+                console.error('Error fetching status:', error);
+            });
+            }, 1000);
+            
+        }
+    </script>
+</head>
+<body>
+    <h2>Select Options for White and Black</h2>
+    <form>
+        <label for="white">White:</label>
+        <select id="white">
+            <option value="webpage">webpage</option>
+            <option value="ai">AI</option>
+            <option value="chessboard">chessboard</option>
+        </select>
+        <br><br>
+        <label for="black">Black:</label>
+        <select id="black">
+            <option value="webpage">webpage</option>
+            <option value="ai">AI</option>
+            <option value="chessboard">chessboard</option>
+        </select>
+        <br><br>
+        <input type="button" value="Submit" onclick="submitForm()">
+    </form>
+</body>
+</html>

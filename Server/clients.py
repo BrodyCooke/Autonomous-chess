@@ -1,27 +1,18 @@
 class Client:
     def __init__(self, ip):
         self.ip = ip
-        self.message_history = []
-        self.lastmessage = ''
-        self.source = ''
-        self.pair = None
+        self.type = ''
+        self.color = '' #includes spectator
 
-    def add_message(self, message):
-        self.message_history.append(message)
-        self.lastmessage = message
-    
-    def get_messages(self):
-        return self.message_history
-    
-    def get_lastmessage(self):
-        return self.lastmessage
-    
-    def zero_lastmessage(self):
-        self.lastmessage = ''
+    def set_type(self, identity):
+        self.type = identity
 
-    def set_pair(self, _pair):
-        self.pair = _pair
+    def get_type(self):
+        return self.type
+    
+    def set_color(self, color):
+        self.color = color
 
-    def get_pair(self):
-        return self.pair
+    def get_color(self):
+        return self.color
     

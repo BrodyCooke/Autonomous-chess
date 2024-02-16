@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waiting for Game to Start</title>
+
+    <script>
+        identify_to_server();
+        waitForServer();
+        
+        function identify_to_server() {
+        
+        // Make an asynchronous request to the server
+        fetch('/identify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: 'webpage' }),
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log('Server response:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function waitForServer(){
+        console.log("waiting for server")
+        var intervalId = window.setInterval(function(){
+        // call your function here
+        fetch('/waiting')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Server response:', data);
+            response = data;
+        })
+        .catch(error => {
+            console.error('Error fetching status:', error);
+        });
+        }, 1000);
+            
+    }
+    </script>
+</head>
+<body>
+    <h1>Waiting for Game to Start</h1>
+</body>
+</html>
