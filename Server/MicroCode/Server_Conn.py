@@ -21,11 +21,8 @@ def connWIFI(WIFI_SSID,WIFI_PASSWORD):
 class server:
 
     def __init__(self,SERVER_IP,SERVER_PORT):
-        self.Tim4 = Timer(4)
         self.SERVER_IP = SERVER_IP
         self.SERVER_PORT = SERVER_PORT
-        self.waiting_message_content = ''
-        self.receive_message_content = ''
 
     def connect(self):
         '''initial connection'''
@@ -51,16 +48,13 @@ class server:
         self.waiting_message_content = ujson.loads(reply)['message']
     
     def waiting(self):
-        self.Tim4.init(mode=Timer.PERIODIC, period= 1000, callback=self.waiting_message)
         print("waiting for game to start")
         playtype = ''
-        while ((self.waiting_message_content != 'white_player') and (self.waiting_message_content != 'black_player')):
+        while ((self.waiting_message() != 'white_player') and (self.waiting_message() != 'black_player')):
             time.sleep(1)
-        self.Tim4.deinit()
-        playtype = self.waiting_message_content
-        self.waiting_message_content = ''
+        playtype = self.waiting_message()
         print("game has started")
-        return playtype        
+        return playtype
 
     def send_move(self,message):
         '''send a move'''
@@ -71,7 +65,7 @@ class server:
         response.close()
         return reply
     
-    def receive_move_message(self,Tim4):
+    def receive_move_message(self):
         '''check status(recive a move)'''
         start = time.time_ns()
         url = 'http://' + self.SERVER_IP + ':' + self.SERVER_PORT + '/receivemove'
@@ -81,16 +75,14 @@ class server:
         move = ujson.loads(reply)['message']
         end = time.time_ns()
         print('Server Response time is: ' ,(end-start) / 1000000000.0, ' Seconds')
-        self.receive_message_content = move
+        return move
     
     def receive_move(self):
-        self.Tim4.init(mode=Timer.PERIODIC, period= 1000, callback=self.receive_move_message)
-        while (self.receive_message_content == ''):
+        recv = self.receive_move_message()
+        while (recv == ''):
+            recv = self.receive_move_message()
             time.sleep(1)
-        self.Tim4.deinit()
-        rtv = self.receive_message_content
-        self.receive_message_content = ''
-        return rtv
+        return recv
         
     
 if __name__ == "__main__":
@@ -106,25 +98,25 @@ if __name__ == "__main__":
     time.sleep(5)
     print(server.receive_move())
     '''
-    connWIFI('Chickennuggs','13221322')
-    server = server('192.168.188.30','5000')
+    connWIFI('Chickennuggs','13221322') #connect to wifi using this username and password
+    server = server('192.168.188.30','5000') #connect to server at this ip and this port
     
-    server.connect()
-    playtype = server.waiting()
+    server.connect() # initializes connection with server, and identifies itself as the micro
+    playtype = server.waiting() # wait for game to start, returns what player type the micro is for this game
     
     print(playtype)
     if playtype == 'white_player':   
         while True:
             move = input("Input a move:") #need to get move from hall effect sensors
-            server.send_move(move)
-            recv = server.receive_move()
+            server.send_move(move) # returns what move the server recieved
+            recv = server.receive_move() # This returns once a message from server is recived
             print("Move from the Server is: ",recv) #send motor movement to micah, and update board state?
     elif playtype == 'black_player':
         while True:
-            recv = server.receive_move()
-            print("Move from the Server is: ",recv)
-            move = input("Input a move:")
-            server.send_move(move)
+            recv = server.receive_move() # This returns once a message from server is recived
+            print("Move from the Server is: ",recv) #send motor movement to micah, and update board state?
+            move = input("Input a move:") #need to get move from hall effect sensors
+            server.send_move(move) # returns what move the server recieved
         
     '''
     while True:
