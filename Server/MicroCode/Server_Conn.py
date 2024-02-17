@@ -73,14 +73,14 @@ class server:
     
     def receive_move_message(self,Tim4):
         '''check status(recive a move)'''
-        start = time.time()
+        start = time.time_ns()
         url = 'http://' + self.SERVER_IP + ':' + self.SERVER_PORT + '/receivemove'
         response = urequests.get(url)
         reply = response.text
         response.close()
         move = ujson.loads(reply)['message']
-        end = time.time()
-        #print('Server Response time is: ' ,end-start)
+        end = time.time_ns()
+        print('Server Response time is: ' ,(end-start) / 1000000000.0, ' Seconds')
         self.receive_message_content = move
     
     def receive_move(self):
@@ -115,10 +115,10 @@ if __name__ == "__main__":
     print(playtype)
     if playtype == 'white_player':   
         while True:
-            move = input("Input a move:")
+            move = input("Input a move:") #need to get move from hall effect sensors
             server.send_move(move)
             recv = server.receive_move()
-            print("Move from the Server is: ",recv)
+            print("Move from the Server is: ",recv) #send motor movement to micah, and update board state?
     elif playtype == 'black_player':
         while True:
             recv = server.receive_move()

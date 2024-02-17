@@ -1,5 +1,6 @@
 
 from stockfish import Stockfish
+
 class API:
     def __init__(self):
         self.stockfish = Stockfish(r'stockfish\stockfish-windows-x86-64.exe')

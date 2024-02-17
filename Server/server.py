@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify,  redirect, url_for
 from clients import Client
 from game import Game
+from chess_api import API
 
 from datetime import datetime
 
@@ -8,6 +9,7 @@ app = Flask(__name__)
 
 # List to store instances of Client class
 game = Game()
+API_game = API()
 
 # Route for handling the initial connection and sending the HTML page
 @app.route('/')
@@ -68,6 +70,13 @@ def startup():
 
     white_type = message_data['white']
     black_type = message_data['black']
+
+    if (black_type == 'ai'):
+        API_client = Client('0.0.0.0')
+        API_client.set_type('ai')
+        API_client.set_color('black')
+        game.add_client(API_client)
+
 
     #find the first client that is of white type
     for c in game.get_clients():
@@ -178,13 +187,21 @@ def status():
             break
         
     message = game.get_lastmessage()
-    print(c.get_previousmove())
-    if message == c.get_previousmove():
-        return jsonify({'status': 'new message', 'message': ''})
-    else:
+    '''ZACH API CALL'''
+    '''ZACH API CALL'''
+    '''ZACH API CALL'''
+    '''ZACH API CALL'''
+    if(game.get_black().get_type() == 'ai'):
+        new_move = API_game.call_api(message)
+        message = new_move
         game.zero_lastmessage()
+    else:
+        if message == c.get_previousmove():
+            return jsonify({'status': 'new message', 'message': ''})
+        else:
+            game.zero_lastmessage()
 
-    # Check if the client instance exists
+
     end = datetime.now()
     print("Runtime is: ",(end-start))
     if client:
