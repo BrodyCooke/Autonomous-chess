@@ -3,6 +3,7 @@ class Client:
         self.ip = ip
         self.type = ''
         self.color = '' #includes spectator
+        self.previousmove = ''
 
     def set_type(self, identity):
         self.type = identity
@@ -15,4 +16,10 @@ class Client:
 
     def get_color(self):
         return self.color
+    
+    def set_previousmove(self, move):
+        self.previousmove = move
+    
+    def get_previousmove(self):
+        return self.previousmove
     
