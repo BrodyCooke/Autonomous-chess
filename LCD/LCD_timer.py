@@ -84,14 +84,14 @@ def countdown(t):
     
 def pause(t):
     global start_count
-    global speed
+    #global speed
     global tim0
     start_count= start_count +1
     if start_count == 1:
         tim0.init(mode=Timer.PERIODIC, period=1*1000, callback=countdown)
     global player_turn
     #print("Button")
-    speed.value(1)
+    #speed.value(1)
     if player_turn == 1:
         player_turn = 2
     else:
@@ -99,7 +99,7 @@ def pause(t):
 
 # Set-up a timer to constantly run for every second to count down using periodic.
 def initialize(player_time):
-    global speed
+    #global speed
     global player_turn
     global tim0
     global p1_sec
@@ -137,11 +137,11 @@ def initialize(player_time):
     #string_p2 = str(p2_min) + ":"+ str(p2_sec)
     string_comb =string_p1 + "     " + string_p2
 
-    pir = Pin(26,Pin.IN)
+    pir = Pin(34,Pin.IN)
     player_turn =1
-    speed = Pin(13,Pin.OUT)
-    speed.value(0)
-    i2c = SoftI2C(scl=Pin(14), sda=Pin(22), freq=100000)     #initializing the I2C method for ESP32 (sda 22, scl 14)
+    #speed = Pin(13,Pin.OUT)
+    #speed.value(0)
+    i2c = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)     #initializing the I2C method for ESP32 (sda 22, scl 14)
     #i2c = I2C(scl=Pin(5), sda=Pin(4), freq=10000)       #initializing the I2C method for ESP8266
     lcd = I2cLcd(i2c, I2C_ADDR, totalRows, totalColumns)
     lcd.putstr("Player1  Player2")
@@ -156,3 +156,4 @@ if __name__ == "__main__":
     x = input("Input Play Time 1:9: ")
     
     initialize(x)
+
