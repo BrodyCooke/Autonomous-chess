@@ -49,6 +49,7 @@ def identify():
     
     message = message_data['message']
     client.set_type(message)
+    print(message)
     return jsonify({'status': 'Message received', 'message': message})
 
 # Route for telling clients when game starts
@@ -82,6 +83,12 @@ def startup():
             game.set_black(black_client)
             print('setting black')
             break
+    
+    for c in game.get_clients():
+        if (c != game.get_black()) & (c != game.get_white()):
+            game.add_spectator(c)
+            print('adding spectator')
+    print(game.get_spectators())
 
     return jsonify({'status': 'Message received', 'message': message_data})
 
@@ -98,18 +105,24 @@ def waiting():
             break
     if not client:
         return jsonify({'status': 'Error', 'message': 'Client not found'})
-
-    for c in game.get_clients():
-        if c.ip == client_ip:
-            print(c)
-            print(game.get_black())
-            print(game.get_white())
-            print(game.get_clients())
-            if c == game.get_white():
-                return redirect(url_for('white_player'))
-            elif c == game.get_black():
-                return redirect(url_for('black_player'))
-    return jsonify({'status': 'Error', 'message': 'Game not started yet'})    
+    
+    if(client.get_type() == 'chessboard'):
+        if client == game.get_white():
+            return jsonify({'status': 'Message received', 'message': 'white_player'})
+        elif client == game.get_black():
+            return jsonify({'status': 'Message received', 'message': 'black_player'})
+        if(client in game.get_spectators()):
+            return jsonify({'status': 'Message received', 'message': 'spectator_player'})
+        return jsonify({'status': 'Message received', 'message': 'Game not started yet'})
+    else:
+        if client == game.get_white():
+            return redirect(url_for('white_player'))
+        elif client == game.get_black():
+            return redirect(url_for('black_player'))
+        if(client in game.get_spectators()):
+            return redirect(url_for('spectator_player'))
+                
+        return jsonify({'status': 'Error', 'message': 'Game not started yet'})    
 
 # Route for the white player
 @app.route('/white_player')
@@ -119,7 +132,12 @@ def white_player():
 # Route for the black player
 @app.route('/black_player')
 def black_player():
-    return render_template('black.html')       
+    return render_template('black.html')      
+
+# Route for the black player
+@app.route('/spectator_player')
+def spectator_player():
+    return render_template('spectator.html')     
 
     
 # Route for handling incoming messages from the client
@@ -142,6 +160,7 @@ def message():
     message = message_data['message']
     game.add_message(message)
     game.set_lastmessage(message)
+    c.set_previousmove(message)
 
     return jsonify({'status': 'Message received', 'message': message})
 
@@ -159,12 +178,39 @@ def status():
             break
         
     message = game.get_lastmessage()
-    #message = '12 23'
-    game.zero_lastmessage()
+    print(c.get_previousmove())
+    if message == c.get_previousmove():
+        return jsonify({'status': 'new message', 'message': ''})
+    else:
+        game.zero_lastmessage()
 
     # Check if the client instance exists
     end = datetime.now()
     print("Runtime is: ",(end-start))
+    if client:
+        return jsonify({'status': 'new message', 'message': message})
+
+    else:
+        return jsonify({'status': 'Error', 'message': 'Client not found'})
+
+# Route for sending messages back to the client
+@app.route('/spectator', methods=['GET'])
+def spectator():
+    client_ip = request.remote_addr
+
+    # Find the client instance, and make sure its valid
+    client = None
+    for c in game.get_spectators():
+        if c.ip == client_ip:
+            client = c
+            break
+    if not client:
+        return jsonify({'status': 'Error', 'message': 'Client not found'})
+    if (len(game.get_messages()) > 0):
+        message = game.get_messages()[len(game.get_messages())-1]
+    else:
+        message = ''
+
     if client:
         return jsonify({'status': 'new message', 'message': message})
 
