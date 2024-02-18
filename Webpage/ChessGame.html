@@ -221,6 +221,10 @@
             if(isCheckmate()){
                 window.alert("Checkmate Game is Over")
             }
+
+            console.log(String(possiblemoves[0]) + ' ' + button.id)
+            translate_fromUCI(translate_toUCI(String(possiblemoves[0]) + ' ' + button.id))
+            
         }
         
         
@@ -635,6 +639,59 @@
                     console.error('Error:', error);
                 });
             }
+
+    // take in move in "12 28" format into 'd2d4 ' format
+    function translate_toUCI(move) {
+            UCImove = ''
+            move_list = move.split(' ')
+            from = move_list[0]
+            to = move_list[1]
+
+            from_row = Math.floor((from-1) / 8) + 1
+            from_col = (from-1) % 8
+
+            to_row = Math.floor((to-1) / 8) + 1
+            to_col = (to-1) % 8
+
+            s1 = String.fromCharCode(from_col + 97)
+            s2 = from_row
+            s3 = String.fromCharCode(to_col + 97)
+            s4 = to_row
+
+            UCImove = s1 + s2 + s3 + s4 + ' '
+
+            console.log(UCImove)
+
+            return UCImove
+        }
+
+    function translate_fromUCI(UCImove) {
+        move = ''
+        // remove spaces
+        UCImove = UCImove.replace(/\s/g, '');
+        UCImove_list = UCImove.split('')
+
+        from_row = UCImove_list[1]
+        from_col = UCImove_list[0]
+
+        to_row = UCImove_list[3]
+        to_col = UCImove_list[2]
+
+        from_col = from_col.charCodeAt(0) - 96;
+        to_col =  to_col.charCodeAt(0) - 96;
+
+        from_row = (from_row - 1) * 8
+        to_row = (to_row - 1) * 8
+
+        from = from_col + from_row
+        to = to_col + to_row
+
+        move = from + ' ' + to
+        console.log(move)
+
+        return move
+    }
+
 </script>
 
 </body>

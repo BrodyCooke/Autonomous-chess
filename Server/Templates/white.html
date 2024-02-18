@@ -146,7 +146,7 @@
 
     function setButton2(button) {
         if(button.textContent == "Start"){
-            sendMoveToServer("Start");
+            //sendMoveToServer("Start");
         }
         orderCounter = 1;
         turn_flag = 0;
@@ -154,7 +154,7 @@
     }
 
     function setButton3(button) {
-        sendMoveToServer("End");
+        //sendMoveToServer("End");
     }
 
 
@@ -628,7 +628,7 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: message }),
+            body: JSON.stringify({ message: translate_toUCI(message) }),
         })
         .then(response => response.text())
         .then(data => {
@@ -644,7 +644,7 @@
         .then(response => response.json())
         .then(data => {
             //console.log('Server response:', data);
-            response = data;
+            response = data['message'];
         })
         .catch(error => {
             console.error('Error fetching status:', error);
@@ -652,15 +652,16 @@
     }
 
     function waitForServer(){
-        response = {"messgae":''}
+        response = ''
         console.log("wiating for server")
         var intervalId = window.setInterval(function(){
         // call your function here
         ReceiveMoveFromServer()
-        console.log(response['message'])
-        if (response['message'] !== '' && typeof response['message'] !== 'undefined'){
+        console.log(response)
+        if (response !== '' && typeof response !== 'undefined'){
             clearInterval(intervalId)
-            response_list = response['message'].split(' ')
+            response = translate_fromUCI(response)
+            response_list = response.split(' ')
             from = response_list[0]
             to = response_list[1]
             console.log(from)
@@ -687,9 +688,61 @@
                 window.alert("Checkmate Game is Over")
             }
             }
-        }, 500);
-            
+        }, 500);       
     }
+
+    // take in move in "12 28" format into 'd2d4 ' format
+    function translate_toUCI(move) {
+            UCImove = ''
+            move_list = move.split(' ')
+            from = move_list[0]
+            to = move_list[1]
+
+            from_row = Math.floor((from-1) / 8) + 1
+            from_col = (from-1) % 8
+
+            to_row = Math.floor((to-1) / 8) + 1
+            to_col = (to-1) % 8
+
+            s1 = String.fromCharCode(from_col + 97)
+            s2 = from_row
+            s3 = String.fromCharCode(to_col + 97)
+            s4 = to_row
+
+            UCImove = s1 + s2 + s3 + s4 + ' '
+
+            console.log(UCImove)
+
+            return UCImove
+        }
+
+    function translate_fromUCI(UCImove) {
+        move = ''
+        // remove spaces
+        UCImove = UCImove.replace(/\s/g, '');
+        UCImove_list = UCImove.split('')
+
+        from_row = UCImove_list[1]
+        from_col = UCImove_list[0]
+
+        to_row = UCImove_list[3]
+        to_col = UCImove_list[2]
+
+        from_col = from_col.charCodeAt(0) - 96;
+        to_col =  to_col.charCodeAt(0) - 96;
+
+        from_row = (from_row - 1) * 8
+        to_row = (to_row - 1) * 8
+
+        from = from_col + from_row
+        to = to_col + to_row
+
+        move = from + ' ' + to
+        console.log(move)
+
+        return move
+    }
+
 
 </script>
 

@@ -30,7 +30,7 @@ def index():
     # first gets sent setup page
     if(len(game.get_clients()) == 1):
         return render_template('homepage.html')
-    # second and on gets blank page
+    # second and on gets waiting page
     elif(len(game.get_clients()) > 1):
         return render_template('waiting.html')
     
@@ -78,21 +78,21 @@ def startup():
         game.add_client(API_client)
 
 
-    #find the first client that is of white type
+    # find the first client that is of white type
     for c in game.get_clients():
         if c.get_type() == white_type:
             white_client = c
             game.set_white(white_client)
             print('setting white')
             break
-    #find the first client that is of black type and not already white
+    # find the first client that is of black type and not already white
     for c in game.get_clients():
         if (c.get_type() == black_type) & (c != game.get_white()):
             black_client = c
             game.set_black(black_client)
             print('setting black')
             break
-    
+    # assign the other clients to spectators
     for c in game.get_clients():
         if (c != game.get_black()) & (c != game.get_white()):
             game.add_spectator(c)
@@ -115,6 +115,7 @@ def waiting():
     if not client:
         return jsonify({'status': 'Error', 'message': 'Client not found'})
     
+    # If client is chessboard send text that the chessboard can interpret
     if(client.get_type() == 'chessboard'):
         if client == game.get_white():
             return jsonify({'status': 'Message received', 'message': 'white_player'})
@@ -123,6 +124,7 @@ def waiting():
         if(client in game.get_spectators()):
             return jsonify({'status': 'Message received', 'message': 'spectator_player'})
         return jsonify({'status': 'Message received', 'message': 'Game not started yet'})
+    # if client is not a chessboad, redirect to webpages as needed
     else:
         if client == game.get_white():
             return redirect(url_for('white_player'))
