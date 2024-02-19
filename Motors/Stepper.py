@@ -6,6 +6,7 @@ import time
 pin1= Pin(21,Pin.OUT)
 pin2 = Pin(2, Pin.OUT)
 
+
 # Define the GPIO pins for the H-bridge inputs
 IN1 = Pin(15, Pin.OUT)   # Replace 5 with your actual GPIO pin number
 IN2 = Pin(16, Pin.OUT)   # Replace 4 with your actual GPIO pin number
