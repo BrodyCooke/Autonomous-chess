@@ -130,14 +130,15 @@
 
 
 <script>
-    var previous_move = ''
+    var previous_move = []
     waitForServer();
     function ReceiveMoveFromServer() {
         fetch('/spectator')
         .then(response => response.json())
         .then(data => {
             //console.log('Server response:', data);
-            response = data;
+            response = data['message'];
+            console.log(response)
         })
         .catch(error => {
             console.error('Error fetching status:', error);
@@ -145,26 +146,54 @@
     }
 
     function waitForServer(){
-        response = {"messgae":''}
-        console.log("waiting for server")
+        response = []
+        console.log("wiating for server")
         var intervalId = window.setInterval(function(){
         // call your function here
         ReceiveMoveFromServer()
-        console.log(response['message'])
-        if (response['message'] !== previous_move && typeof response['message'] !== 'undefined'){
-            //clearInterval(intervalId)
-            previous_move = response['message']
-            response_list = response['message'].split(' ')
-            from = response_list[0]
-            to = response_list[1]
-            console.log(from)
-            console.log(to)
+        if (response.length !== previous_move.length && typeof response !== 'undefined'){
+            
+            for (var i = previous_move.length; i < response.length; i++) {
+                temp = translate_fromUCI(response[i])
+                response_list = temp.split(' ')
+                from = response_list[0]
+                to = response_list[1]
 
-            document.getElementById(to).textContent = document.getElementById(from).textContent;
-            document.getElementById(from).textContent = ''
-        }
-        }, 2000);
+                document.getElementById(to).textContent = document.getElementById(from).textContent;
+                document.getElementById(from).textContent = ''
+            }
+            previous_move = response;
+            }
+        }, 2000);       
     }
+
+    function translate_fromUCI(UCImove) {
+        move = ''
+        // remove spaces
+        UCImove = UCImove.replace(/\s/g, '');
+        UCImove_list = UCImove.split('')
+
+        from_row = UCImove_list[1]
+        from_col = UCImove_list[0]
+
+        to_row = UCImove_list[3]
+        to_col = UCImove_list[2]
+
+        from_col = from_col.charCodeAt(0) - 96;
+        to_col =  to_col.charCodeAt(0) - 96;
+
+        from_row = (from_row - 1) * 8
+        to_row = (to_row - 1) * 8
+
+        from = from_col + from_row
+        to = to_col + to_row
+
+        move = from + ' ' + to
+        console.log(move)
+
+        return move
+    }
+
 
 </script>
 

@@ -196,6 +196,9 @@ def status():
     if(game.get_black().get_type() == 'ai'):
         new_move = API_game.call_api(message)
         message = new_move
+        game.add_message(message)
+        game.set_lastmessage(message)
+        #c.set_previousmove(message)
         game.zero_lastmessage()
     else:
         if message == c.get_previousmove():
@@ -226,7 +229,7 @@ def spectator():
     if not client:
         return jsonify({'status': 'Error', 'message': 'Client not found'})
     if (len(game.get_messages()) > 0):
-        message = game.get_messages()[len(game.get_messages())-1]
+        message = game.get_messages()
     else:
         message = ''
 
