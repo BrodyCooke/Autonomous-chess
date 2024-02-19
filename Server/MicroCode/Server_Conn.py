@@ -1,7 +1,6 @@
 import network
 import urequests
 import ujson
-from machine import Timer
 import time
 
 
@@ -40,12 +39,12 @@ class server:
         
         return str(reply1) + ' ' + str(reply2)
     
-    def waiting_message(self,Tim4):
+    def waiting_message(self):
         url = 'http://' + self.SERVER_IP + ':' + self.SERVER_PORT + '/waiting'
         response = urequests.get(url)
         reply = response.text
         response.close()
-        self.waiting_message_content = ujson.loads(reply)['message']
+        return ujson.loads(reply)['message']
     
     def waiting(self):
         print("waiting for game to start")

@@ -3,7 +3,7 @@ from clients import Client
 from game import Game
 from chess_api import API
 
-from datetime import datetime
+import time
 
 app = Flask(__name__)
 
@@ -178,7 +178,7 @@ def message():
 # Route for sending messages back to the client
 @app.route('/receivemove', methods=['GET'])
 def status():
-    start = datetime.now()
+    start = time.time()
     client_ip = request.remote_addr
 
     # Find the client instance
@@ -204,7 +204,7 @@ def status():
             game.zero_lastmessage()
 
 
-    end = datetime.now()
+    end = time.time()
     print("Runtime is: ",(end-start))
     if client:
         return jsonify({'status': 'new message', 'message': message})
