@@ -151,9 +151,6 @@ def initialize(player_time):
     
 
 if __name__ == "__main__":
-    
-    
     x = input("Input Play Time 1:9: ")
-    
     initialize(x)
 

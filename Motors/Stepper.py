@@ -3,7 +3,7 @@ import time
 
 #Define H-bridge control pins
 #pin1 = Pin(1, Pin.OUT)  # Replace with your GPIO pin numbers
-pin1= Pin(21,Pin.OUT)
+pin1= Pin(19,Pin.OUT)
 pin2 = Pin(2, Pin.OUT)
 
 
@@ -35,7 +35,7 @@ def set_stepy(w5, w6, w7, w8):
 # Function to make one step
 def step(motor, delay):
     if motor == "x":
-        print("x")
+        #print("x")
         set_stepx(1,0,1,0)
         time.sleep_ms(delay)
         set_stepx(0,1,1,0)
@@ -45,7 +45,7 @@ def step(motor, delay):
         set_stepx(1,0,0,1)
         time.sleep_ms(delay)
     else:
-        print("y")
+        #print("y")
         set_stepy(1,0,1,0)
         time.sleep_ms(delay)
         set_stepy(0,1,1,0)
@@ -103,13 +103,15 @@ def reverse_polarity():
     pin2.value(1)
 
 # Example usage
-print("wtf")
-activate_electromagnet()
+if __name__ == "__main__":
+    print("Activate E-Mag")
+    activate_electromagnet()
+    print("Motor Start")
+    # Example usage
+    rotate("y", 825, 6)  # Rotate 200 steps (one revolution) at a faster speed
+    print("24 Volt Motor Start")
+    rotate("x", -400, 13)  # Rotate 200 steps (one revolution) at a faster speed
 
-# Example usage
-#rotate("y", -800, 6)  # Rotate 200 steps (one revolution) at a faster speed
-rotate("x", -5500, 25)  # Rotate 200 steps (one revolution) at a faster speed
-
-deactivate_electromagnet()
+    deactivate_electromagnet()
 
 

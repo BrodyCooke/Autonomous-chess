@@ -11,15 +11,23 @@ class API:
     def call_api(self,player_move):
         self.stockfish.make_moves_from_current_position([player_move])
         api_move = self.stockfish.get_best_move()
+        #print(api_move)
         self.stockfish.make_moves_from_current_position([api_move])
         return api_move
     
     def board_state(self):
         print(self.stockfish.get_fen_position())
 
-
-# move_input = input("Input Chess Move in UCI Format: ")
-# print(move_input)
-# x = call_api(move_input)
-# # print(x)
-# print(stockfish.get_board_visual())
+if __name__ == "__main__":
+    API = API()
+    move_input = input("Input Chess Move in UCI Format: ")
+    print(move_input)
+    x = API.call_api(move_input)
+    print(x)
+    move_input = input("Input Chess Move in UCI Format: ")
+    x = API.call_api(move_input)
+    print(x)
+    move_input = input("Input Chess Move in UCI Format: ")
+    x = API.call_api(move_input)
+    print(x)
+    print(API.stockfish.get_board_visual())
