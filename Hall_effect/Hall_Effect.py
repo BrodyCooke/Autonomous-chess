@@ -1,11 +1,11 @@
 from machine import ADC, Pin, Timer
 import time
 
-adcpin = Pin(14)
-adc = ADC(adcpin)
+adc_pin = Pin(14)
+adc = ADC(adc_pin)
 
-gpiopin1 = Pin(32, Pin.OUT)
-gpiopin2 = Pin(27, Pin.OUT)
+gpio_pin1 = Pin(32, Pin.OUT)
+gpio_pin2 = Pin(27, Pin.OUT)
 gpio_pin3 = Pin(13, Pin.OUT)
 
 States =[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1]]
@@ -41,17 +41,34 @@ def read_halleffects_once():
         gpio_pin3.value(x[2])
         time.sleep(.05)
         analog_value = adc.read()
+        '''if analog_value > 3000:
+            values.append(1)
+        elif analog_value < 2000
+            values.append(-1)'''
         if analog_value < 3000:
             values.append(1)
         else:
             values.append(0)
     return values
-
-if __name__ == "__main__":
-    '''while True:
-        print(read_halleffects_cont())
-        time.sleep(.5)'''
+        
+if __name__ == '__main__':
     start = time.time_ns()
-    print(read_halleffects_once())
+    first_values = read_halleffects_once()  # Get the initial array of values
+    time.sleep(3)
+
+    while True:
+        new_values = read_halleffects_once()  # Get a new array of values
+        if new_values != first_values:  # Compare with the initial array
+            print("Changes detected!")  # If there are differences, print a message
+            print("First values:", first_values)
+            print("New values:", new_values)
+        else:
+            print("Piece Location:", first_values)
+        break
+    
     end = time.time_ns()
     print("Time to receive message from sensors: ",(end - start)/1000000000.0, " seconds")
+    '''while True:
+        print(read_halleffects_cont())
+        time.sleep(.5)
+    print(read_halleffects_once())'''
