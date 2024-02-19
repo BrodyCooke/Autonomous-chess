@@ -39,7 +39,7 @@ def read_halleffects_once():
         gpio_pin1.value(x[0])
         gpio_pin2.value(x[1])
         gpio_pin3.value(x[2])
-        time.sleep(.05)
+        time.sleep(.025)
         analog_value = adc.read()
         '''if analog_value > 3000:
             values.append(1)
@@ -51,11 +51,15 @@ def read_halleffects_once():
             values.append(0)
     return values
         
-if __name__ == '__main__':
+def find_change():
     start = time.time_ns()
     first_values = read_halleffects_once()  # Get the initial array of values
+    end = time.time_ns()
+    print("Time to receive message from sensors: ",(end - start)/1000000000.0, " seconds")
+    
     time.sleep(3)
-
+    
+    start = time.time_ns()
     while True:
         new_values = read_halleffects_once()  # Get a new array of values
         if new_values != first_values:  # Compare with the initial array
@@ -72,3 +76,7 @@ if __name__ == '__main__':
         print(read_halleffects_cont())
         time.sleep(.5)
     print(read_halleffects_once())'''
+    return new_values
+    
+if __name__ == '__main__':
+    find_change()
