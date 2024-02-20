@@ -7,7 +7,7 @@ import Stepper
 
 #Server API Works
 Server_Conn.connWIFI('Chickennuggs','13221322')
-server1 = server('192.168.188.30','5000')
+server1 = server('192.168.140.30','5000')
 server1.connect()
 server1.waiting()
 
@@ -29,8 +29,10 @@ while True:
     print("Move from the Server is: ",recv)
     end = time.time_ns()
     print("Time to receive API: ",(end - start)/1000000000.0, " seconds")
-
-    Stepper.rotate("y", -800, 6)  # rotates a distance (will rotate the specific distance required to move piece to correct location)
+    Stepper.activate_electromagnet()
+    Stepper.rotate("y", -900, 6)  # rotates a distance (will rotate the specific distance required to move piece to correct location)
+    Stepper.deactivate_electromagnet()
     time.sleep(3)
+
 
 
