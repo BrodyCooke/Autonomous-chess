@@ -98,7 +98,7 @@ if __name__ == "__main__":
     print(server.receive_move())
     '''
     connWIFI('Chickennuggs','13221322') #connect to wifi using this username and password
-    server = server('192.168.188.30','5000') #connect to server at this ip and this port
+    server = server('192.168.140.30','5000') #connect to server at this ip and this port
     
     server.connect() # initializes connection with server, and identifies itself as the micro
     playtype = server.waiting() # wait for game to start, returns what player type the micro is for this game
