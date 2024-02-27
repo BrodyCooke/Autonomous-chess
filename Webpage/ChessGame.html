@@ -157,6 +157,12 @@
     var check_flag_white = 0;
     var check_flag_black = 0;
 
+    // flags for castling
+    var white_queenside = 1;
+    var white_kingside = 1;
+    var black_queenside = 1;
+    var black_kingside = 1;
+
     // Get every legal move for the game start
     legal_array = legalMoves()
     //console.log(legal_array)
@@ -219,6 +225,33 @@
             if(move_flag == 0){return;}
             // reset move flag
             move_flag = 0;
+
+            // check to see if king move
+            if(document.getElementById(String(possiblemoves[0])).textContent == '♔' || document.getElementById(String(possiblemoves[0])).textContent == '♚'){
+                // king is moving 2 spaces so its a castle
+                if(Math.abs(parseInt(button.id) - possiblemoves[0]) == 2){
+                    // black kingside
+                    if(parseInt(button.id) == 63){
+                        document.getElementById(62).textContent = document.getElementById(64).textContent;
+                        document.getElementById(64).textContent = '';
+                    }
+                    // black queenside
+                    if(parseInt(button.id) == 59){
+                        document.getElementById(60).textContent = document.getElementById(57).textContent;
+                        document.getElementById(57).textContent = '';
+                    }
+                    // white kingside
+                    if(parseInt(button.id) == 7){
+                        document.getElementById(6).textContent = document.getElementById(8).textContent;
+                        document.getElementById(8).textContent = '';
+                    }
+                    // white queenside
+                    if(parseInt(button.id) == 3){
+                        document.getElementById(4).textContent = document.getElementById(1).textContent;
+                        document.getElementById(1).textContent = '';
+                    }
+               }
+            }
         
             button.textContent = document.getElementById(String(possiblemoves[0])).textContent;
             document.getElementById(String(possiblemoves[0])).textContent = "";
@@ -237,7 +270,7 @@
             pawn_promotion();
             // Get every legal move
             legal_array = legalMoves();
-            //console.log(legal_array)
+            console.log(legal_array)
             if(isCheckmate()){
                 window.alert("Checkmate Game is Over");
             }
@@ -335,6 +368,42 @@
             }
             
         }
+
+
+         // look for castling
+        // black kingside
+        if((black_kingside == 1) && (document.getElementById(62).textContent == '' && document.getElementById(63).textContent == '')){
+            // move king to both squares and see if its in check
+            document.getElementById(62).textContent = '♚' 
+            document.getElementById(63).textContent = '♚'
+            //isKingChecked()
+            if(check_flag_black){
+                ;
+            }
+            else{
+                legal_moves[61].push(63)
+            }
+            document.getElementById(62).textContent = ''
+            document.getElementById(63).textContent = ''
+            //isKingChecked()
+            console.log(legal_moves[61])
+            
+        }
+        // black queenside
+        if(black_queenside == 1 && document.getElementById(59).textContent == '' && document.getElementById(60).textContent == ''){
+            legal_moves[61].push(59)
+        }
+        // white kingside
+        if(white_kingside == 1 && document.getElementById(6).textContent == '' && document.getElementById(7).textContent == ''){
+            document.getElementById(62).textContent == '♔' 
+            
+            legal_moves[5].push(7)
+        }
+        // white queenside
+        if(white_queenside == 1 && document.getElementById(3).textContent == '' && document.getElementById(4).textContent == ''){
+            legal_moves[5].push(3)
+        }
+
         return legal_moves;
     }
 
@@ -656,6 +725,7 @@
             }
             else{;} // move is not in bounds so do nothing
         }
+        return possible_moves
     }
 
 
