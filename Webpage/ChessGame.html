@@ -226,8 +226,27 @@
             // reset move flag
             move_flag = 0;
 
+            // check to see if rook move
+            if(document.getElementById(String(possiblemoves[0])).textContent == '♖' || document.getElementById(String(possiblemoves[0])).textContent == '♜'){
+                // see if kingside rook is moving
+                if(document.getElementById(String(possiblemoves[0])).textContent == '♖' && button.id == 8){white_kingside = 0;}
+                else if(document.getElementById(String(possiblemoves[0])).textContent == '♖' && button.id == 1){white_queenside = 0;}
+                else if(document.getElementById(String(possiblemoves[0])).textContent == '♜' && button.id == 64){black_kingside = 0;}
+                else if(document.getElementById(String(possiblemoves[0])).textContent == '♜' && button.id == 57){black_queenside = 0;}
+            }
+
             // check to see if king move
             if(document.getElementById(String(possiblemoves[0])).textContent == '♔' || document.getElementById(String(possiblemoves[0])).textContent == '♚'){
+                // move is a kingmove so that color can no longer castle
+                if(document.getElementById(String(possiblemoves[0])).textContent == '♔'){
+                    white_kingside = 0;
+                    white_queenside = 0;
+                }
+                else{
+                    black_kingside = 0;
+                    black_queenside = 0;
+                }
+                
                 // king is moving 2 spaces so its a castle
                 if(Math.abs(parseInt(button.id) - possiblemoves[0]) == 2){
                     // black kingside
@@ -376,32 +395,48 @@
             // move king to both squares and see if its in check
             document.getElementById(62).textContent = '♚' 
             document.getElementById(63).textContent = '♚'
-            //isKingChecked()
-            if(check_flag_black){
-                ;
-            }
-            else{
+            isKingChecked()
+            if(check_flag_black == 0){
                 legal_moves[61].push(63)
             }
             document.getElementById(62).textContent = ''
-            document.getElementById(63).textContent = ''
-            //isKingChecked()
-            console.log(legal_moves[61])
-            
+            document.getElementById(63).textContent = ''            
         }
         // black queenside
         if(black_queenside == 1 && document.getElementById(59).textContent == '' && document.getElementById(60).textContent == ''){
-            legal_moves[61].push(59)
+            // move king to both squares and see if its in check
+            document.getElementById(59).textContent = '♚' 
+            document.getElementById(60).textContent = '♚'
+            isKingChecked()
+            if(check_flag_black == 0){
+                legal_moves[61].push(59)
+            }
+            document.getElementById(59).textContent = ''
+            document.getElementById(60).textContent = ''
         }
         // white kingside
         if(white_kingside == 1 && document.getElementById(6).textContent == '' && document.getElementById(7).textContent == ''){
-            document.getElementById(62).textContent == '♔' 
-            
-            legal_moves[5].push(7)
+            // move king to both squares and see if its in check
+            document.getElementById(6).textContent = '♔' 
+            document.getElementById(7).textContent = '♔'
+            isKingChecked()
+            if(check_flag_black == 0){
+                legal_moves[5].push(7)
+            }
+            document.getElementById(6).textContent = ''
+            document.getElementById(7).textContent = ''
         }
         // white queenside
         if(white_queenside == 1 && document.getElementById(3).textContent == '' && document.getElementById(4).textContent == ''){
-            legal_moves[5].push(3)
+            // move king to both squares and see if its in check
+            document.getElementById(3).textContent = '♔' 
+            document.getElementById(4).textContent = '♔'
+            isKingChecked()
+            if(check_flag_black == 0){
+                legal_moves[5].push(3)
+            }
+            document.getElementById(3).textContent = ''
+            document.getElementById(4).textContent = ''
         }
 
         return legal_moves;
