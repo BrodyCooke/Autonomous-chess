@@ -193,7 +193,8 @@ def status():
     '''ZACH API CALL'''
     '''ZACH API CALL'''
     '''ZACH API CALL'''
-    if(game.get_black().get_type() == 'ai'):
+    if(game.get_black().get_type() == 'ai' and message != ''):
+        print('message sent to api is: ', message)
         new_move = API_game.call_api(message)
         message = new_move
         game.add_message(message)
@@ -208,7 +209,7 @@ def status():
 
 
     end = time.time()
-    print("Runtime is: ",(end-start))
+    #print("Runtime is: ",(end-start))
     if client:
         return jsonify({'status': 'new message', 'message': message})
 

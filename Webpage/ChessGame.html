@@ -391,7 +391,7 @@
 
          // look for castling
         // black kingside
-        if((black_kingside == 1) && (document.getElementById(62).textContent == '' && document.getElementById(63).textContent == '')){
+        if((black_kingside == 1) && (document.getElementById(62).textContent == '' && document.getElementById(63).textContent == '' && document.getElementById(64).textContent == '♜')){
             // move king to both squares and see if its in check
             document.getElementById(62).textContent = '♚' 
             document.getElementById(63).textContent = '♚'
@@ -403,7 +403,7 @@
             document.getElementById(63).textContent = ''            
         }
         // black queenside
-        if(black_queenside == 1 && document.getElementById(59).textContent == '' && document.getElementById(60).textContent == ''){
+        if((black_queenside == 1) && (document.getElementById(59).textContent == '' && document.getElementById(60).textContent == '' && document.getElementById(57).textContent == '♜')){
             // move king to both squares and see if its in check
             document.getElementById(59).textContent = '♚' 
             document.getElementById(60).textContent = '♚'
@@ -415,24 +415,23 @@
             document.getElementById(60).textContent = ''
         }
         // white kingside
-        if(white_kingside == 1 && document.getElementById(6).textContent == '' && document.getElementById(7).textContent == ''){
+        if((white_kingside == 1) && (document.getElementById(6).textContent == '' && document.getElementById(7).textContent == '' && document.getElementById(8).textContent == '♖')){
             // move king to both squares and see if its in check
             document.getElementById(6).textContent = '♔' 
             document.getElementById(7).textContent = '♔'
             isKingChecked()
-            if(check_flag_black == 0){
+            if(check_flag_white == 0){
                 legal_moves[5].push(7)
             }
             document.getElementById(6).textContent = ''
             document.getElementById(7).textContent = ''
         }
         // white queenside
-        if(white_queenside == 1 && document.getElementById(3).textContent == '' && document.getElementById(4).textContent == ''){
-            // move king to both squares and see if its in check
+        if((white_queenside) == 1 && (document.getElementById(3).textContent == '' && document.getElementById(4).textContent == ''&& document.getElementById(1).textContent == '♖')){
             document.getElementById(3).textContent = '♔' 
             document.getElementById(4).textContent = '♔'
             isKingChecked()
-            if(check_flag_black == 0){
+            if(check_flag_white == 0){
                 legal_moves[5].push(3)
             }
             document.getElementById(3).textContent = ''
