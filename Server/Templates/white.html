@@ -159,6 +159,8 @@
     var pawn_promoted_flag = 0;
     var promoted_to = '';
 
+    var response;
+
     // flags for castling
     var white_queenside = 1;
     var white_kingside = 1;
@@ -186,7 +188,7 @@
     }
 
 
-    function setButton(button) {
+    async function setButton(button) {
         start = performance.now()  
         if (turn_flag == 0){
             if (orderCounter == 1) { // what happens when the piece thats clicked is selected to be moved 
@@ -301,7 +303,7 @@
                 if(isCheckmate()){
                     window.alert("Checkmate Game is Over")
                 }
-                waitForServer();
+                await waitForServer();
             }
     
             orderCounter++;
@@ -790,8 +792,8 @@
         });
     }
 
-    function ReceiveMoveFromServer() {
-        fetch('/receivemove')
+    async function ReceiveMoveFromServer() {
+        await fetch('/receivemove')
         .then(response => response.json())
         .then(data => {
             console.log('Server response:', data);
@@ -804,19 +806,19 @@
     }
 
     function waitForServer(){
-        response = ''
+        reply = ''
         console.log("waiting for server")
-        var intervalId = window.setInterval(function(){
+        var intervalId = window.setInterval(async function(){
         // call your function here
-        response = ReceiveMoveFromServer()
-        console.log("response inside wait ",response)
-        if (response !== '' && typeof response !== 'undefined'){
+        reply = await ReceiveMoveFromServer()
+        console.log("response inside wait ",reply)
+        if (reply !== '' && typeof reply !== 'undefined'){
             clearInterval(intervalId)
-            response = translate_fromUCI(response)
-            response_list = response.split(' ')
-            from = response_list[0]
-            to = response_list[1]
-            //onsole.log(from)
+            UCI_reply = translate_fromUCI(reply)
+            reply_list = UCI_reply.split(' ')
+            from = reply_list[0]
+            to = reply_list[1]
+            //console.log(from)
             //console.log(to)
 
             // check to see if king move
@@ -867,7 +869,7 @@
                 window.alert("Checkmate Game is Over")
             }
             }
-        }, 1000);       
+        }, 500);       
     }
 
     // convert move from webpage syntax to UCI
