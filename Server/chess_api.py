@@ -6,6 +6,8 @@ class API:
         self.stockfish = Stockfish(r'stockfish\stockfish-windows-x86-64.exe')
         self.stockfish.update_engine_parameters({"Hash": 2048, "UCI_Chess960": "true"}) 
         self.stockfish.set_fen_position("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") # Sets up a board at the original spots
+        #self.stockfish.set_elo_rating(600)
+        self.stockfish.set_skill_level(1)
 
 
     def call_api(self,player_move):

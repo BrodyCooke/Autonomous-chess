@@ -187,30 +187,38 @@ def status():
         if c.ip == client_ip:
             client = c
             break
+
+    # Find the AI client instance
+    AI_client = None
+    for c in game.get_clients():
+        if c.ip == '0.0.0.0':
+            AI_client = c
+            break
         
     message = game.get_lastmessage()
     '''ZACH API CALL'''
     '''ZACH API CALL'''
     '''ZACH API CALL'''
     '''ZACH API CALL'''
-    if(game.get_black().get_type() == 'ai' and message != ''):
-        print('message sent to api is: ', message)
+    if(game.get_black().get_type() == 'ai' and message != AI_client.get_previousmove() and message != ''):
+        print('message sent to AI is: ', message)
         new_move = API_game.call_api(message)
         message = new_move
+        print('message sent from AI is: ', message)
         game.add_message(message)
         game.set_lastmessage(message)
-        #c.set_previousmove(message)
-        game.zero_lastmessage()
+        AI_client.set_previousmove(message)
+        return jsonify({'status': 'new message', 'message': ''})
+        #game.zero_lastmessage()
     else:
-        if message == c.get_previousmove():
-            return jsonify({'status': 'new message', 'message': ''})
-        else:
-            game.zero_lastmessage()
-
+        if message == client.get_previousmove():
+            return jsonify({'status': 'new message', 'message': ''})            
 
     end = time.time()
     #print("Runtime is: ",(end-start))
     if client:
+        game.zero_lastmessage()
+        print('returning move')
         return jsonify({'status': 'new message', 'message': message})
 
     else:

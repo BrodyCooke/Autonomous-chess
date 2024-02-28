@@ -156,14 +156,18 @@
     var turn_flag = 0 // 0 for white, 1 for black
     var check_flag_white = 0;
     var check_flag_black = 0;
+    var pawn_promoted_flag = 0;
+    var promoted_to = '';
 
     // flags for castling
     var white_queenside = 1;
     var white_kingside = 1;
     var black_queenside = 1;
     var black_kingside = 1;
+    var castle_flag = 0;
 
-    // wait for whites move
+
+    // Get every legal move for the game start
     waitForServer();
 
 
@@ -270,11 +274,14 @@
                             document.getElementById(4).textContent = document.getElementById(1).textContent;
                             document.getElementById(1).textContent = '';
                         }
+                        castle_flag = 1;
                     }
                 }
             
                 button.textContent = document.getElementById(String(possiblemoves[0])).textContent;
                 document.getElementById(String(possiblemoves[0])).textContent = "";
+                //promote any pawns
+                pawn_promotion();
                 sendMoveToServer(String(possiblemoves[0]) + ' ' + button.id);
                 revertcolor(possiblemoves);
                 orderCounter = 0;
@@ -286,11 +293,10 @@
                 isKingChecked()
                 document.getElementById("check_white").textContent = ("Check w: "+ String(check_flag_white));
                 document.getElementById("check_black").textContent = ("Check b: "+ String(check_flag_black));
-                //promote any pawns
-                pawn_promotion();
+                
                 // Get every legal move
                 legal_array = legalMoves()
-                console.log(legal_array)
+                //console.log(legal_array)
                 if(isCheckmate()){
                     window.alert("Checkmate Game is Over")
                 }
@@ -300,7 +306,7 @@
             orderCounter++;
             document.getElementById("buttonstart").textContent = "Count " + (orderCounter);
             end = performance.now()
-            console.log(String(end-start))
+            //console.log(String(end-start))
         }
     }
 
@@ -453,10 +459,13 @@
             if(document.getElementById(edges[i]).textContent == '♙' || document.getElementById(edges[i]).textContent == '♟'){
                 if(getColor(document.getElementById(edges[i]).textContent) == 'white'){
                     document.getElementById(edges[i]).textContent = selectedWhiteValue;
+                    promoted_to = selectedWhiteValue;
                 }
                 else{
                     document.getElementById(edges[i]).textContent = selectedBlackValue;
+                    promoted_to = selectedBlackValue;
                 }
+                pawn_promoted_flag = 1;
             }
         }
     }
@@ -784,12 +793,13 @@
         fetch('/receivemove')
         .then(response => response.json())
         .then(data => {
-            //console.log('Server response:', data);
+            console.log('Server response:', data);
             response = data['message'];
         })
         .catch(error => {
             console.error('Error fetching status:', error);
         });
+        return response
     }
 
     function waitForServer(){
@@ -797,16 +807,42 @@
         console.log("wiating for server")
         var intervalId = window.setInterval(function(){
         // call your function here
-        ReceiveMoveFromServer()
-        console.log(response)
+        response = ReceiveMoveFromServer()
         if (response !== '' && typeof response !== 'undefined'){
             clearInterval(intervalId)
             response = translate_fromUCI(response)
             response_list = response.split(' ')
             from = response_list[0]
             to = response_list[1]
-            console.log(from)
-            console.log(to)
+            //onsole.log(from)
+            //console.log(to)
+
+            // check to see if king move
+            if(document.getElementById(from).textContent == '♔' || document.getElementById(from).textContent == '♚'){
+                // king is moving 2 spaces then its a castle
+                if(Math.abs(parseInt(from) - parseInt(to)) == 2){
+                    // black kingside
+                    if(parseInt(to) == 63){
+                        document.getElementById(62).textContent = document.getElementById(64).textContent;
+                        document.getElementById(64).textContent = '';
+                    }
+                    // black queenside
+                    if(parseInt(to) == 59){
+                        document.getElementById(60).textContent = document.getElementById(57).textContent;
+                        document.getElementById(57).textContent = '';
+                    }
+                    // white kingside
+                    if(parseInt(to) == 7){
+                        document.getElementById(6).textContent = document.getElementById(8).textContent;
+                        document.getElementById(8).textContent = '';
+                    }
+                    // white queenside
+                    if(parseInt(to) == 3){
+                        document.getElementById(4).textContent = document.getElementById(1).textContent;
+                        document.getElementById(1).textContent = '';
+                    }
+               }
+            }
 
             document.getElementById(to).textContent = document.getElementById(from).textContent;
             document.getElementById(from).textContent = ''
@@ -824,7 +860,7 @@
             document.getElementById("check_black").textContent = ("Check b: "+ String(check_flag_black));
             // Get every legal move
             legal_array = legalMoves()
-            console.log(legal_array)
+            //console.log(legal_array)
             if(isCheckmate()){
                 window.alert("Checkmate Game is Over")
             }
@@ -832,35 +868,65 @@
         }, 500);       
     }
 
+    // convert move from webpage syntax to UCI
     // take in move in "12 28" format into 'd2d4 ' format
     function translate_toUCI(move) {
-            UCImove = ''
-            move_list = move.split(' ')
-            from = move_list[0]
-            to = move_list[1]
-
-            from_row = Math.floor((from-1) / 8) + 1
-            from_col = (from-1) % 8
-
-            to_row = Math.floor((to-1) / 8) + 1
-            to_col = (to-1) % 8
-
-            s1 = String.fromCharCode(from_col + 97)
-            s2 = from_row
-            s3 = String.fromCharCode(to_col + 97)
-            s4 = to_row
-
-            UCImove = s1 + s2 + s3 + s4 + ' '
-
-            console.log(UCImove)
-
-            return UCImove
+        UCImove = ''
+        
+        if(castle_flag == 1){
+            if(move == '5 7'){UCImove = 'e1h1 ';}
+            else if(move == '5 3'){UCImove = 'e1a1 '}
+            else if(move == '61 63'){UCImove = 'e8h8 '}
+            else if(move == '61 59'){UCImove = 'e8a8 '} 
+            castle_flag = 0;
+            return UCImove;
         }
+        
+        move_list = move.split(' ')
+        from = move_list[0]
+        to = move_list[1]
 
+        from_row = Math.floor((from-1) / 8) + 1
+        from_col = (from-1) % 8
+
+        to_row = Math.floor((to-1) / 8) + 1
+        to_col = (to-1) % 8
+
+        s1 = String.fromCharCode(from_col + 97)
+        s2 = from_row
+        s3 = String.fromCharCode(to_col + 97)
+        s4 = to_row
+
+        if(pawn_promoted_flag == 1){
+            if((promoted_to == '♖') || (promoted_to == '♜')){s5='r';}
+            else if((promoted_to == '♗') || (promoted_to == '♝')){s5='b';}
+            else if((promoted_to == '♕') || (promoted_to == '♛')){s5='q';}
+            else if((promoted_to == '♘') || (promoted_to == '♞')){s5='k';}
+            promoted_to = '';
+            pawn_promoted_flag = 0;        
+        }
+        else {s5 = ' ';}
+
+        UCImove = s1 + s2 + s3 + s4 + s5
+
+        //console.log(UCImove)
+
+        return UCImove
+    }
+
+    // convert move from UCI to Webpage Syntax
+    // takes in 'd2d4' and outputs '12 28'
     function translate_fromUCI(UCImove) {
         move = ''
         // remove spaces
         UCImove = UCImove.replace(/\s/g, '');
+
+
+        if(UCImove == 'e1h1'){move = '5 7';return move;}
+        else if(UCImove == 'e1a1'){move = '5 3';return move;}
+        else if(UCImove == 'e8h8'){move = '61 63';return move;}
+        else if(UCImove == 'e8a8'){move = '61 59';return move;} 
+        
         UCImove_list = UCImove.split('')
 
         from_row = UCImove_list[1]
@@ -879,7 +945,7 @@
         to = to_col + to_row
 
         move = from + ' ' + to
-        console.log(move)
+        //console.log(move)
 
         return move
     }
