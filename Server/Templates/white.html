@@ -850,7 +850,8 @@
 
             document.getElementById(to).textContent = document.getElementById(from).textContent;
             document.getElementById(from).textContent = ''
-
+            //promote any pawns
+            pawn_promotion();
 
             // increment turn counter and update display
             orderCounter = 1
@@ -955,7 +956,13 @@
             promation_type = UCImove_list[4];
             from_color = getColor(document.getElementById(from))
             if(from_color == 'white' && promation_type == 'q'){document.getElementById("PromotionWhite").value = '♕';}
-            else if(from_color == 'black' && promation_type == 'q'){document.getElementById("PromotionWhite").value = '♛';}
+            else if(from_color == 'black' && promation_type == 'q'){document.getElementById("PromotionBlack").value = '♛';}
+            else if(from_color == 'white' && promation_type == 'r'){document.getElementById("PromotionWhite").value = '♖';}
+            else if(from_color == 'black' && promation_type == 'r'){document.getElementById("PromotionBlack").value = '♜';}
+            else if(from_color == 'white' && promation_type == 'b'){document.getElementById("PromotionWhite").value = '♗';}
+            else if(from_color == 'black' && promation_type == 'b'){document.getElementById("PromotionBlack").value = '♝';}
+            else if(from_color == 'white' && promation_type == 'k'){document.getElementById("PromotionWhite").value = '♘';}
+            else if(from_color == 'black' && promation_type == 'k'){document.getElementById("PromotionBlack").value = '♞';}
         }
 
         return move

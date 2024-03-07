@@ -167,9 +167,40 @@
         }, 2000);       
     }
 
+    function getColor(piece){
+        color = ''
+        if (piece == '♙' || piece == '♖' || piece == '♘' || piece == '♗' || piece == '♕'  || piece == '♔'){
+            color = 'white';
+        }
+        else{color = 'black';}
+        return color;
+    }
+
     function translate_fromUCI(UCImove) {
         move = ''
         // remove spaces
+
+        if(UCImove == 'e1h1' && document.getElementById(5) == '♔'){
+            document.getElementById(6).textContent = document.getElementById(8).textContent;
+            document.getElementById(8).textContent = '';
+            move = '5 7';
+            return move;}
+        else if(UCImove == 'e1a1' && document.getElementById(5) == '♔'){
+            document.getElementById(4).textContent = document.getElementById(1).textContent;
+            document.getElementById(1).textContent = '';
+            move = '5 3';
+            return move;}
+        else if(UCImove == 'e8h8' && document.getElementById(5) == '♚'){
+            document.getElementById(62).textContent = document.getElementById(64).textContent;
+            document.getElementById(64).textContent = '';
+            move = '61 63';
+            return move;}
+        else if(UCImove == 'e8a8' && document.getElementById(5) == '♚'){
+            document.getElementById(60).textContent = document.getElementById(57).textContent;
+            document.getElementById(57).textContent = '';
+            move = '61 59';
+            return move;}
+
         UCImove = UCImove.replace(/\s/g, '');
         UCImove_list = UCImove.split('')
 
@@ -190,6 +221,19 @@
 
         move = from + ' ' + to
         console.log(move)
+
+        if(UCImove.length == 5){
+            promation_type = UCImove_list[4];
+            from_color = getColor(document.getElementById(from).textContent)
+            if(from_color == 'white' && promation_type == 'q'){document.getElementById(from).textContent = '♕';}
+            else if(from_color == 'black' && promation_type == 'q'){document.getElementById(from).textContent = '♛';}
+            else if(from_color == 'white' && promation_type == 'r'){document.getElementById(from).textContent = '♖';}
+            else if(from_color == 'black' && promation_type == 'r'){document.getElementById(from).textContent = '♜';}
+            else if(from_color == 'white' && promation_type == 'b'){document.getElementById(from).textContent = '♗';}
+            else if(from_color == 'black' && promation_type == 'b'){document.getElementById(from).textContent = '♝';}
+            else if(from_color == 'white' && promation_type == 'k'){document.getElementById(from).textContent = '♘';}
+            else if(from_color == 'black' && promation_type == 'k'){document.getElementById(from).textContent = '♞';}
+        }
 
         return move
     }
