@@ -122,6 +122,24 @@
     
 </table>
 
+<form>
+    <label style="font-size: 25px;" for="PromotionWhite">Promotion White:</label>
+    <select style="font-size: 25px;" id="PromotionWhite">
+        <option value="♕">♕</option>
+        <option value="♖">♖</option>
+        <option value="♗">♗</option>
+        <option value="♘">♘</option>
+    </select>
+    <br><br>
+    <label style="font-size: 25px;" for="PromotionBlack">Promotion Black:</label>
+    <select style="font-size: 25px;" id="PromotionBlack">
+        <option value="♛">♛</option>
+        <option value="♜">♜</option>
+        <option value="♝">♝</option>
+        <option value="♞">♞</option>
+    </select>
+</form>
+
 <button id="buttonstart" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton2(this)">Start</button>
 <button id="buttonendgame" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton3(this)">End</button>
 <button id="buttonTurn" style= "width: 200px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Turn: White</button>
@@ -138,10 +156,22 @@
     var turn_flag = 0 // 0 for white, 1 for black
     var check_flag_white = 0;
     var check_flag_black = 0;
+    var pawn_promoted_flag = 0;
+    var promoted_to = '';
+
+    var response;
+
+    // flags for castling
+    var white_queenside = 1;
+    var white_kingside = 1;
+    var black_queenside = 1;
+    var black_kingside = 1;
+    var castle_flag = 0;
+
 
     // Get every legal move for the game start
     legal_array = legalMoves()
-    console.log(legal_array)
+    //console.log(legal_array)
 
 
     function setButton2(button) {
@@ -158,7 +188,7 @@
     }
 
 
-    function setButton(button) {
+    async function setButton(button) {
         start = performance.now()  
         if (turn_flag == 0){
             if (orderCounter == 1) { // what happens when the piece thats clicked is selected to be moved 
@@ -203,9 +233,58 @@
                 if(move_flag == 0){return;}
                 // reset move flag
                 move_flag = 0;
+
+                 // check to see if rook move
+                if(document.getElementById(String(possiblemoves[0])).textContent == '♖' || document.getElementById(String(possiblemoves[0])).textContent == '♜'){
+                    // see if kingside rook is moving
+                    if(document.getElementById(String(possiblemoves[0])).textContent == '♖' && button.id == 8){white_kingside = 0;}
+                    else if(document.getElementById(String(possiblemoves[0])).textContent == '♖' && button.id == 1){white_queenside = 0;}
+                    else if(document.getElementById(String(possiblemoves[0])).textContent == '♜' && button.id == 64){black_kingside = 0;}
+                    else if(document.getElementById(String(possiblemoves[0])).textContent == '♜' && button.id == 57){black_queenside = 0;}
+                }
+
+                // check to see if king move
+                if(document.getElementById(String(possiblemoves[0])).textContent == '♔' || document.getElementById(String(possiblemoves[0])).textContent == '♚'){
+                    // move is a kingmove so that color can no longer castle
+                    if(document.getElementById(String(possiblemoves[0])).textContent == '♔'){
+                        white_kingside = 0;
+                        white_queenside = 0;
+                    }
+                    else{
+                        black_kingside = 0;
+                        black_queenside = 0;
+                    }
+                
+                    // king is moving 2 spaces so its a castle
+                    if(Math.abs(parseInt(button.id) - possiblemoves[0]) == 2){
+                        // black kingside
+                        if(parseInt(button.id) == 63){
+                            document.getElementById(62).textContent = document.getElementById(64).textContent;
+                            document.getElementById(64).textContent = '';
+                        }
+                        // black queenside
+                        if(parseInt(button.id) == 59){
+                            document.getElementById(60).textContent = document.getElementById(57).textContent;
+                            document.getElementById(57).textContent = '';
+                        }
+                        // white kingside
+                        if(parseInt(button.id) == 7){
+                            document.getElementById(6).textContent = document.getElementById(8).textContent;
+                            document.getElementById(8).textContent = '';
+                        }
+                        // white queenside
+                        if(parseInt(button.id) == 3){
+                            document.getElementById(4).textContent = document.getElementById(1).textContent;
+                            document.getElementById(1).textContent = '';
+                        }
+                        castle_flag = 1;
+                    }
+                }
             
                 button.textContent = document.getElementById(String(possiblemoves[0])).textContent;
                 document.getElementById(String(possiblemoves[0])).textContent = "";
+                //promote any pawns
+                pawn_promotion();
                 sendMoveToServer(String(possiblemoves[0]) + ' ' + button.id);
                 revertcolor(possiblemoves);
                 orderCounter = 0;
@@ -217,19 +296,20 @@
                 isKingChecked()
                 document.getElementById("check_white").textContent = ("Check w: "+ String(check_flag_white));
                 document.getElementById("check_black").textContent = ("Check b: "+ String(check_flag_black));
+                
                 // Get every legal move
                 legal_array = legalMoves()
-                console.log(legal_array)
+                //console.log(legal_array)
                 if(isCheckmate()){
                     window.alert("Checkmate Game is Over")
                 }
-                waitForServer();
+                await waitForServer();
             }
     
             orderCounter++;
             document.getElementById("buttonstart").textContent = "Count " + (orderCounter);
             end = performance.now()
-            console.log(String(end-start))
+            //console.log(String(end-start))
         }
     }
 
@@ -291,8 +371,6 @@
                     potential_moves = []
                 }
                 //console.log(String(document.getElementById(String(i)).textContent) + ' ' + String(potential_moves))
-
-                if(i==37){console.log(potential_moves)}
                 legal_temp = [];
                 for (var j = 1; j < potential_moves.length; j++) {
                     tempi = document.getElementById(String(i)).textContent;
@@ -317,7 +395,82 @@
             }
             
         }
+
+
+        // look for castling
+        // black kingside
+        if((black_kingside == 1) && (document.getElementById(62).textContent == '' && document.getElementById(63).textContent == '' && document.getElementById(64).textContent == '♜')){
+            // move king to both squares and see if its in check
+            document.getElementById(62).textContent = '♚' 
+            document.getElementById(63).textContent = '♚'
+            isKingChecked()
+            if(check_flag_black == 0){
+                legal_moves[61].push(63)
+            }
+            document.getElementById(62).textContent = ''
+            document.getElementById(63).textContent = ''            
+        }
+        // black queenside
+        if((black_queenside == 1) && (document.getElementById(59).textContent == '' && document.getElementById(60).textContent == '' && document.getElementById(57).textContent == '♜')){
+            // move king to both squares and see if its in check
+            document.getElementById(59).textContent = '♚' 
+            document.getElementById(60).textContent = '♚'
+            isKingChecked()
+            if(check_flag_black == 0){
+                legal_moves[61].push(59)
+            }
+            document.getElementById(59).textContent = ''
+            document.getElementById(60).textContent = ''
+        }
+        // white kingside
+        if((white_kingside == 1) && (document.getElementById(6).textContent == '' && document.getElementById(7).textContent == '' && document.getElementById(8).textContent == '♖')){
+            // move king to both squares and see if its in check
+            document.getElementById(6).textContent = '♔' 
+            document.getElementById(7).textContent = '♔'
+            isKingChecked()
+            if(check_flag_white == 0){
+                legal_moves[5].push(7)
+            }
+            document.getElementById(6).textContent = ''
+            document.getElementById(7).textContent = ''
+        }
+        // white queenside
+        if((white_queenside) == 1 && (document.getElementById(3).textContent == '' && document.getElementById(4).textContent == ''&& document.getElementById(1).textContent == '♖')){
+            document.getElementById(3).textContent = '♔' 
+            document.getElementById(4).textContent = '♔'
+            isKingChecked()
+            if(check_flag_white == 0){
+                legal_moves[5].push(3)
+            }
+            document.getElementById(3).textContent = ''
+            document.getElementById(4).textContent = ''
+        }
+
         return legal_moves;
+    }
+
+    function pawn_promotion(){
+
+        var whiteDropdown = document.getElementById("PromotionWhite");
+        var blackDropdown = document.getElementById("PromotionBlack");
+
+        var selectedWhiteValue = whiteDropdown.options[whiteDropdown.selectedIndex].value;
+        var selectedBlackValue = blackDropdown.options[blackDropdown.selectedIndex].value;
+
+        edges = [1,2,3,4,5,6,7,8,57,58,59,60,61,62,63,64]
+        for(i=0;i<edges.length;i++){
+            if(document.getElementById(edges[i]).textContent == '♙' || document.getElementById(edges[i]).textContent == '♟'){
+                if(getColor(document.getElementById(edges[i]).textContent) == 'white'){
+                    document.getElementById(edges[i]).textContent = selectedWhiteValue;
+                    promoted_to = selectedWhiteValue;
+                }
+                else{
+                    document.getElementById(edges[i]).textContent = selectedBlackValue;
+                    promoted_to = selectedBlackValue;
+                }
+                pawn_promoted_flag = 1;
+            }
+        }
     }
 
     function getColor(piece){
@@ -639,37 +792,66 @@
         });
     }
 
-    function ReceiveMoveFromServer() {
-        fetch('/receivemove')
+    async function ReceiveMoveFromServer() {
+        await fetch('/receivemove')
         .then(response => response.json())
         .then(data => {
-            //console.log('Server response:', data);
+            console.log('Server response:', data);
             response = data['message'];
         })
         .catch(error => {
             console.error('Error fetching status:', error);
         });
+        return response
     }
 
     function waitForServer(){
-        response = ''
-        console.log("wiating for server")
-        var intervalId = window.setInterval(function(){
+        reply = ''
+        console.log("waiting for server")
+        var intervalId = window.setInterval(async function(){
         // call your function here
-        ReceiveMoveFromServer()
-        console.log(response)
-        if (response !== '' && typeof response !== 'undefined'){
+        reply = await ReceiveMoveFromServer()
+        console.log("response inside wait ",reply)
+        if (reply !== '' && typeof reply !== 'undefined'){
             clearInterval(intervalId)
-            response = translate_fromUCI(response)
-            response_list = response.split(' ')
-            from = response_list[0]
-            to = response_list[1]
-            console.log(from)
-            console.log(to)
+            UCI_reply = translate_fromUCI(reply)
+            reply_list = UCI_reply.split(' ')
+            from = reply_list[0]
+            to = reply_list[1]
+            //console.log(from)
+            //console.log(to)
+
+            // check to see if king move
+            if(document.getElementById(from).textContent == '♔' || document.getElementById(from).textContent == '♚'){
+                // king is moving 2 spaces then its a castle
+                if(Math.abs(parseInt(from) - parseInt(to)) == 2){
+                    // black kingside
+                    if(parseInt(to) == 63){
+                        document.getElementById(62).textContent = document.getElementById(64).textContent;
+                        document.getElementById(64).textContent = '';
+                    }
+                    // black queenside
+                    if(parseInt(to) == 59){
+                        document.getElementById(60).textContent = document.getElementById(57).textContent;
+                        document.getElementById(57).textContent = '';
+                    }
+                    // white kingside
+                    if(parseInt(to) == 7){
+                        document.getElementById(6).textContent = document.getElementById(8).textContent;
+                        document.getElementById(8).textContent = '';
+                    }
+                    // white queenside
+                    if(parseInt(to) == 3){
+                        document.getElementById(4).textContent = document.getElementById(1).textContent;
+                        document.getElementById(1).textContent = '';
+                    }
+               }
+            }
 
             document.getElementById(to).textContent = document.getElementById(from).textContent;
             document.getElementById(from).textContent = ''
-
+            //promote any pawns
+            pawn_promotion();
 
             // increment turn counter and update display
             orderCounter = 1
@@ -683,7 +865,7 @@
             document.getElementById("check_black").textContent = ("Check b: "+ String(check_flag_black));
             // Get every legal move
             legal_array = legalMoves()
-            console.log(legal_array)
+            //console.log(legal_array)
             if(isCheckmate()){
                 window.alert("Checkmate Game is Over")
             }
@@ -691,36 +873,66 @@
         }, 500);       
     }
 
+    // convert move from webpage syntax to UCI
     // take in move in "12 28" format into 'd2d4 ' format
     function translate_toUCI(move) {
-            UCImove = ''
-            move_list = move.split(' ')
-            from = move_list[0]
-            to = move_list[1]
-
-            from_row = Math.floor((from-1) / 8) + 1
-            from_col = (from-1) % 8
-
-            to_row = Math.floor((to-1) / 8) + 1
-            to_col = (to-1) % 8
-
-            s1 = String.fromCharCode(from_col + 97)
-            s2 = from_row
-            s3 = String.fromCharCode(to_col + 97)
-            s4 = to_row
-
-            UCImove = s1 + s2 + s3 + s4 + ' '
-
-            console.log(UCImove)
-
-            return UCImove
+        UCImove = ''
+        
+        if(castle_flag == 1){
+            if(move == '5 7'){UCImove = 'e1h1 ';}
+            else if(move == '5 3'){UCImove = 'e1a1 '}
+            else if(move == '61 63'){UCImove = 'e8h8 '}
+            else if(move == '61 59'){UCImove = 'e8a8 '} 
+            castle_flag = 0;
+            return UCImove;
         }
+        
+        move_list = move.split(' ')
+        from = move_list[0]
+        to = move_list[1]
 
+        from_row = Math.floor((from-1) / 8) + 1
+        from_col = (from-1) % 8
+
+        to_row = Math.floor((to-1) / 8) + 1
+        to_col = (to-1) % 8
+
+        s1 = String.fromCharCode(from_col + 97)
+        s2 = from_row
+        s3 = String.fromCharCode(to_col + 97)
+        s4 = to_row
+
+        if(pawn_promoted_flag == 1){
+            if((promoted_to == '♖') || (promoted_to == '♜')){s5='r';}
+            else if((promoted_to == '♗') || (promoted_to == '♝')){s5='b';}
+            else if((promoted_to == '♕') || (promoted_to == '♛')){s5='q';}
+            else if((promoted_to == '♘') || (promoted_to == '♞')){s5='k';}
+            promoted_to = '';
+            pawn_promoted_flag = 0;        
+        }
+        else {s5 = ' ';}
+
+        UCImove = s1 + s2 + s3 + s4 + s5
+
+        //console.log(UCImove)
+
+        return UCImove
+    }
+
+    // convert move from UCI to Webpage Syntax
+    // takes in 'd2d4' and outputs '12 28'
     function translate_fromUCI(UCImove) {
         move = ''
         // remove spaces
         UCImove = UCImove.replace(/\s/g, '');
-        UCImove_list = UCImove.split('')
+
+
+        if(UCImove == 'e1h1'){move = '5 7';return move;}
+        else if(UCImove == 'e1a1'){move = '5 3';return move;}
+        else if(UCImove == 'e8h8'){move = '61 63';return move;}
+        else if(UCImove == 'e8a8'){move = '61 59';return move;}
+
+        UCImove_list = UCImove.split('')   
 
         from_row = UCImove_list[1]
         from_col = UCImove_list[0]
@@ -738,7 +950,20 @@
         to = to_col + to_row
 
         move = from + ' ' + to
-        console.log(move)
+        //console.log(move)
+
+        if(UCImove.length == 5){
+            promation_type = UCImove_list[4];
+            from_color = getColor(document.getElementById(from))
+            if(from_color == 'white' && promation_type == 'q'){document.getElementById("PromotionWhite").value = '♕';}
+            else if(from_color == 'black' && promation_type == 'q'){document.getElementById("PromotionBlack").value = '♛';}
+            else if(from_color == 'white' && promation_type == 'r'){document.getElementById("PromotionWhite").value = '♖';}
+            else if(from_color == 'black' && promation_type == 'r'){document.getElementById("PromotionBlack").value = '♜';}
+            else if(from_color == 'white' && promation_type == 'b'){document.getElementById("PromotionWhite").value = '♗';}
+            else if(from_color == 'black' && promation_type == 'b'){document.getElementById("PromotionBlack").value = '♝';}
+            else if(from_color == 'white' && promation_type == 'k'){document.getElementById("PromotionWhite").value = '♘';}
+            else if(from_color == 'black' && promation_type == 'k'){document.getElementById("PromotionBlack").value = '♞';}
+        }
 
         return move
     }
