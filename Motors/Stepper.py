@@ -17,7 +17,7 @@ IN6 = Pin(27, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 IN7 = Pin(32, Pin.OUT)   # Replace 0 with your actual GPIO pin number
 IN8 = Pin(33, Pin.OUT)   # Replace 2 with your actual GPIO pin number
 # Define steps for one revolution (200 for a 1.8 degree per step motor)
-STEPS_PER_REVOLUTION = 100
+STEPS_PER_REVOLUTION = 200
 
 
 # Function to set the H-bridge state using PWM
@@ -108,9 +108,9 @@ if __name__ == "__main__":
     activate_electromagnet()
     print("Motor Start")
     # Example usage
-    rotate("y", 825, 6)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("y", 16000, 1)  # Rotate 200 steps (one revolution) at a faster speed
     print("24 Volt Motor Start")
-    rotate("x", -400, 13)  # Rotate 200 steps (one revolution) at a faster speed
+    #rotate("x", -400, 13)  # Rotate 200 steps (one revolution) at a faster speed
 
     deactivate_electromagnet()
 
