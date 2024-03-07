@@ -216,7 +216,7 @@ def status():
             return jsonify({'status': 'new message', 'message': ''})            
 
     end = time.time()
-    #print("Runtime is: ",(end-start))
+    print("Runtime is: ",(end-start))
     if client:
         game.zero_lastmessage()
         print('returning move')
