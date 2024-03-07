@@ -200,22 +200,23 @@ def status():
     '''ZACH API CALL'''
     '''ZACH API CALL'''
     '''ZACH API CALL'''
-    if(game.get_black().get_type() == 'ai' and message != AI_client.get_previousmove() and message != ''):
-        print('message sent to AI is: ', message)
-        new_move = API_game.call_api(message)
-        message = new_move
-        print('message sent from AI is: ', message)
-        game.add_message(message)
-        game.set_lastmessage(message)
-        AI_client.set_previousmove(message)
-        return jsonify({'status': 'new message', 'message': ''})
-        #game.zero_lastmessage()
+    if(game.get_black().get_type() == 'ai'):
+        if(message != AI_client.get_previousmove() and message != ''):
+            print('message sent to AI is: ', message)
+            new_move = API_game.call_api(message)
+            message = new_move
+            print('message sent from AI is: ', message)
+            game.add_message(message)
+            game.set_lastmessage(message)
+            AI_client.set_previousmove(message)
+            return jsonify({'status': 'new message', 'message': ''})
+            #game.zero_lastmessage()
     else:
         if message == client.get_previousmove():
             return jsonify({'status': 'new message', 'message': ''})            
 
     end = time.time()
-    #print("Runtime is: ",(end-start))
+    print("Runtime is: ",(end-start))
     if client:
         game.zero_lastmessage()
         print('returning move')

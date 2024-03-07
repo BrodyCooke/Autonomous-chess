@@ -159,6 +159,8 @@
     var pawn_promoted_flag = 0;
     var promoted_to = '';
 
+    var response;
+
     // flags for castling
     var white_queenside = 1;
     var white_kingside = 1;
@@ -167,9 +169,8 @@
     var castle_flag = 0;
 
 
-    // Get every legal move for the game start
+    // wait for whites move
     waitForServer();
-
 
     function setButton2(button) {
         if(button.textContent == "Start"){
@@ -185,7 +186,7 @@
     }
 
 
-    function setButton(button) {
+    async function setButton(button) {
         start = performance.now()  
         if (turn_flag == 1){
             if (orderCounter == 1) { // what happens when the piece thats clicked is selected to be moved 
@@ -300,7 +301,7 @@
                 if(isCheckmate()){
                     window.alert("Checkmate Game is Over")
                 }
-                waitForServer();
+                await waitForServer();
             }
     
             orderCounter++;
@@ -789,8 +790,8 @@
         });
     }
 
-    function ReceiveMoveFromServer() {
-        fetch('/receivemove')
+    async function ReceiveMoveFromServer() {
+        await fetch('/receivemove')
         .then(response => response.json())
         .then(data => {
             console.log('Server response:', data);
@@ -803,18 +804,19 @@
     }
 
     function waitForServer(){
-        response = ''
-        console.log("wiating for server")
-        var intervalId = window.setInterval(function(){
+        reply = ''
+        console.log("waiting for server")
+        var intervalId = window.setInterval(async function(){
         // call your function here
-        response = ReceiveMoveFromServer()
-        if (response !== '' && typeof response !== 'undefined'){
+        reply = await ReceiveMoveFromServer()
+        console.log("response inside wait ",reply)
+        if (reply !== '' && typeof reply !== 'undefined'){
             clearInterval(intervalId)
-            response = translate_fromUCI(response)
-            response_list = response.split(' ')
-            from = response_list[0]
-            to = response_list[1]
-            //onsole.log(from)
+            UCI_reply = translate_fromUCI(reply)
+            reply_list = UCI_reply.split(' ')
+            from = reply_list[0]
+            to = reply_list[1]
+            //console.log(from)
             //console.log(to)
 
             // check to see if king move
@@ -846,7 +848,8 @@
 
             document.getElementById(to).textContent = document.getElementById(from).textContent;
             document.getElementById(from).textContent = ''
-
+            //promote any pawns
+            pawn_promotion();
 
             // increment turn counter and update display
             orderCounter = 1
@@ -925,9 +928,9 @@
         if(UCImove == 'e1h1'){move = '5 7';return move;}
         else if(UCImove == 'e1a1'){move = '5 3';return move;}
         else if(UCImove == 'e8h8'){move = '61 63';return move;}
-        else if(UCImove == 'e8a8'){move = '61 59';return move;} 
-        
-        UCImove_list = UCImove.split('')
+        else if(UCImove == 'e8a8'){move = '61 59';return move;}
+
+        UCImove_list = UCImove.split('')   
 
         from_row = UCImove_list[1]
         from_col = UCImove_list[0]
@@ -946,6 +949,19 @@
 
         move = from + ' ' + to
         //console.log(move)
+
+        if(UCImove.length == 5){
+            promation_type = UCImove_list[4];
+            from_color = getColor(document.getElementById(from))
+            if(from_color == 'white' && promation_type == 'q'){document.getElementById("PromotionWhite").value = '♕';}
+            else if(from_color == 'black' && promation_type == 'q'){document.getElementById("PromotionBlack").value = '♛';}
+            else if(from_color == 'white' && promation_type == 'r'){document.getElementById("PromotionWhite").value = '♖';}
+            else if(from_color == 'black' && promation_type == 'r'){document.getElementById("PromotionBlack").value = '♜';}
+            else if(from_color == 'white' && promation_type == 'b'){document.getElementById("PromotionWhite").value = '♗';}
+            else if(from_color == 'black' && promation_type == 'b'){document.getElementById("PromotionBlack").value = '♝';}
+            else if(from_color == 'white' && promation_type == 'k'){document.getElementById("PromotionWhite").value = '♘';}
+            else if(from_color == 'black' && promation_type == 'k'){document.getElementById("PromotionBlack").value = '♞';}
+        }
 
         return move
     }
