@@ -76,7 +76,11 @@ def startup():
         API_client.set_type('ai')
         API_client.set_color('black')
         game.add_client(API_client)
-
+    if (white_type == 'ai'):
+        API_client = Client('0.0.0.0')
+        API_client.set_type('ai')
+        API_client.set_color('white')
+        game.add_client(API_client)
 
     # find the first client that is of white type
     for c in game.get_clients():
@@ -165,10 +169,14 @@ def message():
             client = c
             break
     if not client:
-        return jsonify({'status': 'Error', 'message': 'Client not found'})         
-    
-    # Store the message in the gamestate and reply to client
+        return jsonify({'status': 'Error', 'message': 'Client not found'})      
+
     message = message_data['message']
+
+    if(game.get_white().get_type() == 'ai'):
+        API_game.make_playermove(message)
+   
+    # Store the message in the gamestate and reply to client
     game.add_message(message)
     game.set_lastmessage(message)
     c.set_previousmove(message)
@@ -187,23 +195,37 @@ def status():
         if c.ip == client_ip:
             client = c
             break
+    if not client:
+        return jsonify({'status': 'Error', 'message': 'Client not found'})
 
     # Find the AI client instance
-    AI_client = None
-    for c in game.get_clients():
-        if c.ip == '0.0.0.0':
-            AI_client = c
-            break
+    if (game.get_white().get_type() == 'ai' or game.get_black().get_type() == 'ai'):
+        AI_client = None
+        for c in game.get_clients():
+            if c.ip == '0.0.0.0':
+                AI_client = c
+                break
+        if not AI_client:
+            return jsonify({'status': 'Error', 'message': 'AI Client not found'})
         
     message = game.get_lastmessage()
-    '''ZACH API CALL'''
-    '''ZACH API CALL'''
-    '''ZACH API CALL'''
-    '''ZACH API CALL'''
-    if(game.get_black().get_type() == 'ai'):
+    if(game.get_white().get_type() == 'ai'):
         if(message != AI_client.get_previousmove() and message != ''):
             print('message sent to AI is: ', message)
-            new_move = API_game.call_api(message)
+            new_move = API_game.get_api_move()
+            message = new_move
+            print('message sent from AI is: ', message)
+            game.add_message(message)
+            game.set_lastmessage(message)
+            AI_client.set_previousmove(message)
+            return jsonify({'status': 'new message', 'message': ''})
+            #game.zero_lastmessage()
+
+    elif(game.get_black().get_type() == 'ai'):
+        if(message != AI_client.get_previousmove() and message != ''):
+            print('message sent to AI is: ', message)
+            API_game.make_playermove(message)
+            new_move = API_game.get_api_move()
             message = new_move
             print('message sent from AI is: ', message)
             game.add_message(message)
