@@ -17,6 +17,83 @@ def connWIFI(WIFI_SSID,WIFI_PASSWORD):
     #return IP address
     return wlan.ifconfig()[0]
 
+'''helper functions for server connection'''
+def translate_toUCI(move):    
+    UCImove = ''
+    # temp until we figure out castle on board
+    castle_flag = 0
+    
+    if castle_flag == 1:
+        if move == '5 7':
+            UCImove = 'e1h1 '
+        elif move == '5 3':
+            UCImove = 'e1a1 '
+        elif move == '61 63':
+            UCImove = 'e8h8 '
+        elif move == '61 59':
+            UCImove = 'e8a8 '
+        castle_flag = 0
+        return UCImove
+    
+    move_list = move.split(' ')
+    _from = int(move_list[0])
+    _to = int(move_list[1])
+
+    from_row = (_from - 1) // 8 + 1
+    from_col = (_from - 1) % 8
+
+    to_row = (_to - 1) // 8 + 1
+    to_col = (_to - 1) % 8
+
+    s1 = chr(from_col + 97)
+    s2 = str(from_row)
+    s3 = chr(to_col + 97)
+    s4 = str(to_row)
+
+    ##### Need to handle promotions somehow #####
+    s5 = ' '
+
+    UCImove = s1 + s2 + s3 + s4 + s5
+
+    return UCImove
+
+def translate_fromUCI(UCImove):
+    move = ''
+
+    # remove spaces
+    UCImove = UCImove.replace(' ', '')
+
+    if UCImove == 'e1h1':
+        move = '5 7'
+        return move
+    elif UCImove == 'e1a1':
+        move = '5 3'
+        return move
+    elif UCImove == 'e8h8':
+        move = '61 63'
+        return move
+    elif UCImove == 'e8a8':
+        move = '61 59'
+        return move
+
+    from_row = int(UCImove[1])
+    from_col = ord(UCImove[0]) - 96
+    to_row = int(UCImove[3])
+    to_col = ord(UCImove[2]) - 96
+
+    from_row = (from_row - 1) * 8
+    to_row = (to_row - 1) * 8
+
+    _from = from_col + from_row
+    _to = to_col + to_row
+
+    move = str(_from) + ' ' + str(_to)
+
+    ##### Need to handle promotions somehow #####
+    return move
+
+
+
 class server:
 
     def __init__(self,SERVER_IP,SERVER_PORT):
@@ -82,6 +159,8 @@ class server:
             recv = self.receive_move_message()
             time.sleep(1)
         return recv
+    
+
         
     
 if __name__ == "__main__":
@@ -96,6 +175,8 @@ if __name__ == "__main__":
     server.send_move('12 28')
     time.sleep(5)
     print(server.receive_move())
+    '''
+    #repeated move similar to a games logic
     '''
     connWIFI('Chickennuggs','13221322') #connect to wifi using this username and password
     server = server('192.168.140.30','5000') #connect to server at this ip and this port
@@ -116,12 +197,15 @@ if __name__ == "__main__":
             print("Move from the Server is: ",recv) #send motor movement to micah, and update board state?
             move = input("Input a move:") #need to get move from hall effect sensors
             server.send_move(move) # returns what move the server recieved
-        
     '''
-    while True:
-        move = input("Input a move:")
-        server.send_move(move)
-        recv = server.apicall()
-        print(recv)
-        '''
+    
+    move = '4 12'
+    uci = translate_toUCI(move)
+    print(uci)
+    move = translate_fromUCI(uci)
+    print(move)
+    
+    
+    
+    
     
