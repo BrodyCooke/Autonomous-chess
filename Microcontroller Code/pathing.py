@@ -11,7 +11,7 @@ def find_path(maze, start, end):
 
     while queue:
         (x, y), path = queue.popleft()
-        if (x, y) == end:
+        if (x, y) in end:
             return path
         
         if (x, y) in visited:
@@ -33,16 +33,20 @@ def find_path(maze, start, end):
 maze = [
     [0, 1, 0, 1, 0],
     [0, 1, 1, 1, 0],
-    [0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0],
     [1, 0, 1, 1, 0],
     [0, 0, 0, 0, 0]
 ]
 start = (0, 0)
-end = (4, 2)
+end = [(2, 3)]
 
 path = find_path(maze, start, end)
 if path:
     print("Maze solved! Shortest path found:", path)
 else:
     print("No path found from start to end in the maze.")
+    
+    
+for i in range(len(path) -1):
+    
 

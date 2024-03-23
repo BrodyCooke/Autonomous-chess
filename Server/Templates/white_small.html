@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loop through Buttons in HTML Table (8x8)</title>
+    <style>
+        .chess-board { border-spacing: 0; border-collapse: collapse; }
+        .chess-board th { padding: .5em; }
+        .chess-board th + th { border-bottom: 1px solid #000; }
+        .chess-board th:first-child,
+        .chess-board td:last-child { border-right: 1px solid #000; }
+        .chess-board tr:last-child td { border-bottom: 1px solid; }
+        .chess-board th:empty { border: none; }
+        .chess-board td { width: 1.5em; height: 1.5em; text-align: center; font-size: 44px; line-height: 0;}
+        .chess-board .light { background: #eee; width: 100px; height: 90px; font-size: 44px; }
+        .chess-board .dark { background: #aaa; width: 100px; height: 90px; font-size: 44px; }
+    </style>
+</head>
+<body>
+
+<table class="chess-board">
+    <!-- Create an 8 by 8 table -->
+    <tr>
+        <th></th>
+        <th>a</th>
+        <th>b</th>
+        <th>c</th>
+        <tr>
+            <th>3</th>
+            <td><button id="7" class="dark" onclick="setButton(this)">♟</button></td>
+            <td><button id="8" class="light" onclick="setButton(this)">♟</button></td>
+            <td><button id="9" class="dark" onclick="setButton(this)">♟</button></td>
+        </tr>
+        <tr>
+            <th>2</th>
+            <td><button id="4" class="light" onclick="setButton(this)"></button></td>
+            <td><button id="5" class="dark" onclick="setButton(this)"></button></td>
+            <td><button id="6" class="light" onclick="setButton(this)"></button></td>
+        </tr>
+        <tr>
+            <th>1</th>
+            <td><button id="1" class="dark" onclick="setButton(this)">♙</button></td>
+            <td><button id="2" class="light" onclick="setButton(this)">♙</button></td>
+            <td><button id="3" class="dark" onclick="setButton(this)">♙</button></td>
+        </tr>
+
+</table>
+
+<button id="buttonstart" style= "width: 200px; height: 90px; font-size: 44px;" onclick="setButton2(this)">Start</button>
+<button id="buttonendgame" style= "width: 100px; height: 90px; font-size: 30px;" onclick="setButton3(this)">Start</button>
+
+<script>
+    var orderCounter = 1; // flag to keep track of order of button presses
+    c_spacetomove = '#fbe790'; // color for the possible move spaces
+    possiblemoves= []; // array to hold all possible moves for a piece
+    move_flag = 0; // flag that swaps to 1 if player move was in the list of possible moves
+
+
+    function setButton2(button) {
+    }
+
+    function setButton3(button) {
+    }
+
+    function setButton(button) {
+        // what happens when the clicked space is where the old piece will be moved
+        if (orderCounter > 1) {
+            // make sure button is in list of possible moves
+            for (var i = 0; i < possiblemoves.length; i++) {
+                if(String(possible_moves[i]) == button.id){
+                    move_flag = 1;
+                    break;
+                }
+            }
+            // reset move flag
+            move_flag = 0;
+            // check if clicked space is the same as the selected piece
+            if(button.id == String(possiblemoves[0])){
+                revertcolor(possible_moves);
+                // reset order counter
+                orderCounter = 1;
+                document.getElementById("buttonstart").textContent = "Count " + (orderCounter);
+                return;
+            }
+        
+            //move the piece by: changing the now clicked button to the old text and removing the text of the old button
+            button.textContent = document.getElementById(String(possiblemoves[0])).textContent;
+            document.getElementById(String(possiblemoves[0])).textContent = "";
+            sendMoveToServer(String(possiblemoves[0]) + ' ' + button.id);
+            revertcolor(possiblemoves);
+            orderCounter = 0
+            waitForServer();
+        }
+        // what happens when the piece thats clicked is selected to be moved
+        else {    
+            // make sure its not empty
+            if(button.textContent == ''){return}    
+            //buttonid = button.id;
+            // set color for the selected piece space
+            button.style.backgroundColor = '#c8a951';
+            possiblemoves = setpossiblemoves(parseInt(button.id),button.textContent);
+        }
+        
+        orderCounter++;
+        document.getElementById("buttonstart").textContent = "Count " + (orderCounter);
+    }
+
+    function setpossiblemoves(from,piece){
+        possible_moves = [];
+
+        possible_moves.push(from);
+        console.log(from + ' ' + piece);
+
+        // change the color of all the potential move spaces
+        for (var i = 1; i < possible_moves.length; i++) {
+            document.getElementById(String(possible_moves[i])).style.backgroundColor = c_spacetomove;
+        }
+
+        return possible_moves;;
+    }
+
+    function getColor(piece){
+        color = ''
+        if (piece == '♙' || piece == '♖' || piece == '♘' || piece == '♗' || piece == '♕'  || piece == '♔'){
+            color = 'white';
+        }
+        else{color = 'black';}
+        return color;
+    }
+
+    function revertcolor(moves) {
+
+        for (var i = 0; i < moves.length; i++) {
+            if ((moves[i] >= 1 && moves[i] <= 8) || (moves[i] >= 17 && moves[i] <= 24)|| (moves[i] >= 33 && moves[i] <= 40)|| (moves[i] >= 49 && moves[i] <= 56)) {
+                if (moves[i] % 2 == 0) {
+                    document.getElementById(String(moves[i])).style.backgroundColor = '#eee';
+                } else {
+                    document.getElementById(String(moves[i])).style.backgroundColor = '#aaa';
+                }
+            } else {
+                if (moves[i] % 2 == 0) {
+                    document.getElementById(String(moves[i])).style.backgroundColor = '#aaa';
+                } else {
+                    document.getElementById(String(moves[i])).style.backgroundColor = '#eee';
+                }
+            }
+        }
+    }
+
+
+    function sendMoveToServer(message) {
+        
+        // Make an asynchronous request to the server
+        fetch('/sendmove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: translate_toUCI(message) }),
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log('Server response:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    async function ReceiveMoveFromServer() {
+        await fetch('/receivemove')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Server response:', data);
+            response = data['message'];
+        })
+        .catch(error => {
+            console.error('Error fetching status:', error);
+        });
+        return response
+    }
+
+    function waitForServer(){
+        reply = ''
+        console.log("waiting for server")
+        var intervalId = window.setInterval(async function(){
+        // call your function here
+        reply = await ReceiveMoveFromServer()
+        console.log("response inside wait ",reply)  
+        if (reply !== '' && typeof reply !== 'undefined'){
+            clearInterval(intervalId)
+            UCI_reply = translate_fromUCI(reply)
+            reply_list = UCI_reply.split(' ')
+            from = reply_list[0]
+            to = reply_list[1]
+            //console.log(from)
+            //console.log(to)
+
+            document.getElementById(to).textContent = document.getElementById(from).textContent;
+            document.getElementById(from).textContent = ''
+
+            }
+        }, 500);       
+    }
+
+    // convert move from webpage syntax to UCI
+    // take in move in "12 28" format into 'd2d4 ' format
+    function translate_toUCI(move) {
+        UCImove = ''
+    
+        
+        move_list = move.split(' ')
+        from = move_list[0]
+        to = move_list[1]
+
+        from_row = Math.floor((from-1) / 8) + 1
+        from_col = (from-1) % 8
+
+        to_row = Math.floor((to-1) / 8) + 1
+        to_col = (to-1) % 8
+
+        s1 = String.fromCharCode(from_col + 97)
+        s2 = from_row
+        s3 = String.fromCharCode(to_col + 97)
+        s4 = to_row
+
+        s5 = ' ';
+
+        UCImove = s1 + s2 + s3 + s4 + s5
+
+        //console.log(UCImove)
+
+        return UCImove
+    }
+
+    // convert move from UCI to Webpage Syntax
+    // takes in 'd2d4' and outputs '12 28'
+    function translate_fromUCI(UCImove) {
+        move = ''
+        // remove spaces
+        UCImove = UCImove.replace(/\s/g, '');
+
+        UCImove_list = UCImove.split('')   
+
+        from_row = UCImove_list[1]
+        from_col = UCImove_list[0]
+
+        to_row = UCImove_list[3]
+        to_col = UCImove_list[2]
+
+        from_col = from_col.charCodeAt(0) - 96;
+        to_col =  to_col.charCodeAt(0) - 96;
+
+        from_row = (from_row - 1) * 8
+        to_row = (to_row - 1) * 8
+
+        from = from_col + from_row
+        to = to_col + to_row
+
+        move = from + ' ' + to
+        //console.log(move)
+
+        return move
+    }
+</script>
+
+</body>
+</html>
