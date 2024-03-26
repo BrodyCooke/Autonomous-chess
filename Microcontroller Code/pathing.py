@@ -83,3 +83,11 @@ else:
 #
 #
 #
+
+path_count = 1
+for i in range(len(path) -1):
+    if path[i] == path[i+1]:
+        path_count += 1
+    else: 
+        pass
+        #call motors
