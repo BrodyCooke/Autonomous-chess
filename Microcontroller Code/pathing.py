@@ -46,7 +46,3 @@ if path:
 else:
     print("No path found from start to end in the maze.")
     
-    
-for i in range(len(path) -1):
-    
-
