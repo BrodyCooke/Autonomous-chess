@@ -33,6 +33,3 @@ while True:
     Stepper.rotate("y", -900, 6)  # rotates a distance (will rotate the specific distance required to move piece to correct location)
     Stepper.deactivate_electromagnet()
     time.sleep(3)
-
-
-

@@ -1,5 +1,23 @@
 from collections import deque
 
+
+def captured_piece():
+    edges = [    # Top edge
+    [(x, 0) for x in range(8)],
+    # Right edge
+    [(7, y) for y in range(8)],
+    # Bottom edge
+    [(x, 7) for x in range(8)],
+    # Left edge
+    [(0, y) for y in range(8)]]
+    end = edges
+    find_path(maze,start,end)
+    move_motor(path_list)
+def move_motor(path_list):
+    for x in path_list:
+        movement_dir = x[0]
+        
+
 def find_path(maze, start, end):
     def is_valid_move(x, y):
         return 0 <= x < len(maze) and 0 <= y < len(maze[0]) and maze[x][y] == 0
@@ -46,3 +64,22 @@ if path:
 else:
     print("No path found from start to end in the maze.")
 
+# Steps needed: Change maze map to 8x8 with a 9th of all twos
+# 
+# Add tuple for stacking same moves
+# Add an extra spot to drag captured pieces to.
+# def captured_piece(piece_to_capture, captured_piece):   Shortest path to end with array
+# def get_board_state():
+# 
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
