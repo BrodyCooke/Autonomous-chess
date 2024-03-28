@@ -41,12 +41,10 @@ def read_halleffects_once():
         gpio_pin3.value(x[2])
         time.sleep(.025)
         analog_value = adc.read()
-        '''if analog_value > 3000:
+        if analog_value > 2100:
             values.append(1)
-        elif analog_value < 2000
-            values.append(-1)'''
-        if analog_value < 3000:
-            values.append(1)
+        elif analog_value < 1200:
+            values.append(-1)
         else:
             values.append(0)
     return values
