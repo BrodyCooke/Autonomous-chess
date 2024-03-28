@@ -5,6 +5,7 @@ def captured_piece():
     edges = [[(x, 0) for x in range(8)], [(7, y) for y in range(8)], [(x, 7) for x in range(8)], [(0, y) for y in range(8)]]
     edges.remove(start) # removed self from edge list
     end = edges
+
     find_path(maze,start,end)
     
 def move_piece(move_api):
@@ -13,25 +14,27 @@ def move_piece(move_api):
     # server sends in format (start_loc,end_loc) (5,1)
     # scan hall effect - call get_current_board()
     # move_api is a tuple with (start_loc,end_loc) where start and end are ordered pairs (5,1)
-    hE_board = get_current_board()
+    hE_board = get_current_board() #from Hall Effect sensor Code
     start_loc = move_api(0)
     end_loc = move_api(1)
-    emag_prev = get_emag_location() # pull previous emagnet location
+    emag_prev = get_emag_location() # pull previous emagnet location (From Motor Code)
 
     deactivate_emag()
     path_list = emag_path(emag_prev, start_loc) #previous emag location, move to location
     move_motor(path_list) # move emag to underneath desired piece to move
-    update_emag_location(end_loc) # update emag location
+    update_emag_location(start_loc) # update emag location
 
     path_list = find_path(hE_board, start_loc,end_loc) # find the shortest path to move a piece through the board
     activate_emag()
     move_motor(path_list) # Move the piece through the board
     update_emag_location(end_loc)
     deactivate_emag()
+    # Pass to player
+    # Start Timer
 
 def emag_path(start, end):
     x = start(0) - end(0)
-    y = start(0) - end(0)
+    y = start(1) - end(1)
     path_list = []
     if(x > 0):
         for i in range(abs(x)):
@@ -42,10 +45,10 @@ def emag_path(start, end):
     
     if(y > 0):
         for i in range(abs(y)):
-            path_list.append((1,0)) #up
+            path_list.append((1,0)) #down
     elif(y < 0):
         for i in range(abs(y)):
-            path_list.append((-1,0)) #down
+            path_list.append((-1,0)) #up
         
 
 
