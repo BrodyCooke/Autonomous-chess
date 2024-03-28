@@ -1,4 +1,6 @@
 from collections import deque
+import Board
+import Stepper
 
 # (row,col)
 def captured_piece():
@@ -107,23 +109,6 @@ def find_path(maze, start, end):
                 queue.append(((new_x, new_y), path + [(dx, dy)]))
 
     return None
-
-# Example usage:
-maze = [
-    [0, 1, 0, 1, 0],
-    [0, 1, 1, 1, 0],
-    [0, 0, 0, 0, 0],
-    [1, 0, 1, 1, 0],
-    [0, 0, 0, 0, 0]
-]
-start = (0, 0)
-end = [(2, 3)]
-
-path = find_path(maze, start, end)
-if path:
-    print("Maze solved! Shortest path found:", path)
-else:
-    print("No path found from start to end in the maze.")
 
 # Steps needed: Change maze map to 8x8 with a 9th of all twos
 # 

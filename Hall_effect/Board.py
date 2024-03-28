@@ -32,20 +32,20 @@ class board:
         self.emag_location = location
 
     def read_halleffects_once():
-    values = []
-    for x in States:
-        gpio_pin1.value(x[0])
-        gpio_pin2.value(x[1])
-        gpio_pin3.value(x[2])
-        time.sleep(.025)
-        analog_value = adc.read()
-        if analog_value > 2000:
-            values.append(1)
-        elif analog_value < 1500:
-            values.append(-1)
-        else:
-            values.append(0)
-    return values
+        values = []
+        for x in States:
+            gpio_pin1.value(x[0])
+            gpio_pin2.value(x[1])
+            gpio_pin3.value(x[2])
+            time.sleep(.025)
+            analog_value = adc.read()
+            if analog_value > 2000:
+                values.append(1)
+            elif analog_value < 1500:
+                values.append(-1)
+            else:
+                values.append(0)
+        return values
 
         self.update_board(values)
         return values
