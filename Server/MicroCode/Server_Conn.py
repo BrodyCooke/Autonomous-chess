@@ -35,19 +35,14 @@ def translate_toUCI(move):
         castle_flag = 0
         return UCImove
     
-    move_list = move.split(' ')
-    _from = int(move_list[0])
-    _to = int(move_list[1])
+    from_row = move[0][0] + 1
+    from_col = chr(move[0][1] + 97)
+    to_row = move[1][0] + 1
+    to_col = chr(move[1][1] + 97)
 
-    from_row = (_from - 1) // 8 + 1
-    from_col = (_from - 1) % 8
-
-    to_row = (_to - 1) // 8 + 1
-    to_col = (_to - 1) % 8
-
-    s1 = chr(from_col + 97)
+    s1 = str(from_col)
     s2 = str(from_row)
-    s3 = chr(to_col + 97)
+    s3 = str(to_col)
     s4 = str(to_row)
 
     ##### Need to handle promotions somehow #####
@@ -63,6 +58,7 @@ def translate_fromUCI(UCImove):
     # remove spaces
     UCImove = UCImove.replace(' ', '')
 
+    ###update for castle###
     if UCImove == 'e1h1':
         move = '5 7'
         return move
@@ -76,18 +72,14 @@ def translate_fromUCI(UCImove):
         move = '61 59'
         return move
 
-    from_row = int(UCImove[1])
-    from_col = ord(UCImove[0]) - 96
-    to_row = int(UCImove[3])
-    to_col = ord(UCImove[2]) - 96
+    from_row = int(UCImove[1]) - 1
+    from_col = ord(UCImove[0]) - 96 -1
+    to_row = int(UCImove[3]) -1 
+    to_col = ord(UCImove[2]) - 96 -1
 
-    from_row = (from_row - 1) * 8
-    to_row = (to_row - 1) * 8
 
-    _from = from_col + from_row
-    _to = to_col + to_row
-
-    move = str(_from) + ' ' + str(_to)
+    move = ((from_row,from_col),(to_row,to_col))
+    
 
     ##### Need to handle promotions somehow #####
     return move
@@ -199,7 +191,7 @@ if __name__ == "__main__":
             server.send_move(move) # returns what move the server recieved
     '''
     
-    move = '4 12'
+    move = ((0, 3), (1, 3))
     uci = translate_toUCI(move)
     print(uci)
     move = translate_fromUCI(uci)
