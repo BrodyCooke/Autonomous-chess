@@ -39,9 +39,9 @@ class board:
         gpio_pin3.value(x[2])
         time.sleep(.025)
         analog_value = adc.read()
-        if analog_value > 2100:
+        if analog_value > 2000:
             values.append(1)
-        elif analog_value < 1200:
+        elif analog_value < 1500:
             values.append(-1)
         else:
             values.append(0)
