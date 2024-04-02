@@ -1,14 +1,23 @@
 from machine import ADC, Pin, Timer
 import time
 
+'''
 adc_pin = Pin(14)
 adc = ADC(adc_pin)
 
 gpio_pin1 = Pin(32, Pin.OUT)
 gpio_pin2 = Pin(27, Pin.OUT)
-gpio_pin3 = Pin(13, Pin.OUT)
+gpio_pin3 = Pin(13, Pin.OUT)'''
 
-States =[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1]]
+adc_pin = Pin(36)
+adc = ADC(adc_pin)
+
+
+gpio_pin1 = Pin(14, Pin.OUT)
+gpio_pin2 = Pin(32, Pin.OUT)
+gpio_pin3 = Pin(15, Pin.OUT)
+
+States =[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1],[0,1,1],[1,1,1]]
 
 def reset(t):
     analog_value = adc.read()
@@ -26,11 +35,11 @@ def read_halleffects_cont():
             gpio_pin1.value(x[0])
             gpio_pin2.value(x[1])
             gpio_pin3.value(x[2])
-            time.sleep(.05)
+            time.sleep(.5)
             analog_value = adc.read()
             if analog_value < 3000:
                 print(analog_value)
-                return x
+                #return x
                 #break
 
 def read_halleffects_once():
@@ -39,8 +48,10 @@ def read_halleffects_once():
         gpio_pin1.value(x[0])
         gpio_pin2.value(x[1])
         gpio_pin3.value(x[2])
-        time.sleep(.025)
+        #time.sleep(.025)
+        time.sleep(.5)
         analog_value = adc.read()
+        print(analog_value)
         if analog_value > 2000:
             values.append(1)
         elif analog_value < 1500:
@@ -77,4 +88,13 @@ def find_change():
     return new_values
     
 if __name__ == '__main__':
-    find_change()
+    #find_change()
+    
+    
+    gpio_pin1.value(0)
+    gpio_pin2.value(0)
+    gpio_pin3.value(0)
+    while True:
+        time.sleep(.5)
+        analog_value = adc.read()
+        print(analog_value)

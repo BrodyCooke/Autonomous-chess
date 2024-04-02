@@ -1,4 +1,4 @@
-#from machine import ADC, Pin, Timer
+from machine import ADC, Pin, Timer
 import time
 
 
@@ -16,6 +16,15 @@ class board:
         #self.gpio_pin1 = Pin(32, Pin.OUT)
         #self.gpio_pin2 = Pin(27, Pin.OUT)
         #self.gpio_pin3 = Pin(13, Pin.OUT)
+        
+        '''feather'''
+        adc_pin = Pin(36)
+        self.adc = ADC(adc_pin)
+
+
+        self.gpio_pin1 = Pin(14, Pin.OUT)
+        self.gpio_pin2 = Pin(32, Pin.OUT)
+        self.gpio_pin3 = Pin(15, Pin.OUT)
 
         self.States =[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1]]
 
@@ -31,14 +40,15 @@ class board:
     def update_emag_location(self, location):
         self.emag_location = location
 
-    def read_halleffects_once():
+    def read_halleffects_once(self):
         values = []
-        for x in States:
-            gpio_pin1.value(x[0])
-            gpio_pin2.value(x[1])
-            gpio_pin3.value(x[2])
+        for x in self.States:
+            self.gpio_pin1.value(x[0])
+            self.gpio_pin2.value(x[1])
+            self.gpio_pin3.value(x[2])
             time.sleep(.025)
-            analog_value = adc.read()
+            analog_value = self.adc.read()
+            print(analog_value)
             if analog_value > 2000:
                 values.append(1)
             elif analog_value < 1500:
@@ -122,5 +132,7 @@ if __name__ == "__main__":
     
     #move piece from server
     
+    
+    print(sens.read_halleffects_once())
     
     
