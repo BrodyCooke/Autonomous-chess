@@ -4,7 +4,7 @@ from lcd_api import LcdApi
 from i2c_lcd import I2cLcd
 from time import sleep
 
-class LCD_timer:
+class LCD_time:
     def __init__(self, player_time):
         self.untimed_mode 		= False # if true change p1/p2 to count up.
         self.p1_sec 			= 0
@@ -102,7 +102,7 @@ class LCD_timer:
         self.string_comb = self.string_p1 + "     " + self.string_p2
         self.lcd.putstr(self.string_comb)
     
-    def pause(t):
+    def pause(self):
         self.paused = True
         
     def unpause(self):
