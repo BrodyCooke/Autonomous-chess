@@ -1,9 +1,15 @@
 import Hall_Effect
 import LCD_timer
+from LCD_timer import LCD_time as LCD
 import Server_Conn 
 from Server_Conn import server
 import time
 import Stepper
+import machine
+from machine import Pin, Timer
+import pathing as pth
+import board as brd
+
 
 #Server API Works
 Server_Conn.connWIFI('Chickennuggs','13221322')
@@ -11,6 +17,50 @@ server1 = server('192.168.140.30','5000')
 server1.connect()
 server1.waiting()
 
+
+
+# Initialize Button Interrupt
+b_state = 0
+pir = Pin(34,Pin.IN) #Button Interrupt
+
+def button_pressed(self):
+    brd.read_halleffects_once()
+    move = brd.findchange() #if no change or too much change
+    if b_state != 0: # if it is not first turn 
+        LCD.paused()
+    if move_valid == False:
+        #power LED
+        led_pow = 1
+        #try another move
+    #Needs to unpause bot first
+    LCD.unpaused() 
+    uci = server.translate_toUCI(move)
+    server.send_move(uci)
+    move = server.receive_move()
+    server.translate_fromUCI(move)
+    LCD.paused() # Pause Bot Move
+    pth.move_piece(move)
+    # Unpauses the player timer
+    LCD.unpaused()
+    b_state = 1 # not initial button press
+    
+    
+    
+
+pir.irq(trigger=Pin.IRQ_RISING, handler=button_pressed)
+#Button Pressed 
+#     Scan (Done) 
+#     On Button:
+#         Scan
+#         check valid move
+#             turn on red light
+#             wait for button hit
+#         translate move (start Timer for API)
+#         send move 
+#         receive move (api)
+#         translate move(stop Timer for API)
+#         move piece (this updates all variables)
+#         Start Player timer (Wait for player button press)
 
 #LCD Works
 x = input("Select Game Time: ")
