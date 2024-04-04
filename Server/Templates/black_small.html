@@ -28,9 +28,9 @@
         <th>c</th>
         <tr>
             <th>3</th>
-            <td><button id="7" class="dark" onclick="setButton(this)">♟</button></td>
-            <td><button id="8" class="light" onclick="setButton(this)">♟</button></td>
-            <td><button id="9" class="dark" onclick="setButton(this)">♟</button></td>
+            <td><button id="7" class="dark" onclick="setButton(this)"></button></td>
+            <td><button id="8" class="light" onclick="setButton(this)"></button></td>
+            <td><button id="9" class="dark" onclick="setButton(this)"></button></td>
         </tr>
         <tr>
             <th>2</th>
@@ -41,8 +41,8 @@
         <tr>
             <th>1</th>
             <td><button id="1" class="dark" onclick="setButton(this)">♙</button></td>
-            <td><button id="2" class="light" onclick="setButton(this)">♙</button></td>
-            <td><button id="3" class="dark" onclick="setButton(this)">♙</button></td>
+            <td><button id="2" class="light" onclick="setButton(this)"></button></td>
+            <td><button id="3" class="dark" onclick="setButton(this)"></button></td>
         </tr>
 
 </table>
@@ -215,11 +215,11 @@
         from = move_list[0]
         to = move_list[1]
 
-        from_row = Math.floor((from-1) / 8) + 1
-        from_col = (from-1) % 8
+        from_row = Math.floor((from-1) / 3) + 1
+        from_col = (from-1) % 3
 
-        to_row = Math.floor((to-1) / 8) + 1
-        to_col = (to-1) % 8
+        to_row = Math.floor((to-1) / 3) + 1
+        to_col = (to-1) % 3
 
         s1 = String.fromCharCode(from_col + 97)
         s2 = from_row
@@ -230,8 +230,8 @@
 
         UCImove = s1 + s2 + s3 + s4 + s5
 
-        //console.log(UCImove)
-
+        console.log('move to send')
+        console.log(UCImove)
         return UCImove
     }
 
@@ -253,15 +253,16 @@
         from_col = from_col.charCodeAt(0) - 96;
         to_col =  to_col.charCodeAt(0) - 96;
 
-        from_row = (from_row - 1) * 8
-        to_row = (to_row - 1) * 8
+        from_row = (from_row - 1) * 3
+        to_row = (to_row - 1) * 3
 
         from = from_col + from_row
         to = to_col + to_row
 
         move = from + ' ' + to
-        //console.log(move)
+        console.log(move)
 
+        console.log('move to do')
         return move
     }
 </script>

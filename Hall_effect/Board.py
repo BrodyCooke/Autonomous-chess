@@ -9,15 +9,16 @@ class board:
         self.current_board = []
         self.emag_location = ()
 
-        #adc_pin = Pin(14)
-        #self.adc = ADC(adc_pin)
+        adc_pin = Pin(35)
+        self.adc = ADC(adc_pin)
 
 
-        #self.gpio_pin1 = Pin(32, Pin.OUT)
-        #self.gpio_pin2 = Pin(27, Pin.OUT)
-        #self.gpio_pin3 = Pin(13, Pin.OUT)
+        self.gpio_pin1 = Pin(5, Pin.OUT)
+        self.gpio_pin2 = Pin(4, Pin.OUT)
+        self.gpio_pin3 = Pin(2, Pin.OUT)
         
         '''feather'''
+        '''
         adc_pin = Pin(36)
         self.adc = ADC(adc_pin)
 
@@ -25,8 +26,9 @@ class board:
         self.gpio_pin1 = Pin(14, Pin.OUT)
         self.gpio_pin2 = Pin(32, Pin.OUT)
         self.gpio_pin3 = Pin(15, Pin.OUT)
+        '''
 
-        self.States =[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1]]
+        self.States =[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1],[0,1,1],[1,1,1]]
 
     def get_current_board(self):
         return self.current_board
@@ -41,24 +43,35 @@ class board:
         self.emag_location = location
 
     def read_halleffects_once(self):
+        
+        board = []
         values = []
         for x in self.States:
+            
             self.gpio_pin1.value(x[0])
             self.gpio_pin2.value(x[1])
             self.gpio_pin3.value(x[2])
             time.sleep(.025)
             analog_value = self.adc.read()
-            print(analog_value)
+            #print(analog_value)
             if analog_value > 2000:
                 values.append(1)
-            elif analog_value < 1500:
-                values.append(-1)
+            #elif analog_value < 1500:
+            #    values.append(-1)
             else:
                 values.append(0)
-        return values
+                
+            #print(self.States.index(x))
+            if ((self.States.index(x) ) % 3 == 2 or self.States.index(x) == len(self.States)-1):
+                #print('hello')
+                #print(values)
+                while len(values) <3:
+                    values.append(1)
+                board.append(values)
+                values = []
 
-        self.update_board(values)
-        return values
+        self.update_board(board)
+        return board
     
     def update_board(self,board):
         self.previous_board = self.current_board
@@ -84,14 +97,16 @@ class board:
         
         from_pos = None
         to_pos = None
-        if len(changes) == 2:
+        if len(changes) <= 2:
             for change in changes:
                 if change[2] == 0:
                     from_pos = change[0]
                 else:
                     to_pos = change[0]
         else:
-            raise('too many changes')
+            #raise('too many changes')
+            print('Changes WENT WRONG')
+            print(changes)
                     
         move = (from_pos,to_pos)
         print(move)
@@ -102,19 +117,15 @@ if __name__ == "__main__":
 
 
     maze1 = [
-    [0, 1, 0, 1, 0],
-    [0, 1, 1, 1, 0],
-    [0, 0, 0, 0, 0],
-    [-1, 0, -1, -1, 0],
-    [0, 0, -1, 0, 0]
+    [1, 0, 0],
+    [0, 0, 0],
+    [0, 0, 1]
     ]
 
     maze2 = [
-    [0, 1, 0, 1, 0],
-    [0, 1, -1, 1, 0],
-    [0, 0, 0, 0, 0],
-    [-1, 0, 0, -1, 0],
-    [0, 0, -1, 0, 0]
+    [0, 1, 0],
+    [0, 0, 0],
+    [0, 0, 1]
     ]
     
     #init
@@ -132,7 +143,7 @@ if __name__ == "__main__":
     
     #move piece from server
     
-    
-    print(sens.read_halleffects_once())
+    #print('test')
+    #print(sens.read_halleffects_once())
     
     

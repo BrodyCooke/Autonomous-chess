@@ -12,10 +12,10 @@ class LCD_time:
         self.p2_sec 			= 0
         self.p2_min 			= int(player_time)
         self.player_turn 		= 1
+        self.zero_sec 			= "00"
         self.string_p1 			= str(self.p1_min) + ":" + self.zero_sec
         self.string_p2 			= str(self.p2_min) + ":" + self.zero_sec
         self.string_comb 		= self.string_p1 + "     " + self.string_p2
-        self.zero_sec 			= "00"
         self.I2C_ADDR 			= 0x27
         self.totalRows 			= 2
         self.totalColumns 		= 16

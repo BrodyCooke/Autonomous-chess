@@ -143,6 +143,8 @@ class server:
         move = ujson.loads(reply)['message']
         end = time.time_ns()
         print('Server Response time is: ' ,(end-start) / 1000000000.0, ' Seconds')
+        
+        #move = 'a1b1'
         return move
     
     def receive_move(self):

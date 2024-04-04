@@ -1,19 +1,20 @@
 import Hall_Effect
+import Board as brd
 import LCD_timer
-from LCD_timer import LCD_time as LCD
+from LCD_timer import LCD_time
 import Server_Conn 
 from Server_Conn import server
-import time
 import Stepper
+import pathing as pth
+
+import time
 import machine
 from machine import Pin, Timer
-import pathing as pth
-import board as brd
 
 
 #Server API Works
 Server_Conn.connWIFI('Chickennuggs','13221322')
-server1 = server('192.168.140.30','5000')
+server1 = server('192.168.198.30','5000')
 server1.connect()
 server1.waiting()
 
@@ -22,26 +23,42 @@ server1.waiting()
 # Initialize Button Interrupt
 b_state = 0
 pir = Pin(34,Pin.IN) #Button Interrupt
+sens = brd.board()
+print(sens.read_halleffects_once())
+#LCD = LCD_time('60')
 
 def button_pressed(self):
-    brd.read_halleffects_once()
-    move = brd.findchange() #if no change or too much change
+    global b_state
+    global server1
+    
+    print('in button iterupt')
+    print(sens.read_halleffects_once())
+    
+    move = sens.find_change() #if no change or too much change
+    move_valid = True
     if b_state != 0: # if it is not first turn 
-        LCD.paused()
+        #LCD.paused()
+        pass
     if move_valid == False:
         #power LED
         led_pow = 1
         #try another move
     #Needs to unpause bot first
-    LCD.unpaused() 
-    uci = server.translate_toUCI(move)
-    server.send_move(uci)
-    move = server.receive_move()
-    server.translate_fromUCI(move)
-    LCD.paused() # Pause Bot Move
-    pth.move_piece(move)
+    #LCD.unpause() 
+    uci = Server_Conn.translate_toUCI(move)
+    print('UCI : ',uci)
+    server1.send_move(uci)
+    move = server1.receive_move()
+    move = Server_Conn.translate_fromUCI(move)
+    print('UCI : ',move)
+    #LCD.paused() # Pause Bot Move
+    pth.move_piece(sens,move)
+    #tmp code 
+    time.sleep(5)
+    print(sens.read_halleffects_once())
+    #tmp code
     # Unpauses the player timer
-    LCD.unpaused()
+    #LCD.unpaused()
     b_state = 1 # not initial button press
     
     
@@ -63,6 +80,7 @@ pir.irq(trigger=Pin.IRQ_RISING, handler=button_pressed)
 #         Start Player timer (Wait for player button press)
 
 #LCD Works
+'''
 x = input("Select Game Time: ")
 LCD_timer.initialize(x)
 
@@ -83,3 +101,14 @@ while True:
     Stepper.rotate("y", -900, 6)  # rotates a distance (will rotate the specific distance required to move piece to correct location)
     Stepper.deactivate_electromagnet()
     time.sleep(3)
+    '''
+
+'''testing pathing'''
+'''
+sens = brd.board()
+print(sens.read_halleffects_once())
+
+move = ((0, 0), (0, 1))
+
+pth.move_piece(sens,move)
+'''

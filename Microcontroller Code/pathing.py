@@ -1,6 +1,7 @@
 from collections import deque
 import Board
 import Stepper
+import time
 
 # (row,col)
 def captured_piece():
@@ -10,33 +11,46 @@ def captured_piece():
 
     find_path(maze,start,end)
     
-def move_piece(move_api):
+def move_piece(sens,move_api):
     #already scanned
     # receive move from api 
     # server sends in format (start_loc,end_loc) (5,1)
     # scan hall effect - call get_current_board()
     # move_api is a tuple with (start_loc,end_loc) where start and end are ordered pairs (5,1)
-    hE_board = get_current_board() #from Hall Effect sensor Code
-    start_loc = move_api(0)
-    end_loc = move_api(1)
-    emag_prev = get_emag_location() # pull previous emagnet location (From Motor Code)
+    hE_board = sens.get_current_board() #from Hall Effect sensor Code
+    start_loc = move_api[0]
+    end_loc = move_api[1]
+    emag_prev = sens.get_emag_location() # pull previous emagnet location (From Motor Code)
 
-    deactivate_emag()
+    Stepper.deactivate_electromagnet()
+    #
+    #
+    #
+    #tempppp delete laterrr
+    #
+    #
+    #
+    emag_prev = end_loc
     path_list = emag_path(emag_prev, start_loc) #previous emag location, move to location
-    move_motor(path_list) # move emag to underneath desired piece to move
-    update_emag_location(start_loc) # update emag location
+    #move_motor(path_list) # move emag to underneath desired piece to move
+    #Stepper.rotate("y", 200, 2) 
+
+    sens.update_emag_location(start_loc) # update emag location
 
     path_list = find_path(hE_board, start_loc,end_loc) # find the shortest path to move a piece through the board
-    activate_emag()
+    Stepper.activate_electromagnet()
+    print(path_list)
     move_motor(path_list) # Move the piece through the board
-    update_emag_location(end_loc)
-    deactivate_emag()
+    time.sleep(1)
+    #Stepper.rotate("y", -200, 2) 
+    sens.update_emag_location(end_loc)
+    Stepper.deactivate_electromagnet()
     # Pass to player
     # Start Timer
 
 def emag_path(start, end):
-    x = start(0) - end(0)
-    y = start(1) - end(1)
+    x = start[0] - end[0]
+    y = start[1] - end[1]
     path_list = []
     if(x > 0):
         for i in range(abs(x)):
@@ -55,23 +69,40 @@ def emag_path(start, end):
 
 
 def move_motor(path_list):
+    print('moving motor: ',path_list)
     path_count = 1
-    for i in range(len(path) -1):
-        if path[i] == path[i+1]:
+    for i in range(len(path_list)):
+        if (i == len(path_list)-1):
+            if(path_list[i] == (1,0)):
+                #call x positive motor
+                Stepper.move("y", -path_count) #rotate x
+            elif(path_list[i] == (-1,0)):
+                #call x negative motor
+                Stepper.move("y", path_count) #rotate x
+            elif(path_list[i] == (0,1)):
+                #call y positive
+                print('call y pos')
+                Stepper.move("x", path_count) #rotate x
+            elif(path_list[i] == (0,-1)):
+                #call y negative
+                Stepper.move("x", -path_count) #rotate x
+            else:
+                print("Cry\n")
+        elif path_list[i] == path_list[i+1]:
             path_count += 1
         else: 
-            if(path[i] == (1,0)):
+            if(path_list[i] == (1,0)):
                 #call x positive motor
-                rotate("x", path_count) #rotate x
-            elif(path[i] == (-1,0)):
+                Stepper.move("y", -path_count) #rotate x
+            elif(path_list[i] == (-1,0)):
                 #call x negative motor
-                rotate("x", -path_count) #rotate x
-            elif(path[i] == (0,1)):
+                Stepper.move("y", path_count) #rotate x
+            elif(path_list[i] == (0,1)):
                 #call y positive
-                rotate("y", path_count) #rotate x
-            elif(path[i] == (0,-1)):
+                Stepper.move("x", path_count) #rotate x
+            elif(path_list[i] == (0,-1)):
                 #call y negative
-                rotate("y", -path_count) #rotate x
+                Stepper.move("x", -path_count) #rotate x
             else:
                 print("Cry\n")
         
@@ -92,7 +123,7 @@ def find_path(maze, start, end):
 
     while queue:
         (x, y), path = queue.popleft()
-        if (x, y) in end:
+        if (x, y) == end:
             return path
         
         if (x, y) in visited:
@@ -129,3 +160,11 @@ def find_path(maze, start, end):
 #
 #
 #
+if __name__ == "__main__":
+
+    sens = Board.board()
+    print(sens.read_halleffects_once())
+
+    move = ((0, 0), (0, 1))
+
+    move_piece(sens,move)

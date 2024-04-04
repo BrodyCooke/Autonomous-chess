@@ -143,13 +143,13 @@ def waiting():
 @app.route('/white_player')
 def white_player():
     #return render_template('white_small.html')
-    return render_template('white.html')   
+    return render_template('white_small.html')   
 
 # Route for the black player
 @app.route('/black_player')
 def black_player():
     #return render_template('black_small.html')
-    return render_template('black.html')     
+    return render_template('black_small.html')     
 
 # Route for the black player
 @app.route('/spectator_player')

@@ -61,7 +61,10 @@ def rotate(motor, steps, delay=10):
             step(motor, delay)
         if steps < 0:
             reverse_step_sequence(motor, delay)
-        
+            
+def move(motor,steps):
+    print('calling rotate: ',motor,steps)
+    rotate(motor,STEPS_PER_REVOLUTION*steps,5)
 
 
 # Function to reverse the step sequence for changing direction
@@ -108,9 +111,9 @@ if __name__ == "__main__":
     activate_electromagnet()
     print("Motor Start")
     # Example usage
-    rotate("y", 16000, 1)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("y", 200, 5)  # Rotate 200 steps (one revolution) at a faster speed
     print("24 Volt Motor Start")
-    #rotate("x", -400, 13)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("x", 200, 5)  # Rotate 200 steps (one revolution) at a faster speed
 
     deactivate_electromagnet()
 

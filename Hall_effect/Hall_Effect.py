@@ -9,13 +9,13 @@ gpio_pin1 = Pin(32, Pin.OUT)
 gpio_pin2 = Pin(27, Pin.OUT)
 gpio_pin3 = Pin(13, Pin.OUT)'''
 
-adc_pin = Pin(36)
+adc_pin = Pin(35)
 adc = ADC(adc_pin)
 
 
-gpio_pin1 = Pin(14, Pin.OUT)
-gpio_pin2 = Pin(32, Pin.OUT)
-gpio_pin3 = Pin(15, Pin.OUT)
+gpio_pin1 = Pin(5, Pin.OUT)
+gpio_pin2 = Pin(4, Pin.OUT)
+gpio_pin3 = Pin(2, Pin.OUT)
 
 States =[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1],[0,1,1],[1,1,1]]
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     
     
     gpio_pin1.value(0)
-    gpio_pin2.value(0)
+    gpio_pin2.value(1)
     gpio_pin3.value(0)
     while True:
         time.sleep(.5)
