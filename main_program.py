@@ -25,6 +25,7 @@ b_state = 0
 pir = Pin(34,Pin.IN) #Button Interrupt
 sens = brd.board()
 print(sens.read_halleffects_once())
+sens.update_emag_location((0,0))
 #LCD = LCD_time('60')
 
 def button_pressed(self):

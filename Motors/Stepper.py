@@ -111,9 +111,9 @@ if __name__ == "__main__":
     activate_electromagnet()
     print("Motor Start")
     # Example usage
-    rotate("y", 200, 5)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("y", -200, 5)  # Rotate 200 steps (one revolution) at a faster speed
     print("24 Volt Motor Start")
-    rotate("x", 200, 5)  # Rotate 200 steps (one revolution) at a faster speed
+    #rotate("x", -200, 5)  # Rotate 200 steps (one revolution) at a faster speed
 
     deactivate_electromagnet()
 

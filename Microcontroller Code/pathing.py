@@ -20,26 +20,22 @@ def move_piece(sens,move_api):
     hE_board = sens.get_current_board() #from Hall Effect sensor Code
     start_loc = move_api[0]
     end_loc = move_api[1]
-    emag_prev = sens.get_emag_location() # pull previous emagnet location (From Motor Code)
+    emag_prev = sens.get_emag_location() # pull previous emagnet location (From board.py code)
 
     Stepper.deactivate_electromagnet()
-    #
-    #
-    #
-    #tempppp delete laterrr
-    #
-    #
-    #
-    emag_prev = end_loc
+
     path_list = emag_path(emag_prev, start_loc) #previous emag location, move to location
-    #move_motor(path_list) # move emag to underneath desired piece to move
+    move_motor(path_list) # move emag to underneath desired piece to move\
+    print('Mag Path ',path_list)
+    time.sleep(1)
+
     #Stepper.rotate("y", 200, 2) 
 
     sens.update_emag_location(start_loc) # update emag location
 
     path_list = find_path(hE_board, start_loc,end_loc) # find the shortest path to move a piece through the board
     Stepper.activate_electromagnet()
-    print(path_list)
+    print('Piece Path ',path_list)
     move_motor(path_list) # Move the piece through the board
     time.sleep(1)
     #Stepper.rotate("y", -200, 2) 
@@ -51,20 +47,26 @@ def move_piece(sens,move_api):
 def emag_path(start, end):
     x = start[0] - end[0]
     y = start[1] - end[1]
+    print("emag: ", x, ' ',y)
     path_list = []
-    if(x > 0):
-        for i in range(abs(x)):
-            path_list.append((0,1)) #right
-    elif(x<0):
-        for i in range(abs(x)):
-            path_list.append((0,-1)) #left
-    
     if(y > 0):
         for i in range(abs(y)):
-            path_list.append((1,0)) #down
-    elif(y < 0):
+            path_list.append((0,-1)) #up
+            
+    elif(y<0):
         for i in range(abs(y)):
-            path_list.append((-1,0)) #up
+            path_list.append((0,1)) #down
+    
+    if(x > 0):
+        for i in range(abs(x)):
+            path_list.append((-1,0)) #left
+    elif(x < 0):
+        for i in range(abs(x)):
+            path_list.append((1,0)) #right
+            
+    print('Emag Path ', path_list)
+            
+    return path_list
         
 
 
@@ -164,7 +166,7 @@ if __name__ == "__main__":
 
     sens = Board.board()
     print(sens.read_halleffects_once())
+    sens.update_emag_location((0,0))
 
-    move = ((0, 0), (0, 1))
-
+    move = ((0, 1), (1, 0))
     move_piece(sens,move)

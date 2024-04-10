@@ -7,7 +7,7 @@ class board:
     def __init__(self):
         self.previous_board = []
         self.current_board = []
-        self.emag_location = ()
+        self.emag_location = (0,0)
 
         adc_pin = Pin(35)
         self.adc = ADC(adc_pin)
@@ -69,7 +69,7 @@ class board:
                     values.append(1)
                 board.append(values)
                 values = []
-
+        board.reverse()
         self.update_board(board)
         return board
     
@@ -130,12 +130,7 @@ if __name__ == "__main__":
     
     #init
     sens = board()
-    sens.update_board(maze1)
-    
-    
-    #button intr
-    sens.update_board(maze2)
-    sens.find_change()
+    print(sens.read_halleffects_once())
     
     #call server code
     
