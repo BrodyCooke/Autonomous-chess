@@ -9,7 +9,7 @@ import pathing as pth
 
 import time
 import machine
-from machine import Pin, Timer
+from machine import Pin, Timer, SoftI2C
 
 
 #Server API Works
@@ -26,7 +26,8 @@ pir = Pin(34,Pin.IN) #Button Interrupt
 sens = brd.board()
 print(sens.read_halleffects_once())
 sens.update_emag_location((0,0))
-#LCD = LCD_time('60')
+i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
+#LCD = LCD_time(9,i2c_set)
 
 def button_pressed(self):
     global b_state

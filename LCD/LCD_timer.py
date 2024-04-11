@@ -5,7 +5,7 @@ from i2c_lcd import I2cLcd
 from time import sleep
 
 class LCD_time:
-    def __init__(self, player_time):
+    def __init__(self, player_time,i2c_set):
         self.untimed_mode 		= False # if true change p1/p2 to count up.
         self.p1_sec 			= 0
         self.p1_min 			= int(player_time)
@@ -20,7 +20,7 @@ class LCD_time:
         self.totalRows 			= 2
         self.totalColumns 		= 16
         
-        self.i2c 				= SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
+        self.i2c 				= i2c_set
         self.lcd 				= I2cLcd(self.i2c, self.I2C_ADDR, self.totalRows, self.totalColumns)
         self.tim0 				= Timer(0)
         self.paused 			= True
@@ -153,7 +153,8 @@ class LCD_time:
 
 if __name__ == "__main__":
     x = input("Input Play Time 1:9: ")
-    
+    i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
+    LCD_time(x,i2c_set)
     #initialize(x)
     
 #     Scan (Done)
