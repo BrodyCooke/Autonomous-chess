@@ -8,14 +8,17 @@ pin2 = Pin(2, Pin.OUT)
 
 
 # Define the GPIO pins for the H-bridge inputs
+#X
 IN1 = Pin(15, Pin.OUT)   # Replace 5 with your actual GPIO pin number
 IN2 = Pin(16, Pin.OUT)   # Replace 4 with your actual GPIO pin number
-IN3 = Pin(23, Pin.OUT)   # Replace 0 with your actual GPIO pin number
-IN4 = Pin(25, Pin.OUT)   # Replace 2 with your actual GPIO pin number
-IN5 = Pin(26, Pin.OUT)   # Replace 5 with your actual GPIO pin number
-IN6 = Pin(27, Pin.OUT)   # Replace 4 with your actual GPIO pin number
-IN7 = Pin(32, Pin.OUT)   # Replace 0 with your actual GPIO pin number
-IN8 = Pin(33, Pin.OUT)   # Replace 2 with your actual GPIO pin number
+IN3 = Pin(18, Pin.OUT)   # Replace 0 with your actual GPIO pin number
+IN4 = Pin(19, Pin.OUT)   # Replace 2 with your actual GPIO pin number
+
+#Y
+IN5 = Pin(23, Pin.OUT)   # Replace 5 with your actual GPIO pin number
+IN6 = Pin(25, Pin.OUT)   # Replace 4 with your actual GPIO pin number
+IN7 = Pin(26, Pin.OUT)   # Replace 0 with your actual GPIO pin number
+IN8 = Pin(27, Pin.OUT)   # Replace 2 with your actual GPIO pin number
 # Define steps for one revolution (200 for a 1.8 degree per step motor)
 STEPS_PER_REVOLUTION = 200
 
@@ -111,7 +114,7 @@ if __name__ == "__main__":
     activate_electromagnet()
     print("Motor Start")
     # Example usage
-    rotate("y", -200, 5)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("y", 10800, 1)  # Rotate 200 steps (one revolution) at a faster speed
     print("24 Volt Motor Start")
     #rotate("x", -200, 5)  # Rotate 200 steps (one revolution) at a faster speed
 
