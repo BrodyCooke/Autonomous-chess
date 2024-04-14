@@ -9,24 +9,28 @@ class LCD_time:
         self.untimed_mode 		= False # if true change p1/p2 to count up.
         self.p1_sec 			= 0
         self.p1_min 			= int(player_time)
+        print("P1")
         self.p2_sec 			= 0
         self.p2_min 			= int(player_time)
         self.player_turn 		= 1
+        print("P1")
         self.zero_sec 			= "00"
         self.string_p1 			= str(self.p1_min) + ":" + self.zero_sec
         self.string_p2 			= str(self.p2_min) + ":" + self.zero_sec
         self.string_comb 		= self.string_p1 + "     " + self.string_p2
+        print("STR")
         self.I2C_ADDR 			= 0x27
         self.totalRows 			= 2
         self.totalColumns 		= 16
-        
+        print("I2C")
         self.i2c 				= i2c_set
         self.lcd 				= I2cLcd(self.i2c, self.I2C_ADDR, self.totalRows, self.totalColumns)
+        print("LCD")
         self.tim0 				= Timer(0)
         self.paused 			= True
-        
+        print("Paused")
         self.lcd.putstr("Player1  Player2")
-        
+        print("putstr")
         self.tim0.init(mode=Timer.PERIODIC, period=1*1000, callback=self.countdown)
         
 # def button_press(pin):
@@ -55,6 +59,9 @@ class LCD_time:
 #         
 
     def countdown(self):
+        global count1
+        count1 = count1 + 1 
+        print(count1)
         if not self.paused: 
             if self.player_turn == 1:
                 self.p1_sec = self.p1_sec - 1
@@ -154,7 +161,15 @@ class LCD_time:
 if __name__ == "__main__":
     x = input("Input Play Time 1:9: ")
     i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
+    print("Hi")
+    global count1
+    count1 = 0
     LCD_time(x,i2c_set)
+    c2 = 0
+    while True:
+        c2 =c2 + 1
+        if c2 % 10:
+            print(c2)
     #initialize(x)
     
 #     Scan (Done)
