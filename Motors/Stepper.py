@@ -22,6 +22,9 @@ IN8 = Pin(27, Pin.OUT)   # Replace 2 with your actual GPIO pin number
 # Define steps for one revolution (200 for a 1.8 degree per step motor)
 STEPS_PER_REVOLUTION = 200
 
+#Y
+EN1 = Pin(1, Pin.OUT)   # Replace 5 with your actual GPIO pin number
+EN2 = Pin(2, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 
 # Function to set the H-bridge state using PWM
 def set_stepx(w1, w2, w3, w4):
@@ -40,23 +43,23 @@ def step(motor, delay):
     if motor == "x":
         #print("x")
         set_stepx(1,0,1,0)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepx(0,1,1,0)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepx(0,1,0,1)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepx(1,0,0,1)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
     else:
         #print("y")
         set_stepy(1,0,1,0)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepy(0,1,1,0)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepy(0,1,0,1)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepy(1,0,0,1)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
 # Function to rotate the motor a specified number of steps
 def rotate(motor, steps, delay=10):
     for _ in range(abs(steps)):
@@ -75,22 +78,22 @@ def reverse_step_sequence(motor, delay):
     
     if motor == "x":
         set_stepx(1,0,0,1)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepx(0,1,0,1)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepx(0,1,1,0)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepx(1,0,1,0)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
     else:
         set_stepy(1,0,0,1)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepy(0,1,0,1)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepy(0,1,1,0)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
         set_stepy(1,0,1,0)
-        time.sleep_ms(delay)
+        time.sleep_us(delay)
 
 
 # Function to activate electromagnet
@@ -114,10 +117,17 @@ if __name__ == "__main__":
     activate_electromagnet()
     print("Motor Start")
     # Example usage
+    EN1.value(0)
+    EN2.value(0)
+    
+    EN1.value(1)
     rotate("y", 10800, 1)  # Rotate 200 steps (one revolution) at a faster speed
+    EN1.value(0)
+   
     print("24 Volt Motor Start")
-    #rotate("x", -200, 5)  # Rotate 200 steps (one revolution) at a faster speed
-
+    EN2.value(1)
+    rotate("x", -200, 5)  # Rotate 200 steps (one revolution) at a faster speed
+    EN2.value(0)
     deactivate_electromagnet()
 
 
