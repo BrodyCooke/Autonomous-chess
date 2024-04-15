@@ -159,17 +159,24 @@ class server:
     
 if __name__ == "__main__":
     #connWIFI('CookeFamily','P@rty0fF!ve')
-    '''
+    
     # Basic code sends 1 message and gets 1 message
     connWIFI('Chickennuggs','13221322')
     
-    server = server('192.168.188.30','5000')
+    server = server('192.168.84.30','5000')
     server.connect()
-    time.sleep(5)
-    server.send_move('12 28')
-    time.sleep(5)
-    print(server.receive_move())
-    '''
+    playtype = server.waiting() # wait for game to start, returns what player type the micro is for this game
+    while True:
+        move_str = input('Input move in form ((0, 3), (1, 3)): ')
+        move = ((int(move_str[0]),int(move_str[1])),(int(move_str[2]),int(move_str[3])))
+        print(move)
+        uci = translate_toUCI(move)
+        server.send_move(uci)
+        time.sleep(5)
+        recv = server.receive_move()
+        move = translate_fromUCI(recv)
+        print(move)
+    
     #repeated move similar to a games logic
     '''
     connWIFI('Chickennuggs','13221322') #connect to wifi using this username and password
@@ -192,12 +199,13 @@ if __name__ == "__main__":
             move = input("Input a move:") #need to get move from hall effect sensors
             server.send_move(move) # returns what move the server recieved
     '''
-    
+    '''
     move = ((0, 3), (1, 3))
     uci = translate_toUCI(move)
     print(uci)
     move = translate_fromUCI(uci)
     print(move)
+    '''
     
     
     
