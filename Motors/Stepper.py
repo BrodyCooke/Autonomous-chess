@@ -3,8 +3,8 @@ import time
 
 #Define H-bridge control pins
 #pin1 = Pin(1, Pin.OUT)  # Replace with your GPIO pin numbers
-pin1= Pin(19,Pin.OUT)
-pin2 = Pin(2, Pin.OUT)
+#pin1= Pin(19,Pin.OUT)
+#pin2 = Pin(2, Pin.OUT)
 
 
 # Define the GPIO pins for the H-bridge inputs
@@ -23,8 +23,8 @@ IN8 = Pin(27, Pin.OUT)   # Replace 2 with your actual GPIO pin number
 STEPS_PER_REVOLUTION = 200
 
 #Y
-EN1 = Pin(1, Pin.OUT)   # Replace 5 with your actual GPIO pin number
-EN2 = Pin(2, Pin.OUT)   # Replace 4 with your actual GPIO pin number
+#EN1 = Pin(1, Pin.OUT)   # Replace 5 with your actual GPIO pin number
+#EN2 = Pin(2, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 
 # Function to set the H-bridge state using PWM
 def set_stepx(w1, w2, w3, w4):
@@ -114,20 +114,20 @@ def reverse_polarity():
 # Example usage
 if __name__ == "__main__":
     print("Activate E-Mag")
-    activate_electromagnet()
+    #activate_electromagnet()
     print("Motor Start")
     # Example usage
-    EN1.value(0)
-    EN2.value(0)
+    #EN1.value(0)
+    #EN2.value(0)
     
-    EN1.value(1)
-    rotate("y", 10800, 1)  # Rotate 200 steps (one revolution) at a faster speed
-    EN1.value(0)
+    #EN1.value(1)
+    #rotate("y", 2000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    #EN1.value(0)
    
     print("24 Volt Motor Start")
-    EN2.value(1)
-    rotate("x", -200, 5)  # Rotate 200 steps (one revolution) at a faster speed
-    EN2.value(0)
-    deactivate_electromagnet()
+    #EN2.value(1)
+    rotate("x", 1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    #EN2.value(0)
+    #deactivate_electromagnet()
 
 

@@ -17,7 +17,7 @@ gpio_pin1 = Pin(5, Pin.OUT)
 gpio_pin2 = Pin(4, Pin.OUT)
 gpio_pin3 = Pin(2, Pin.OUT)
 
-States =[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1],[0,1,1],[1,1,1]]
+States =[[1,1,1],[1,0,1],[0,1,1],[0,0,1],[0,1,0],[1,0,0],[0,0,0],[1,1,0]]
 
 def reset(t):
     analog_value = adc.read()
@@ -32,9 +32,9 @@ def reset(t):
 def read_halleffects_cont():
     while True:
         for x in States:
-            gpio_pin1.value(x[0])
+            gpio_pin1.value(x[2])
             gpio_pin2.value(x[1])
-            gpio_pin3.value(x[2])
+            gpio_pin3.value(x[0])
             time.sleep(.5)
             analog_value = adc.read()
             if analog_value < 3000:
@@ -45,19 +45,21 @@ def read_halleffects_cont():
 def read_halleffects_once():
     values = []
     for x in States:
-        gpio_pin1.value(x[0])
+        gpio_pin1.value(x[2])
         gpio_pin2.value(x[1])
-        gpio_pin3.value(x[2])
+        gpio_pin3.value(x[0])
         #time.sleep(.025)
         time.sleep(.5)
         analog_value = adc.read()
         print(analog_value)
-        if analog_value > 2000:
+        if analog_value > 2800:
             values.append(1)
-        elif analog_value < 1500:
+        elif analog_value < 2400:
             values.append(-1)
         else:
             values.append(0)
+            
+    print(values)
     return values
         
 def find_change():
@@ -90,11 +92,15 @@ def find_change():
 if __name__ == '__main__':
     #find_change()
     
+    read_halleffects_once()
+    '''
     
-    gpio_pin1.value(0)
+    
+    gpio_pin1.value(1)
     gpio_pin2.value(1)
-    gpio_pin3.value(0)
+    gpio_pin3.value(1)
     while True:
         time.sleep(.5)
         analog_value = adc.read()
         print(analog_value)
+        '''
