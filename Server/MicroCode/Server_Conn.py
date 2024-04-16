@@ -91,6 +91,7 @@ class server:
     def __init__(self,SERVER_IP,SERVER_PORT):
         self.SERVER_IP = SERVER_IP
         self.SERVER_PORT = SERVER_PORT
+        self.spectator_msg = ''
 
     def connect(self):
         '''initial connection'''
@@ -118,7 +119,7 @@ class server:
     def waiting(self):
         print("waiting for game to start")
         playtype = ''
-        while ((self.waiting_message() != 'white_player') and (self.waiting_message() != 'black_player')):
+        while ((self.waiting_message() != 'white_player') and (self.waiting_message() != 'black_player') and (self.waiting_message() != 'spectator_player')):
             time.sleep(1)
         playtype = self.waiting_message()
         print("game has started")
@@ -142,7 +143,7 @@ class server:
         response.close()
         move = ujson.loads(reply)['message']
         end = time.time_ns()
-        print('Server Response time is: ' ,(end-start) / 1000000000.0, ' Seconds')
+        #print('Server Response time is: ' ,(end-start) / 1000000000.0, ' Seconds')
         
         #move = 'a1b1'
         return move
@@ -154,6 +155,20 @@ class server:
             time.sleep(1)
         return recv
     
+    def spectator_message(self):
+        url = 'http://' + self.SERVER_IP + ':' + self.SERVER_PORT + '/spectator'
+        response = urequests.get(url)
+        reply = response.text
+        response.close()
+        return ujson.loads(reply)['message']
+    
+    def spectator(self):
+        spec = self.spectator_message()
+        while spec == self.spectator_msg:
+            spec = self.spectator_message()
+            time.sleep(2)
+        self.spectator_msg = spec
+        return spec
 
         
     
@@ -161,9 +176,21 @@ if __name__ == "__main__":
     #connWIFI('CookeFamily','P@rty0fF!ve')
     
     # Basic code sends 1 message and gets 1 message
-    connWIFI('Chickennuggs','13221322')
+    #connWIFI('Chickennuggs','13221322')
     
-    server = server('192.168.84.30','5000')
+    #server = server('192.168.84.30','5000')
+    connWIFI('CookeFamily','P@rty0fF!ve')
+    server = server('192.168.1.85','5000')
+    server.connect()
+    playtype = server.waiting() # wait for game to start, returns what player type the micro is for this game
+    print(playtype)
+    
+    while True:
+        recv = server.spectator()
+        print(recv)
+
+
+    '''
     server.connect()
     playtype = server.waiting() # wait for game to start, returns what player type the micro is for this game
     while True:
@@ -176,6 +203,7 @@ if __name__ == "__main__":
         recv = server.receive_move()
         move = translate_fromUCI(recv)
         print(move)
+    '''
     
     #repeated move similar to a games logic
     '''
