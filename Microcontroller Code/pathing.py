@@ -1,7 +1,9 @@
 from collections import deque
 import Board
 import Stepper
+import graphshit as g
 import time
+
 
 # (row,col)
 def captured_piece():
@@ -17,32 +19,42 @@ def move_piece(sens,move_api):
     # server sends in format (start_loc,end_loc) (5,1)
     # scan hall effect - call get_current_board()
     # move_api is a tuple with (start_loc,end_loc) where start and end are ordered pairs (5,1)
-    hE_board = sens.get_current_board() #from Hall Effect sensor Code
+    #hE_board = sens.get_current_board() #from Hall Effect sensor Code
+    hE_board = [[1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [1,0,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1]]
     start_loc = move_api[0]
     end_loc = move_api[1]
-    emag_prev = sens.get_emag_location() # pull previous emagnet location (From board.py code)
-
-    Stepper.deactivate_electromagnet()
-
-    path_list = emag_path(emag_prev, start_loc) #previous emag location, move to location
-    move_motor(path_list) # move emag to underneath desired piece to move\
-    print('Mag Path ',path_list)
-    time.sleep(1)
-
-    #Stepper.rotate("y", 200, 2) 
-
-    sens.update_emag_location(start_loc) # update emag location
-
-    path_list = find_path(hE_board, start_loc,end_loc) # find the shortest path to move a piece through the board
-    Stepper.activate_electromagnet()
-    print('Piece Path ',path_list)
-    move_motor(path_list) # Move the piece through the board
-    time.sleep(1)
-    #Stepper.rotate("y", -200, 2) 
-    sens.update_emag_location(end_loc)
-    Stepper.deactivate_electromagnet()
-    # Pass to player
-    # Start Timer
+    
+    path = g.find_path(hE_board,start_loc,[end_loc])
+    for piece in path:
+        emag_prev = sens.get_emag_location() # pull previous emagnet location (From board.py code)
+        Stepper.deactivate_electromagnet()
+        
+        emag_start = piece[0]
+        path_list = emag_path(emag_prev, emag_start) #previous emag location, move to location
+        print('Mag Path ',path_list)
+        move_motor(path_list) # move emag to underneath desired piece to move\
+        sens.update_emag_location(emag_start) # update emag location
+        
+        Stepper.activate_electromagnet()
+        piecepath = []
+        for i in range(len(piece)-1):
+            piecepath.append((piece[i+1][0]-piece[i][0],piece[i+1][1]-piece[i][1]))
+        print('Piece Path ',piecepath)
+        
+        move_motor(piecepath) # Move the piece through the board
+        time.sleep(1)
+        #Stepper.rotate("y", -200, 2) 
+        sens.update_emag_location(piece[-1])
+        Stepper.deactivate_electromagnet()
+        # Pass to player
+        # Start Timer
 
 def emag_path(start, end):
     x = start[0] - end[0]
@@ -113,7 +125,7 @@ def move_motor(path_list):
             #call motors
     
         
-
+'''
 def find_path(maze, start, end):
     def is_valid_move(x, y):
         return 0 <= x < len(maze) and 0 <= y < len(maze[0]) and maze[x][y] == 0
@@ -142,7 +154,7 @@ def find_path(maze, start, end):
                 queue.append(((new_x, new_y), path + [(dx, dy)]))
 
     return None
-
+'''
 # Steps needed: Change maze map to 8x8 with a 9th of all twos
 # 
 # Add tuple for stacking same moves
@@ -165,8 +177,7 @@ def find_path(maze, start, end):
 if __name__ == "__main__":
 
     sens = Board.board()
-    print(sens.read_halleffects_once())
     sens.update_emag_location((0,0))
 
-    move = ((0, 1), (1, 0))
+    move = ((7, 1), (5, 2))
     move_piece(sens,move)

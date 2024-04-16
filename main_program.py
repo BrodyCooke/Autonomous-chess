@@ -6,19 +6,18 @@ import Server_Conn
 from Server_Conn import server
 import Stepper
 import pathing as pth
+import graphshit as g
 
 import time
 import machine
 from machine import Pin, Timer, SoftI2C
 
-
+'''
 #Server API Works
 Server_Conn.connWIFI('Chickennuggs','13221322')
 server1 = server('192.168.198.30','5000')
 server1.connect()
-server1.waiting()
-
-
+playtype = server1.waiting()
 
 # Initialize Button Interrupt
 b_state = 0
@@ -28,6 +27,15 @@ print(sens.read_halleffects_once())
 sens.update_emag_location((0,0))
 i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
 #LCD = LCD_time(9,i2c_set)
+
+if playtype = 'spectator_player':    
+    while True:
+        recv = server.spectator()
+        move = recv[-1]
+        move = Server_Conn.translate_fromUCI(move)
+        print('UCI : ',move)
+        pth.move_piece(sens,move)
+        
 
 def button_pressed(self):
     global b_state
@@ -80,7 +88,7 @@ pir.irq(trigger=Pin.IRQ_RISING, handler=button_pressed)
 #         translate move(stop Timer for API)
 #         move piece (this updates all variables)
 #         Start Player timer (Wait for player button press)
-
+'''
 #LCD Works
 '''
 x = input("Select Game Time: ")
@@ -114,3 +122,31 @@ move = ((0, 0), (0, 1))
 
 pth.move_piece(sens,move)
 '''
+
+if __name__ == "__main__":
+
+    maze = [[1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [1,0,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1]]
+    
+    start_vertex = (7, 1)
+    end_vertex = [(5, 2)]
+    
+    path_to_run = g.find_path(maze,start_vertex,end_vertex)
+    '''
+    final_path = []
+    for elm in path_to_run:
+        for i in range(len(elm)-1):
+            final_path.append((elm[i+1][0]-elm[i][0],elm[i+1][1]-elm[i][1]))
+    '''
+        
+    pth.move_motor(final_path)
+
+
+    
+    

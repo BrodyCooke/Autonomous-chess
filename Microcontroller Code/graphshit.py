@@ -1,5 +1,5 @@
 import heapq
-import copy
+import ujson
 from collections import deque
 import time
 import os
@@ -194,7 +194,7 @@ def find_path_help(maze,graph, moveable,start_vertex,end_vertexs,final_path):
 
 
 def find_path(maze,start_vertex,end_vertex):
-    new_maze = copy.deepcopy(maze)
+    new_maze = deepcopy(maze)
 
     '''find path to move piece, and any pices in the way'''
     graph, unoccupied, moveable = convert_maze_to_graph(new_maze)
@@ -257,7 +257,8 @@ def find_path(maze,start_vertex,end_vertex):
 
 def visulize_update(maze,path,clear=0):
     if clear == 1:
-                os.system('cls')
+        pass
+        #os.system('cls')
     print_maze(maze)
     time.sleep(5)
     for moves in path:
@@ -266,7 +267,8 @@ def visulize_update(maze,path,clear=0):
             maze[moves[i][0]][moves[i][1]] = 0
             maze[moves[i+1][0]][moves[i+1][1]] = tmp
             if clear == 1:
-                os.system('cls')
+                pass
+                #os.system('cls')
             print('Move: ',moves[i], ' to ', moves[i+1])
             print_maze(maze)
             if clear == 1:
@@ -277,6 +279,9 @@ def print_maze(maze):
     for row in maze:
         print(row)
     print('\n\n')
+    
+def deepcopy(obj):
+    return ujson.loads(ujson.dumps(obj))
 
 
 if __name__ == "__main__":
@@ -285,16 +290,16 @@ if __name__ == "__main__":
             [1,1,1,1,1,1,1,1],
             [0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0],
-            [0,0,0,0,1,0,0,0],
-            [0,0,1,1,0,0,1,0],
-            [1,1,1,0,0,1,0,1],
-            [1,0,1,1,1,1,1,1]]
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [1,0,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1]]
     
     # Specify start and end vertices
-    start_vertex = (7, 2)
-    end_vertex = [(4, 5)]
+    start_vertex = (7, 1)
+    end_vertex = [(5, 2)]
 
-    find_path(maze,start_vertex,end_vertex)
+    path_to_run = find_path(maze,start_vertex,end_vertex)
 
     
 
