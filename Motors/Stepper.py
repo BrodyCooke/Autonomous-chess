@@ -1,6 +1,6 @@
-from machine import Pin, PWM
+from machine import Pin, PWM, SoftI2C
 import time
-
+import pcf8575
 #Define H-bridge control pins
 #pin1 = Pin(1, Pin.OUT)  # Replace with your GPIO pin numbers
 #pin1= Pin(19,Pin.OUT)
@@ -113,6 +113,10 @@ def reverse_polarity():
 
 # Example usage
 if __name__ == "__main__":
+    i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
+    gpio_i2c_addr = 0x20
+    pcf = pcf8575.PCF8575(i2c_set, 0x20)
+    
     print("Activate E-Mag")
     #activate_electromagnet()
     print("Motor Start")
@@ -121,13 +125,20 @@ if __name__ == "__main__":
     #EN2.value(0)
     
     #EN1.value(1)
-    #rotate("y", 2000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    pcf.pin(13,1)
+    
+    rotate("y", 1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    pcf.pin(13,0)
+
     #EN1.value(0)
    
     print("24 Volt Motor Start")
     #EN2.value(1)
-    rotate("x", 1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    pcf.pin(12,1)
+    #rotate("x", 1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    pcf.pin(12,0)
     #EN2.value(0)
     #deactivate_electromagnet()
+    
 
 
