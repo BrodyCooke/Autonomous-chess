@@ -3,8 +3,8 @@ import time
 import pcf8575
 #Define H-bridge control pins
 #pin1 = Pin(1, Pin.OUT)  # Replace with your GPIO pin numbers
-#pin1= Pin(19,Pin.OUT)
-#pin2 = Pin(2, Pin.OUT)
+pin1= Pin(19,Pin.OUT)
+pin2 = Pin(2, Pin.OUT)
 
 
 # Define the GPIO pins for the H-bridge inputs
@@ -20,7 +20,13 @@ IN6 = Pin(25, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 IN7 = Pin(26, Pin.OUT)   # Replace 0 with your actual GPIO pin number
 IN8 = Pin(27, Pin.OUT)   # Replace 2 with your actual GPIO pin number
 # Define steps for one revolution (200 for a 1.8 degree per step motor)
-STEPS_PER_REVOLUTION = 200
+STEPS_PER_REVOLUTION = 500
+
+i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
+gpio_i2c_addr = 0x20
+pcf = pcf8575.PCF8575(i2c_set, 0x20)
+    
+    
 
 #Y
 #EN1 = Pin(1, Pin.OUT)   # Replace 5 with your actual GPIO pin number
@@ -69,8 +75,18 @@ def rotate(motor, steps, delay=10):
             reverse_step_sequence(motor, delay)
             
 def move(motor,steps):
+    if motor == 'y':
+        pcf.pin(13,1)
+    else:
+        pcf.pin(12,1)
+
     print('calling rotate: ',motor,steps)
-    rotate(motor,STEPS_PER_REVOLUTION*steps,5)
+    rotate(motor,STEPS_PER_REVOLUTION*steps,1000)
+    
+    if motor == 'y':
+        pcf.pin(13,0)
+    else:
+        pcf.pin(12,0)
 
 
 # Function to reverse the step sequence for changing direction
@@ -127,7 +143,8 @@ if __name__ == "__main__":
     #EN1.value(1)
     pcf.pin(13,1)
     
-    rotate("y", 1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    #5700-5800 steps is about 1 full board
+    rotate("y", -500 * 1, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     pcf.pin(13,0)
 
     #EN1.value(0)
@@ -135,7 +152,7 @@ if __name__ == "__main__":
     print("24 Volt Motor Start")
     #EN2.value(1)
     pcf.pin(12,1)
-    #rotate("x", 1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("x", 500 * 0, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     pcf.pin(12,0)
     #EN2.value(0)
     #deactivate_electromagnet()

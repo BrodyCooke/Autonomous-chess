@@ -78,7 +78,7 @@ def translate_fromUCI(UCImove):
     to_col = ord(UCImove[2]) - 96 -1
 
 
-    move = ((from_row,from_col),(to_row,to_col))
+    move = ((abs(7-from_row),from_col),(abs(7-to_row),to_col))
     
 
     ##### Need to handle promotions somehow #####
@@ -176,11 +176,9 @@ if __name__ == "__main__":
     #connWIFI('CookeFamily','P@rty0fF!ve')
     
     # Basic code sends 1 message and gets 1 message
-    #connWIFI('Chickennuggs','13221322')
+    connWIFI('Chickennuggs','13221322')
     
-    #server = server('192.168.84.30','5000')
-    connWIFI('CookeFamily','P@rty0fF!ve')
-    server = server('192.168.1.85','5000')
+    server = server('192.168.84.30','5000')
     server.connect()
     playtype = server.waiting() # wait for game to start, returns what player type the micro is for this game
     print(playtype)
@@ -188,6 +186,8 @@ if __name__ == "__main__":
     while True:
         recv = server.spectator()
         print(recv)
+        move = translate_fromUCI(recv[-1])
+        print(move)
 
 
     '''

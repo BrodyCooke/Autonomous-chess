@@ -231,7 +231,6 @@ def find_path(maze,start_vertex,end_vertex):
 
         loopingpath = []
         for path_list in paths_back_change:
-            path_list.reverse()  
             for elm in path_list:
                 paths_back.append(elm)
                 loopingpath.append(elm)
@@ -239,7 +238,9 @@ def find_path(maze,start_vertex,end_vertex):
         print(paths_back)
         
         for path_list in paths_back:
-                final_path.append(path_list)
+            path_list.reverse()
+            for elm in path_list:
+                final_path.append(elm)
 
         print('\nFinal_path:' ,final_path)
 
@@ -271,7 +272,6 @@ def print_maze(maze):
     for row in maze:
         print(row)
     print('\n\n')
-    
     
 def deepcopy(obj):
     return ujson.loads(ujson.dumps(obj))
