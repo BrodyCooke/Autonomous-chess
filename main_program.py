@@ -1,4 +1,3 @@
-import Hall_Effect
 import Board as brd
 import LCD_timer
 from LCD_timer import LCD_time
@@ -12,10 +11,10 @@ import time
 import machine
 from machine import Pin, Timer, SoftI2C
 
-'''
+
 #Server API Works
 Server_Conn.connWIFI('Chickennuggs','13221322')
-server1 = server('192.168.198.30','5000')
+server1 = server('192.168.84.30','5000')
 server1.connect()
 playtype = server1.waiting()
 
@@ -28,9 +27,9 @@ sens.update_emag_location((0,0))
 i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
 #LCD = LCD_time(9,i2c_set)
 
-if playtype = 'spectator_player':    
+if playtype == 'spectator_player':    
     while True:
-        recv = server.spectator()
+        recv = server1.spectator()
         move = recv[-1]
         move = Server_Conn.translate_fromUCI(move)
         print('UCI : ',move)
@@ -88,7 +87,7 @@ pir.irq(trigger=Pin.IRQ_RISING, handler=button_pressed)
 #         translate move(stop Timer for API)
 #         move piece (this updates all variables)
 #         Start Player timer (Wait for player button press)
-'''
+
 #LCD Works
 '''
 x = input("Select Game Time: ")
@@ -124,7 +123,8 @@ pth.move_piece(sens,move)
 '''
 
 if __name__ == "__main__":
-
+    pass
+'''
     maze = [[1,1,1,1,1,1,1,1],
             [1,1,1,1,1,1,1,1],
             [0,0,0,0,0,0,0,0],
@@ -137,16 +137,15 @@ if __name__ == "__main__":
     start_vertex = (7, 1)
     end_vertex = [(5, 2)]
     
+    
     path_to_run = g.find_path(maze,start_vertex,end_vertex)
-    '''
+    
     final_path = []
     for elm in path_to_run:
         for i in range(len(elm)-1):
             final_path.append((elm[i+1][0]-elm[i][0],elm[i+1][1]-elm[i][1]))
-    '''
+    
         
     pth.move_motor(final_path)
-
-
-    
+'''
     

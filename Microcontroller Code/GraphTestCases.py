@@ -19,7 +19,7 @@ def test1():
 
     path_to_run = g.find_path(maze,start_vertex,end_vertex)
     
-    g.visulize_update(maze,path_to_run,clear=1)
+    g.visulize_update(maze,path_to_run,clear=0)
 
 '''move top left knight'''
 '''able to move to location'''
@@ -83,7 +83,7 @@ def test4():
 
     path_to_run = g.find_path(maze,start_vertex,end_vertex)
     
-    g.visulize_update(maze,path_to_run,clear=1)
+    g.visulize_update(maze,path_to_run,clear=0)
 
 if __name__ == "__main__":
         test4()

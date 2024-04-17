@@ -206,50 +206,43 @@ def find_path(maze,start_vertex,end_vertex):
     print('\nFinal_path:' ,final_path)
 
     '''edit maze to reflect curret board state'''
+    pieces_to_return = [1]
+    loopingpath = final_path
+    while len(pieces_to_return) > 0:
+        print('Looping path: ',loopingpath)
+        for move in loopingpath:
+            tmp_piece = new_maze[move[0][0]][move[0][1]]
+            new_maze[move[0][0]][move[0][1]] = 0 #start = 0
+            new_maze[move[-1][0]][move[-1][1]] = tmp_piece #end = old start
+        
+        #print_maze(new_maze)
+        graph, unoccupied, moveable = convert_maze_to_graph(new_maze)
 
-    for move in final_path:
-        tmp_piece = new_maze[move[0][0]][move[0][1]]
-        new_maze[move[0][0]][move[0][1]] = 0 #start = 0
-        new_maze[move[-1][0]][move[-1][1]] = tmp_piece #end = old start
-    
-    #print_maze(new_maze)
-    graph, unoccupied, moveable = convert_maze_to_graph(new_maze)
+        '''find path for return of any moved pieces'''
+        pieces_to_return = loopingpath[:-1]
+        paths_back = []
+        paths_back_change = []
 
-    '''find path for return of any moved pieces'''
-    pieces_to_return = path_to_run[:-1]
-    paths_back = []
+        return_path = []
 
-    return_path = []
+        for piece in pieces_to_return:
+            return_path = find_path_help(new_maze,graph, moveable,piece[-1],[piece[0]],[])
+            paths_back_change.append(return_path)  #here for now til i figure out recursion
 
-    for piece in pieces_to_return:
-        return_path = find_path_help(new_maze,graph, moveable,piece[-1],[piece[0]],[])
-        paths_back.append(return_path)  #here for now til i figure out recursion
+        loopingpath = []
+        for path_list in paths_back_change:
+            for elm in path_list:
+                paths_back.append(elm)
+                loopingpath.append(elm)
 
-        ''' need to add a recursive step here
-        if len(return_path) > 1:
-            for move in return_path:
-                tmp_piece = new_maze[move[0][0]][move[0][1]]
-                new_maze[move[0][0]][move[0][1]] = 0 #start = 0
-                new_maze[move[-1][0]][move[-1][1]] = tmp_piece #end = old start
-            
-            #print_maze(new_maze)
-            graph, unoccupied, moveable = convert_maze_to_graph(new_maze)
-            pieces_to_return = path_to_run[:-1]
-            paths_back = []
+        print(paths_back)
+        
+        for path_list in paths_back:
+            path_list.reverse()
+            for elm in path_list:
+                final_path.append(elm)
 
-            return_path = []
-            '''
-
-
-
-    print(paths_back)
-    
-    for path_list in paths_back:
-        path_list.reverse()
-        for elm in path_list:
-            final_path.append(elm)
-
-    print('\nFinal_path:' ,final_path)
+        print('\nFinal_path:' ,final_path)
 
     return final_path
 
