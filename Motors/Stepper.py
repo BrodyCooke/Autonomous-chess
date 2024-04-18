@@ -3,9 +3,10 @@ import time
 import pcf8575
 #Define H-bridge control pins
 #pin1 = Pin(1, Pin.OUT)  # Replace with your GPIO pin numbers
-#pin1= Pin(19,Pin.OUT)
-#pin2 = Pin(2, Pin.OUT)
 
+# pin1= pcf.pin(19,Pin.OUT)
+# pin2 = pcf.pin(2, Pin.OUT)
+pcf = None
 
 # Define the GPIO pins for the H-bridge inputs
 #X
@@ -98,18 +99,24 @@ def reverse_step_sequence(motor, delay):
 
 # Function to activate electromagnet
 def activate_electromagnet():
-    pin1.value(1)
-    pin2.value(0)
+#     pin1.value(1)
+#     pin2.value(0)
+    pcf.pin(0,1)
+    pcf.pin(1,0)
 
 #Function to deactivate electromagnet
 def deactivate_electromagnet():
-    pin1.value(0)
-    pin2.value(0)
+#     pin1.value(0)
+#     pin2.value(0)
+    pcf.pin(0,0)
+    pcf.pin(1,0)
 
 # Function to reverse polarity
 def reverse_polarity():
-    pin1.value(0)
-    pin2.value(1)
+#     pin1.value(0)
+#     pin2.value(1)
+    pcf.pin(0,0)
+    pcf.pin(1,1)
 
 # Example usage
 if __name__ == "__main__":
@@ -118,7 +125,7 @@ if __name__ == "__main__":
     pcf = pcf8575.PCF8575(i2c_set, 0x20)
     
     print("Activate E-Mag")
-    #activate_electromagnet()
+    activate_electromagnet()
     print("Motor Start")
     # Example usage
     #EN1.value(0)
@@ -127,18 +134,18 @@ if __name__ == "__main__":
     #EN1.value(1)
     pcf.pin(13,1)
     
-    rotate("y", 1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("y", -1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     pcf.pin(13,0)
 
     #EN1.value(0)
-   
+    reverse_polarity()
     print("24 Volt Motor Start")
     #EN2.value(1)
     pcf.pin(12,1)
-    #rotate("x", 1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("x", -1000, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     pcf.pin(12,0)
     #EN2.value(0)
-    #deactivate_electromagnet()
+    deactivate_electromagnet()
     
 
 
