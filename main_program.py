@@ -37,7 +37,7 @@ i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
 gpio_i2c_addr = 0x20
 pcf = pcf8575.PCF8575(i2c_set, 0x20)
 Stepper.pcf = pcf
-#LCD = LCD_time(9,i2c_set)
+LCD = LCD_time(9,i2c_set)
 
 if playtype == 'spectator_player':    
     while True:
@@ -46,46 +46,69 @@ if playtype == 'spectator_player':
         move = Server_Conn.translate_fromUCI(move)
         print('UCI : ',move)
         pth.move_piece(sens,move)
-        
 
-def button_pressed(self):
-    global b_state
+
+def button_pressed(self,pcf):
     global server1
-    
+    global b_state
     print('in button iterupt')
     print(sens.read_halleffects_once())
     
-    move = sens.find_change() #if no change or too much change
+    #move = sens.find_change() #if no change or too much change
     move_valid = True
-    if b_state != 0: # if it is not first turn 
-        #LCD.paused()
-        pass
-    if move_valid == False:
-        #power LED
-        led_pow = 1
+    pcf.pin(2,0)
+    if b_state != 0: # if it is not first turn
+        
+        LCD.pause()
+    try:
+        move = sens.find_change()
+        if len(move) != 2:
+            move_valid = False
+            pcf.pin(2,1)
+            sens.update_board(sens.get_previous_board())
+    except Exception as e:
+        print(e)
+        move_valid = False
+        pcf.pin(2,1)
+        sens.update_board(sens.get_previous_board())
+        return # would we break to get out of function as a whole?
         #try another move
+    if move_valid == False:
+        return
     #Needs to unpause bot first
-    #LCD.unpause() 
+    LCD.unpause() 
     uci = Server_Conn.translate_toUCI(move)
     print('UCI : ',uci)
-    server1.send_move(uci)
+    serv_move = server1.send_move(uci)
+    if serv_move == 'invalid':
+        move_valid = False
+        print(move_valid)
+        pcf.pin(2,1)
+        sens.update_board(sens.get_previous_board())
+        return
+    # Check valid
     move = server1.receive_move()
     move = Server_Conn.translate_fromUCI(move)
     print('UCI : ',move)
-    #LCD.paused() # Pause Bot Move
+    LCD.pause() # Pause Bot Move
     pth.move_piece(sens,move)
     #tmp code 
     time.sleep(5)
     print(sens.read_halleffects_once())
     #tmp code
     # Unpauses the player timer
-    #LCD.unpaused()
+    LCD.unpause()
     b_state = 1 # not initial button press
-    
+
+if playtype == 'white_player' or 'black_player':
+    while True:
+        new_bstate = pir.value()
+        if (new_bstate == 1) and (b_state == 0):
+            button_pressed(pcf)
     
     
 
-pir.irq(trigger=Pin.IRQ_RISING, handler=button_pressed)
+#pir.irq(trigger=Pin.IRQ_RISING, handler=button_pressed)
 #Button Pressed 
 #     Scan (Done) 
 #     On Button:
