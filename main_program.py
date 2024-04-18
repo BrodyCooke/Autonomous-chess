@@ -10,11 +10,11 @@ import graphshit as g
 import time
 import machine
 from machine import Pin, Timer, SoftI2C
-
+import pcf8575 
 
 #Server API Works
 Server_Conn.connWIFI('Chickennuggs','13221322')
-server1 = server('192.168.84.30','5000')
+server1 = server('192.168.128.30','5000')
 server1.connect()
 playtype = server1.waiting()
 
@@ -24,7 +24,19 @@ pir = Pin(34,Pin.IN) #Button Interrupt
 sens = brd.board()
 print(sens.read_halleffects_once())
 sens.update_emag_location((0,0))
+maze = [[-1,-1,-1,-1,-1,-1,-1,-1],
+            [-1,-1,-1,-1,-1,-1,-1,-1],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1]]
+sens.update_board(maze)
 i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
+gpio_i2c_addr = 0x20
+pcf = pcf8575.PCF8575(i2c_set, 0x20)
+Stepper.pcf = pcf
 #LCD = LCD_time(9,i2c_set)
 
 if playtype == 'spectator_player':    

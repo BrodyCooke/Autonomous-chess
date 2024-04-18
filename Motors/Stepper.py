@@ -6,9 +6,13 @@ import pcf8575
 pin1= Pin(19,Pin.OUT)
 pin2 = Pin(2, Pin.OUT)
 
+# pin1= pcf.pin(19,Pin.OUT)
+# pin2 = pcf.pin(2, Pin.OUT)
+pcf = None
 
 # Define the GPIO pins for the H-bridge inputs
 #X
+
 IN1 = Pin(15, Pin.OUT)   # Replace 5 with your actual GPIO pin number
 IN2 = Pin(16, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 IN3 = Pin(18, Pin.OUT)   # Replace 0 with your actual GPIO pin number
@@ -20,13 +24,22 @@ IN6 = Pin(25, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 IN7 = Pin(26, Pin.OUT)   # Replace 0 with your actual GPIO pin number
 IN8 = Pin(27, Pin.OUT)   # Replace 2 with your actual GPIO pin number
 # Define steps for one revolution (200 for a 1.8 degree per step motor)
-STEPS_PER_REVOLUTION = 500
 
-i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
-gpio_i2c_addr = 0x20
-pcf = pcf8575.PCF8575(i2c_set, 0x20)
-    
-    
+'''
+
+IN1 = Pin(23, Pin.OUT)   # Replace 5 with your actual GPIO pin number
+IN2 = Pin(25, Pin.OUT)   # Replace 4 with your actual GPIO pin number
+IN3 = Pin(26, Pin.OUT)   # Replace 0 with your actual GPIO pin number
+IN4 = Pin(27, Pin.OUT)   # Replace 2 with your actual GPIO pin number
+
+#Y
+IN5 = Pin(15, Pin.OUT)   # Replace 5 with your actual GPIO pin number
+IN6 = Pin(16, Pin.OUT)   # Replace 4 with your actual GPIO pin number
+IN7 = Pin(18, Pin.OUT)   # Replace 0 with your actual GPIO pin number
+IN8 = Pin(19, Pin.OUT)   # Replace 2 with your actual GPIO pin number
+# Define steps for one revolution (200 for a 1.8 degree per step motor)
+'''
+STEPS_PER_REVOLUTION = 750
 
 #Y
 #EN1 = Pin(1, Pin.OUT)   # Replace 5 with your actual GPIO pin number
@@ -81,12 +94,7 @@ def move(motor,steps):
         pcf.pin(12,1)
 
     print('calling rotate: ',motor,steps)
-    rotate(motor,STEPS_PER_REVOLUTION*steps,1000)
-    
-    if motor == 'y':
-        pcf.pin(13,0)
-    else:
-        pcf.pin(12,0)
+    rotate(motor,STEPS_PER_REVOLUTION*steps,5)
 
 
 # Function to reverse the step sequence for changing direction
@@ -114,18 +122,24 @@ def reverse_step_sequence(motor, delay):
 
 # Function to activate electromagnet
 def activate_electromagnet():
-    pin1.value(1)
-    pin2.value(0)
+#     pin1.value(1)
+#     pin2.value(0)
+    pcf.pin(0,1)
+    pcf.pin(1,0)
 
 #Function to deactivate electromagnet
 def deactivate_electromagnet():
-    pin1.value(0)
-    pin2.value(0)
+#     pin1.value(0)
+#     pin2.value(0)
+    pcf.pin(0,0)
+    pcf.pin(1,0)
 
 # Function to reverse polarity
 def reverse_polarity():
-    pin1.value(0)
-    pin2.value(1)
+#     pin1.value(0)
+#     pin2.value(1)
+    pcf.pin(0,0)
+    pcf.pin(1,1)
 
 # Example usage
 if __name__ == "__main__":
@@ -135,27 +149,29 @@ if __name__ == "__main__":
     
     print("Activate E-Mag")
     #activate_electromagnet()
+    #reverse_polarity()
+    deactivate_electromagnet()
     print("Motor Start")
     # Example usage
     #EN1.value(0)
     #EN2.value(0)
-    
     #EN1.value(1)
-    pcf.pin(13,1)
-    
-    #5700-5800 steps is about 1 full board
-    rotate("y", -500 * 1, 1000)  # Rotate 200 steps (one revolution) at a faster speed
-    pcf.pin(13,0)
-
+    pcf.pin(12,1)
+    time.sleep(.1)
+    rotate("y", 750*.5, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    time.sleep(.1)
+    pcf.pin(12,0)
+    time.sleep(1)
     #EN1.value(0)
-   
     print("24 Volt Motor Start")
     #EN2.value(1)
-    pcf.pin(12,1)
-    rotate("x", 500 * 0, 1000)  # Rotate 200 steps (one revolution) at a faster speed
-    pcf.pin(12,0)
+    pcf.pin(13,1)
+    time.sleep(.1)
+    rotate("x", 750*.5, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    time.sleep(.1)
+    pcf.pin(13,0)
     #EN2.value(0)
-    #deactivate_electromagnet()
+    deactivate_electromagnet()
     
 
 

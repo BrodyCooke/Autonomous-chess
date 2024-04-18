@@ -20,16 +20,18 @@ def move_piece(sens,move_api):
     # scan hall effect - call get_current_board()
     # move_api is a tuple with (start_loc,end_loc) where start and end are ordered pairs (5,1)
     #hE_board = sens.get_current_board() #from Hall Effect sensor Code
-    hE_board = [[0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0]]
     start_loc = move_api[0]
     end_loc = move_api[1]
+    '''code for spec game only'''
+    hE_board = sens.get_current_board()
+    
+    tmp = hE_board[start_loc[0]][start_loc[1]]
+    hE_board[start_loc[0]][start_loc[1]] = 0
+    hE_board[end_loc[0]][end_loc[1]] = tmp
+    
+    sens.update_board(hE_board)
+    
+    print(sens.get_current_board())
     
     path = g.find_path(hE_board,start_loc,[end_loc])
     for piece in path:
@@ -47,7 +49,7 @@ def move_piece(sens,move_api):
         for i in range(len(piece)-1):
             piecepath.append((piece[i+1][0]-piece[i][0],piece[i+1][1]-piece[i][1]))
         print('Piece Path ',piecepath)
-        
+        time.sleep(1)
         move_motor(piecepath) # Move the piece through the board
         time.sleep(1)
         #Stepper.rotate("y", -200, 2) 
@@ -185,3 +187,4 @@ if __name__ == "__main__":
 
     move = ((7, 1), (5, 2))
     move_piece(sens,move)
+
