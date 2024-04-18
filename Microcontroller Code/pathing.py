@@ -20,16 +20,18 @@ def move_piece(sens,move_api):
     # scan hall effect - call get_current_board()
     # move_api is a tuple with (start_loc,end_loc) where start and end are ordered pairs (5,1)
     #hE_board = sens.get_current_board() #from Hall Effect sensor Code
-    hE_board = [[1,1,1,1,1,1,1,1],
-            [1,1,1,1,1,1,1,1],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [1,0,1,1,1,1,1,1],
-            [1,1,1,1,1,1,1,1]]
     start_loc = move_api[0]
     end_loc = move_api[1]
+    '''code for spec game only'''
+    hE_board = sens.get_current_board()
+    
+    tmp = hE_board[start_loc[0]][start_loc[1]]
+    hE_board[start_loc[0]][start_loc[1]] = 0
+    hE_board[end_loc[0]][end_loc[1]] = tmp
+    
+    sens.update_board(hE_board)
+    
+    print(sens.get_current_board())
     
     path = g.find_path(hE_board,start_loc,[end_loc])
     for piece in path:
@@ -47,7 +49,7 @@ def move_piece(sens,move_api):
         for i in range(len(piece)-1):
             piecepath.append((piece[i+1][0]-piece[i][0],piece[i+1][1]-piece[i][1]))
         print('Piece Path ',piecepath)
-        
+        time.sleep(1)
         move_motor(piecepath) # Move the piece through the board
         time.sleep(1)
         #Stepper.rotate("y", -200, 2) 
@@ -89,10 +91,10 @@ def move_motor(path_list):
         if (i == len(path_list)-1):
             if(path_list[i] == (1,0)):
                 #call x positive motor
-                Stepper.move("y", -path_count) #rotate x
+                Stepper.move("y", path_count) #rotate x
             elif(path_list[i] == (-1,0)):
                 #call x negative motor
-                Stepper.move("y", path_count) #rotate x
+                Stepper.move("y", -path_count) #rotate x
             elif(path_list[i] == (0,1)):
                 #call y positive
                 print('call y pos')
@@ -107,16 +109,20 @@ def move_motor(path_list):
         else: 
             if(path_list[i] == (1,0)):
                 #call x positive motor
-                Stepper.move("y", -path_count) #rotate x
+                Stepper.move("y", path_count) #rotate x
+                path_count = 1
             elif(path_list[i] == (-1,0)):
                 #call x negative motor
-                Stepper.move("y", path_count) #rotate x
+                Stepper.move("y", -path_count) #rotate x
+                path_count = 1
             elif(path_list[i] == (0,1)):
                 #call y positive
                 Stepper.move("x", path_count) #rotate x
+                path_count = 1
             elif(path_list[i] == (0,-1)):
                 #call y negative
                 Stepper.move("x", -path_count) #rotate x
+                path_count = 1
             else:
                 print("Cry\n")
         
@@ -181,3 +187,4 @@ if __name__ == "__main__":
 
     move = ((7, 1), (5, 2))
     move_piece(sens,move)
+
