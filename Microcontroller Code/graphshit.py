@@ -174,11 +174,11 @@ def find_path_help(maze,graph, moveable,start_vertex,end_vertexs,final_path):
 
 
     #print('Occupied: ',occupied)
-    print("\nStarting: ", start_vertex)
-    print("Shortest Path:", shortest_path)
-    print("Shortest Distance:", shortest_distance)
+    #print("\nStarting: ", start_vertex)
+    #print("Shortest Path:", shortest_path)
+    #print("Shortest Distance:", shortest_distance)
 
-    print("Found ",num_inway,' in way at: ', found_list)
+    #print("Found ",num_inway,' in way at: ', found_list)
 
 
     movable_spaces = list(set(moveable) - set(shortest_path))
@@ -203,13 +203,13 @@ def find_path(maze,start_vertex,end_vertex):
     path_to_run = find_path_help(new_maze,graph, moveable,start_vertex,end_vertex,final_path)
     path_to_run.reverse()
     final_path = path_to_run
-    print('\nFinal_path:' ,final_path)
+    #print('\nFinal_path:' ,final_path)
 
     '''edit maze to reflect curret board state'''
     pieces_to_return = [1]
     loopingpath = final_path
     while len(pieces_to_return) > 0:
-        print('Looping path: ',loopingpath)
+        #print('Looping path: ',loopingpath)
         for move in loopingpath:
             tmp_piece = new_maze[move[0][0]][move[0][1]]
             new_maze[move[0][0]][move[0][1]] = 0 #start = 0
@@ -235,14 +235,13 @@ def find_path(maze,start_vertex,end_vertex):
                 paths_back.append(elm)
                 loopingpath.append(elm)
 
-        print(paths_back)
+        #print('Paths Back: ',paths_back)
         
         for path_list in paths_back:
             path_list.reverse()
-            for elm in path_list:
-                final_path.append(elm)
+            final_path.append(path_list)
 
-        print('\nFinal_path:' ,final_path)
+        #print('\nFinal_path:' ,final_path)
 
     return final_path
 

@@ -1,6 +1,6 @@
 from collections import deque
 import Board
-import Stepper
+#import Stepper
 import graphshit as g
 import time
 
@@ -28,7 +28,9 @@ def move_piece(sens,move_api):
     print('Board at start: ',hE_board)
     
     path = g.find_path(hE_board,start_loc,[end_loc])
+    print('Path: ',path)
     for piece in path:
+        print('piece: ', piece)
         emag_prev = sens.get_emag_location() # pull previous emagnet location (From board.py code)
         Stepper.deactivate_electromagnet()
         
@@ -38,15 +40,19 @@ def move_piece(sens,move_api):
         move_motor(path_list) # move emag to underneath desired piece to move\
         sens.update_emag_location(emag_start) # update emag location
         
-        Stepper.activate_electromagnet()
+        #pick the polarity for mag
+        if (hE_board[piece[0][0]][piece[0][1]] == 1):
+            Stepper.activate_electromagnet()
+        else:
+            Stepper.reverse_polarity()
+            
         piecepath = []
         for i in range(len(piece)-1):
             piecepath.append((piece[i+1][0]-piece[i][0],piece[i+1][1]-piece[i][1]))
         print('Piece Path ',piecepath)
-        time.sleep(1)
+        time.sleep(.5)
         move_motor(piecepath) # Move the piece through the board
-        time.sleep(1)
-        #Stepper.rotate("y", -200, 2) 
+        time.sleep(.5)
         sens.update_emag_location(piece[-1])
         Stepper.deactivate_electromagnet()
         
@@ -56,7 +62,7 @@ def move_piece(sens,move_api):
     
     sens.update_board(hE_board)
     
-    print(sens.get_current_board())
+    print('Current Board: ',sens.get_current_board())
         # Pass to player
         # Start Timer
 
@@ -186,6 +192,15 @@ if __name__ == "__main__":
 
     sens = Board.board()
     sens.update_emag_location((0,0))
+    maze = [[-1,-1,-1,-1,-1,-1,-1,-1],
+            [-1,-1,-1,-1,-1,-1,-1,-1],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1]]
+    sens.update_board(maze)
 
     move = ((7, 1), (5, 2))
     move_piece(sens,move)
