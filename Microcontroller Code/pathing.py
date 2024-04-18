@@ -25,13 +25,7 @@ def move_piece(sens,move_api):
     '''code for spec game only'''
     hE_board = sens.get_current_board()
     
-    tmp = hE_board[start_loc[0]][start_loc[1]]
-    hE_board[start_loc[0]][start_loc[1]] = 0
-    hE_board[end_loc[0]][end_loc[1]] = tmp
-    
-    sens.update_board(hE_board)
-    
-    print(sens.get_current_board())
+    print('Board at start: ',hE_board)
     
     path = g.find_path(hE_board,start_loc,[end_loc])
     for piece in path:
@@ -55,6 +49,14 @@ def move_piece(sens,move_api):
         #Stepper.rotate("y", -200, 2) 
         sens.update_emag_location(piece[-1])
         Stepper.deactivate_electromagnet()
+        
+    tmp = hE_board[start_loc[0]][start_loc[1]]
+    hE_board[start_loc[0]][start_loc[1]] = 0
+    hE_board[end_loc[0]][end_loc[1]] = tmp
+    
+    sens.update_board(hE_board)
+    
+    print(sens.get_current_board())
         # Pass to player
         # Start Timer
 

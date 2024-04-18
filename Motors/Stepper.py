@@ -3,8 +3,8 @@ import time
 import pcf8575
 #Define H-bridge control pins
 #pin1 = Pin(1, Pin.OUT)  # Replace with your GPIO pin numbers
-pin1= Pin(19,Pin.OUT)
-pin2 = Pin(2, Pin.OUT)
+#pin1= Pin(19,Pin.OUT)
+#pin2 = Pin(2, Pin.OUT)
 
 # pin1= pcf.pin(19,Pin.OUT)
 # pin2 = pcf.pin(2, Pin.OUT)
