@@ -21,7 +21,7 @@ gpio_pin5 = Pin(17, Pin.OUT)
 gpio_pin6 = Pin(18, Pin.OUT)
 
 States =[[1,1,1],[1,0,1],[0,1,1],[0,0,1],[0,1,0],[1,0,0],[0,0,0],[1,1,0]]
-New_States = [[0,0,0],[1,0,0],[0,1,0],[1,1,0]]
+New_States = [[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1],[0,1,1],[1,1,1]]
 
 def reset(t):
     analog_value = adc.read()
@@ -53,19 +53,18 @@ def read_halleffects_once():
         gpio_pin4.value(i[2])
         gpio_pin5.value(i[1])
         gpio_pin6.value(i[0])
-        #time.sleep(0.2)
         temp_list = []
         for x in States:
             gpio_pin1.value(x[2])
             gpio_pin2.value(x[1])
             gpio_pin3.value(x[0])
             #time.sleep(.025)
-            time.sleep(.5)
+            time.sleep(.3)
             analog_value = adc.read()
             print(analog_value)
-            if analog_value > 2500:
+            if analog_value > 2000:
                 temp_list.append(1)
-            elif analog_value < 2050:
+            elif analog_value < 1700:
                 temp_list.append(-1)
             else:
                 temp_list.append(0)
