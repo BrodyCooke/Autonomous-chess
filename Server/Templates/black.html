@@ -20,6 +20,10 @@
 </head>
 <body>
 
+<div id="blacktaken">
+    <p></p>
+</div>
+
 <table class="chess-board">
     <tr>
         <th></th>
@@ -121,6 +125,10 @@
     </tr>
     
 </table>
+
+<div id="whitetaken">
+    <p></p>
+</div>
 
 <form>
     <label style="font-size: 25px;" for="PromotionWhite">Promotion White:</label>
@@ -280,8 +288,11 @@
                     }
                 }
             
+                document.getElementById('blacktaken').textContent += button.textContent;
                 button.textContent = document.getElementById(String(possiblemoves[0])).textContent;
                 document.getElementById(String(possiblemoves[0])).textContent = "";
+                button.style.backgroundColor = '#eee'
+                document.getElementById(String(possiblemoves[0])).style.backgroundColor = '#eee'
                 //promote any pawns
                 pawn_promotion();
                 sendMoveToServer(String(possiblemoves[0]) + ' ' + button.id);
@@ -811,7 +822,7 @@
         // call your function here
         reply = await ReceiveMoveFromServer()
         console.log("response inside wait ",reply)
-        if (reply !== '' && typeof reply !== 'undefined'){
+        if (reply !== '' && typeof reply !== 'undefined' && reply != 'started'){
             clearInterval(intervalId)
             UCI_reply = translate_fromUCI(reply)
             reply_list = UCI_reply.split(' ')
@@ -847,8 +858,11 @@
                }
             }
 
+            document.getElementById('whitetaken').textContent += document.getElementById(to).textContent;
             document.getElementById(to).textContent = document.getElementById(from).textContent;
             document.getElementById(from).textContent = ''
+            document.getElementById(from).style.backgroundColor = '#eee'
+            document.getElementById(to).style.backgroundColor = '#eee'
             //promote any pawns
             pawn_promotion();
 

@@ -20,6 +20,10 @@
 </head>
 <body>
 
+<div id="blacktaken">
+    <p></p>
+</div>
+
 <table class="chess-board">
     <tr>
         <th></th>
@@ -119,8 +123,13 @@
         <td><button id="7" class="dark" onclick="setButton(this)">♘</button></td>
         <td><button id="8" class="light" onclick="setButton(this)">♖</button></td>
     </tr>
+
     
 </table>
+
+<div id="whitetaken">
+    <p></p>
+</div>
 
 <form>
     <label style="font-size: 25px;" for="PromotionWhite">Promotion White:</label>
@@ -280,9 +289,12 @@
                         castle_flag = 1;
                     }
                 }
-            
+                
+                document.getElementById('whitetaken').textContent += button.textContent;
                 button.textContent = document.getElementById(String(possiblemoves[0])).textContent;
                 document.getElementById(String(possiblemoves[0])).textContent = "";
+                button.style.backgroundColor = '#eee'
+                document.getElementById(String(possiblemoves[0])).style.backgroundColor = '#eee'
                 //promote any pawns
                 pawn_promotion();
                 sendMoveToServer(String(possiblemoves[0]) + ' ' + button.id);
@@ -848,8 +860,11 @@
                }
             }
 
+            document.getElementById('blacktaken').textContent += document.getElementById(to).textContent;
             document.getElementById(to).textContent = document.getElementById(from).textContent;
             document.getElementById(from).textContent = ''
+            document.getElementById(from).style.backgroundColor = '#eee'
+            document.getElementById(to).style.backgroundColor = '#eee'
             //promote any pawns
             pawn_promotion();
 

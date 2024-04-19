@@ -1,12 +1,13 @@
 class Game:
     def __init__(self):
         self.message_history = []
-        self.lastmessage = ''
+        self.lastmessage = 'started'
         self.p_white = None
         self.p_black = None
         self.spectators = []
         self.clients = []
         self.endgame = 0
+        self.gametime = 0
 
     def add_message(self, message):
         self.message_history.append(message)
@@ -53,4 +54,10 @@ class Game:
 
     def is_endgame(self):
         return self.endgame
+    
+    def set_gametime(self,gametime):
+        self.gametime= gametime
+
+    def get_gametime(self):
+        return self.gametime
     

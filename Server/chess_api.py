@@ -12,6 +12,10 @@ class API:
         #self.stockfish.set_skill_level(0)
         print(json.dumps(self.stockfish.get_parameters(), indent = 4))
 
+    def set_difficulty(self, difficulty):
+        self.stockfish.set_elo_rating(difficulty)
+        print(json.dumps(self.stockfish.get_parameters(), indent = 4))
+
 
     def get_api_move(self):
         api_move = self.stockfish.get_best_move(10)

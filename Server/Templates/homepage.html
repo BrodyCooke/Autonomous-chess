@@ -14,17 +14,20 @@
             var selectedWhiteValue = whiteDropdown.options[whiteDropdown.selectedIndex].value;
             var selectedBlackValue = blackDropdown.options[blackDropdown.selectedIndex].value;
 
-            send_startup(selectedWhiteValue,selectedBlackValue)
+            var difficulty = document.getElementById("difficulty").value;
+            var gametime = document.getElementById("time").value;
+
+            send_startup(selectedWhiteValue,selectedBlackValue,difficulty,gametime)
             waitForServer();
         }
 
-        function send_startup(v1,v2){
+        function send_startup(v1,v2,v3,v4){
             fetch('/startup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ white: v1, black: v2}),
+            body: JSON.stringify({ white: v1, black: v2 , difficulty: v3, gametime: v4}),
             })
             .then(response => response.text())
             .then(data => {
@@ -103,6 +106,12 @@
             <option value="ai">AI</option>
             <option value="chessboard">chessboard</option>
         </select>
+        <br><br>
+        <label for="difficulty">Select Bot difficulty:</label>
+        <input type="text" id="difficulty" name="difficulty" value="1200">
+        <br><br>
+        <label for="time">Select Game Time:</label>
+        <input type="text" id="time" name="time" value="10">
         <br><br>
         <input style="font-size: 50px;" type="button" value="Submit" onclick="submitForm()">
     </form>

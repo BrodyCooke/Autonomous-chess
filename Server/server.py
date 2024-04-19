@@ -4,10 +4,10 @@ from game import Game
 from chess_api import API
 
 import time
+import webbrowser
 
 app = Flask(__name__)
 
-# List to store instances of Client class
 game = Game()
 API_game = API()
 
@@ -68,9 +68,14 @@ def startup():
     if not client:
         return jsonify({'status': 'Error', 'message': 'Client not found'})
 
+    '''parse the message'''
     white_type = message_data['white']
     black_type = message_data['black']
-
+    difficulty = int(message_data['difficulty'])
+    API_game.set_difficulty(difficulty)
+    game.set_gametime(message_data['gametime'])
+    print(game.get_gametime())
+        
     if (black_type == 'ai'):
         API_client = Client('0.0.0.0')
         API_client.set_type('ai')
@@ -243,7 +248,7 @@ def status():
     print("Runtime is: ",(end-start))
     if client:
         game.zero_lastmessage()
-        print('returning move')
+        print('returning move',message)
         return jsonify({'status': 'new message', 'message': message})
 
     else:
@@ -286,4 +291,5 @@ def apicall():
 '''
 
 if __name__ == '__main__':
+    #webbrowser.open('http://127.0.0.1:5000')  # Go to example.com
     app.run(host='0.0.0.0', port=5000,debug=False)
