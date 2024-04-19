@@ -1,6 +1,6 @@
 from collections import deque
 import Board
-#import Stepper
+import Stepper
 import graphshit as g
 import time
 
@@ -22,7 +22,6 @@ def move_piece(sens,move_api):
     #hE_board = sens.get_current_board() #from Hall Effect sensor Code
     start_loc = move_api[0]
     end_loc = move_api[1]
-    '''code for spec game only'''
     hE_board = sens.get_current_board()
     
     print('Board at start: ',hE_board)
@@ -56,6 +55,7 @@ def move_piece(sens,move_api):
         sens.update_emag_location(piece[-1])
         Stepper.deactivate_electromagnet()
         
+    '''code for spec game only'''
     tmp = hE_board[start_loc[0]][start_loc[1]]
     hE_board[start_loc[0]][start_loc[1]] = 0
     hE_board[end_loc[0]][end_loc[1]] = tmp

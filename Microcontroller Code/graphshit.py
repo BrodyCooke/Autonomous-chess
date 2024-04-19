@@ -221,25 +221,25 @@ def find_path(maze,start_vertex,end_vertex):
         '''find path for return of any moved pieces'''
         pieces_to_return = loopingpath[:-1]
         paths_back = []
-        paths_back_change = []
 
         return_path = []
 
         for piece in pieces_to_return:
             return_path = find_path_help(new_maze,graph, moveable,piece[-1],[piece[0]],[])
-            paths_back_change.append(return_path)  #here for now til i figure out recursion
+            paths_back.append(return_path)  #here for now til i figure out recursion
 
         loopingpath = []
-        for path_list in paths_back_change:
+        for path_list in paths_back:
+            path_list.reverse()
             for elm in path_list:
-                paths_back.append(elm)
                 loopingpath.append(elm)
 
         #print('Paths Back: ',paths_back)
-        
+    
+        paths_back.reverse()
         for path_list in paths_back:
-            path_list.reverse()
-            final_path.append(path_list)
+            for elm in path_list:
+                final_path.append(elm)
 
         #print('\nFinal_path:' ,final_path)
 
@@ -278,18 +278,18 @@ def deepcopy(obj):
 
 if __name__ == "__main__":
 
-    maze = [[1,1,1,1,1,1,1,1],
-            [1,1,1,1,1,1,1,1],
+    maze = [[-1,-1,-1,-1,-1,-1,-1,-1],
+            [-1,-1,-1,-1,-1,-1,-1,-1],
             [0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [1,0,1,1,1,1,1,1],
-            [1,1,1,1,1,1,1,1]]
+            [0,0,0,0,1,0,0,0],
+            [0,0,1,1,0,0,1,0],
+            [1,1,1,0,0,1,0,1],
+            [1,0,1,1,1,1,1,1]]
     
     # Specify start and end vertices
-    start_vertex = (7, 1)
-    end_vertex = [(5, 2)]
+    start_vertex = (7, 2)
+    end_vertex = [(4, 5)]
 
     path_to_run = find_path(maze,start_vertex,end_vertex)
 
