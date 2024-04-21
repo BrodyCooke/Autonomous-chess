@@ -85,7 +85,7 @@ def rotate(motor, steps, delay=10):
         if steps < 0:
             reverse_step_sequence(motor, delay)
             
-def move(motor,steps):
+def move_emag(motor,steps):
     if motor == 'y':
         pcf.pin(13,1)
     else:
@@ -93,6 +93,29 @@ def move(motor,steps):
 
     print('calling rotate: ',motor,steps)
     rotate(motor,STEPS_PER_REVOLUTION*steps,1000)
+    
+    if motor == 'y':
+        pcf.pin(13,0)
+    else:
+        pcf.pin(12,0)
+        
+        
+def move_piece(motor,steps):
+    direction=0
+    if motor == 'y':
+        pcf.pin(13,1)
+    else:
+        pcf.pin(12,1)
+
+    print('calling rotate: ',motor,steps)
+    rotate(motor,STEPS_PER_REVOLUTION*steps,1000)
+    if steps > 0:
+        direction = 1
+    else:
+        direction = -1
+    rotate(motor,STEPS_PER_REVOLUTION*.25 * direction,1000)
+    rotate(motor,STEPS_PER_REVOLUTION*.25 * -1 * direction,1000)
+
     
     if motor == 'y':
         pcf.pin(13,0)
@@ -161,7 +184,7 @@ if __name__ == "__main__":
     #EN1.value(1)
     pcf.pin(13,1)
     time.sleep(.1)
-    rotate("y", 750*-1, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("y", 750*0, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     time.sleep(.1)
     pcf.pin(13,0)
     time.sleep(1)
@@ -170,11 +193,11 @@ if __name__ == "__main__":
     #EN2.value(1)
     pcf.pin(12,1)
     time.sleep(.1)
-    rotate("x", 750*-6, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("x", 750*0, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     time.sleep(.1)
     pcf.pin(12,0)
     #EN2.value(0)
-    #deactivate_electromagnet()
+    deactivate_electromagnet()
     
 
 

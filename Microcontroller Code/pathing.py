@@ -35,7 +35,7 @@ def move_piece(sens,move_api):
         emag_start = piece[0]
         path_list = emag_path(emag_prev, emag_start) #previous emag location, move to location
         print('Mag Path ',path_list)
-        move_motor(path_list) # move emag to underneath desired piece to move\
+        move_motor_emag(path_list) # move emag to underneath desired piece to move\
         sens.update_emag_location(emag_start) # update emag location
         
         #pick the polarity for mag
@@ -49,7 +49,7 @@ def move_piece(sens,move_api):
             piecepath.append((piece[i+1][0]-piece[i][0],piece[i+1][1]-piece[i][1]))
         print('Piece Path ',piecepath)
         time.sleep(.5)
-        move_motor(piecepath) # Move the piece through the board
+        move_motor_piece(piecepath) # Move the piece through the board
         #time.sleep(.5)
         sens.update_emag_location(piece[-1])
         Stepper.deactivate_electromagnet()
@@ -88,24 +88,24 @@ def emag_path(start, end):
         
 
 
-def move_motor(path_list):
+def move_motor_emag(path_list):
     print('moving motor: ',path_list)
     path_count = 1
     for i in range(len(path_list)):
         if (i == len(path_list)-1):
             if(path_list[i] == (1,0)):
                 #call x positive motor
-                Stepper.move("y", path_count) #rotate x
+                Stepper.move_emag("y", path_count) #rotate x
             elif(path_list[i] == (-1,0)):
                 #call x negative motor
-                Stepper.move("y", -path_count) #rotate x
+                Stepper.move_emag("y", -path_count) #rotate x
             elif(path_list[i] == (0,1)):
                 #call y positive
                 print('call y pos')
-                Stepper.move("x", path_count) #rotate x
+                Stepper.move_emag("x", path_count) #rotate x
             elif(path_list[i] == (0,-1)):
                 #call y negative
-                Stepper.move("x", -path_count) #rotate x
+                Stepper.move_emag("x", -path_count) #rotate x
             else:
                 print("Cry\n")
         elif path_list[i] == path_list[i+1]:
@@ -113,19 +113,19 @@ def move_motor(path_list):
         else: 
             if(path_list[i] == (1,0)):
                 #call x positive motor
-                Stepper.move("y", path_count) #rotate x
+                Stepper.move_emag("y", path_count) #rotate x
                 path_count = 1
             elif(path_list[i] == (-1,0)):
                 #call x negative motor
-                Stepper.move("y", -path_count) #rotate x
+                Stepper.move_emag("y", -path_count) #rotate x
                 path_count = 1
             elif(path_list[i] == (0,1)):
                 #call y positive
-                Stepper.move("x", path_count) #rotate x
+                Stepper.move_emag("x", path_count) #rotate x
                 path_count = 1
             elif(path_list[i] == (0,-1)):
                 #call y negative
-                Stepper.move("x", -path_count) #rotate x
+                Stepper.move_emag("x", -path_count) #rotate x
                 path_count = 1
             else:
                 print("Cry\n")
@@ -133,7 +133,51 @@ def move_motor(path_list):
             pass
             # Move to Motor Code
             #call motors
-    
+            
+            
+def move_motor_piece(path_list):
+    print('moving motor: ',path_list)
+    path_count = 1
+    for i in range(len(path_list)):
+        if (i == len(path_list)-1):
+            if(path_list[i] == (1,0)):
+                #call x positive motor
+                Stepper.move_piece("y", path_count) #rotate x
+            elif(path_list[i] == (-1,0)):
+                #call x negative motor
+                Stepper.move_piece("y", -path_count) #rotate x
+            elif(path_list[i] == (0,1)):
+                #call y positive
+                print('call y pos')
+                Stepper.move_piece("x", path_count) #rotate x
+            elif(path_list[i] == (0,-1)):
+                #call y negative
+                Stepper.move_piece("x", -path_count) #rotate x
+            else:
+                print("Cry\n")
+        elif path_list[i] == path_list[i+1]:
+            path_count += 1
+        else: 
+            if(path_list[i] == (1,0)):
+                #call x positive motor
+                Stepper.move_piece("y", path_count) #rotate x
+                path_count = 1
+            elif(path_list[i] == (-1,0)):
+                #call x negative motor
+                Stepper.move_piece("y", -path_count) #rotate x
+                path_count = 1
+            elif(path_list[i] == (0,1)):
+                #call y positive
+                Stepper.move_piece("x", path_count) #rotate x
+                path_count = 1
+            elif(path_list[i] == (0,-1)):
+                #call y negative
+                Stepper.move_piece("x", -path_count) #rotate x
+                path_count = 1
+            else:
+                print("Cry\n")
+        
+            pass
         
 '''
 def find_path(maze, start, end):
