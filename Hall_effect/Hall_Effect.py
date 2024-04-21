@@ -49,29 +49,94 @@ def read_halleffects_cont():
 
 def read_halleffects_once():
     values = []
+    values2 = []
+
     temp_list = []
     for i in New_States:
         gpio_pin4.value(i[2])
         gpio_pin5.value(i[1])
         gpio_pin6.value(i[0])
         temp_list = []
+        temp_list2 = []
+
         for x in States:
             gpio_pin1.value(x[2])
             gpio_pin2.value(x[1])
             gpio_pin3.value(x[0])
             #time.sleep(.025)
-            time.sleep(.3)
+            time.sleep(.4)
             analog_value = adc.read()
             print(analog_value)
-            if analog_value > 2400:
-                temp_list.append(1)
-            elif analog_value < 1600:
-                temp_list.append(-1)
+            temp_list2.append(analog_value)
+            if i == [0,0,0]:
+                print('State 1')
+                if analog_value > 1890:
+                    temp_list.append(1)
+                elif analog_value < 1600:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            elif i == [1,0,0]:
+                print('State 2')
+                if analog_value > 1850:
+                    temp_list.append(1)
+                elif analog_value < 1600:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            elif i == [0,1,0]:
+                print('State 3')
+                if analog_value > 1850:
+                    temp_list.append(1)
+                elif analog_value < 1600:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            elif i == [1,1,0]:
+                print('State 4')
+                if analog_value > 1850:
+                    temp_list.append(1)
+                elif analog_value < 1600:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            elif i == [0,0,1]:
+                print('State 5')
+                if analog_value > 1850:
+                    temp_list.append(1)
+                elif analog_value < 1600:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            elif i == [1,0,1]:
+                print('State 6')
+                if analog_value > 1850:
+                    temp_list.append(1)
+                elif analog_value < 1600:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            elif i == [0,1,1]:
+                print('State 7')
+                if analog_value > 1900:
+                    temp_list.append(1)
+                elif analog_value < 1600:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
             else:
-                temp_list.append(0)
-        values.append(temp_list)    
+                print('State 8')
+                if analog_value > 1900:
+                    temp_list.append(1)
+                elif analog_value < 1600:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+        values.append(temp_list)
+        values2.append(temp_list2)
             
     printlist(values)
+    printlist(values2)
     return values
 
 def printlist (final_list):
