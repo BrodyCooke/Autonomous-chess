@@ -161,7 +161,7 @@ if __name__ == "__main__":
     #EN1.value(1)
     pcf.pin(13,1)
     time.sleep(.1)
-    rotate("y", 750*-1, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("y", 0, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     time.sleep(.1)
     pcf.pin(13,0)
     time.sleep(1)
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     #EN2.value(1)
     pcf.pin(12,1)
     time.sleep(.1)
-    rotate("x", 750*-6, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("x", 0, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     time.sleep(.1)
     pcf.pin(12,0)
     #EN2.value(0)

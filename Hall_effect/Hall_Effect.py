@@ -63,12 +63,20 @@ def read_halleffects_once():
             time.sleep(.3)
             analog_value = adc.read()
             print(analog_value)
-            if analog_value > 2400:
-                temp_list.append(1)
-            elif analog_value < 1600:
-                temp_list.append(-1)
+            if x == 8:
+                if analog_value > 2300:
+                    temp_list.append(1)
+                elif analog_value < 1800:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
             else:
-                temp_list.append(0)
+                if analog_value > 2120:
+                    temp_list.append(1)
+                elif analog_value < 1690:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
         values.append(temp_list)    
             
     printlist(values)
