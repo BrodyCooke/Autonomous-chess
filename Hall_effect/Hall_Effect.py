@@ -63,17 +63,59 @@ def read_halleffects_once():
             time.sleep(.3)
             analog_value = adc.read()
             print(analog_value)
-            if x == 8:
-                if analog_value > 2300:
+            if x == 1:
+                if analog_value > 1400:
                     temp_list.append(1)
-                elif analog_value < 1800:
+                elif analog_value < 1200:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            elif x == 2:
+                if analog_value > 1400:
+                    temp_list.append(1)
+                elif analog_value < 1200:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            elif x == 3:
+                if analog_value > 1400:
+                    temp_list.append(1)
+                elif analog_value < 1200:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            elif x == 4:
+                if analog_value > 1400:
+                    temp_list.append(1)
+                elif analog_value < 1200:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            if x == 5:
+                if analog_value > 1400:
+                    temp_list.append(1)
+                elif analog_value < 1200:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            if x == 6:
+                if analog_value > 1400:
+                    temp_list.append(1)
+                elif analog_value < 1200:
+                    temp_list.append(-1)
+                else:
+                    temp_list.append(0)
+            if x == 7:
+                if analog_value > 1400:
+                    temp_list.append(1)
+                elif analog_value < 1200:
                     temp_list.append(-1)
                 else:
                     temp_list.append(0)
             else:
-                if analog_value > 2120:
+                if analog_value > 1400:
                     temp_list.append(1)
-                elif analog_value < 1690:
+                elif analog_value < 1200:
                     temp_list.append(-1)
                 else:
                     temp_list.append(0)
