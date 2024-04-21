@@ -110,6 +110,7 @@ class LCD_time:
     
     def pause(self):
         self.paused = True
+        self.tim0.deinit()
         
     def unpause(self):
         if self.player_turn == 1:
@@ -117,6 +118,7 @@ class LCD_time:
         else:
             self.player_turn = 1
         self.paused = False
+        self.tim0.init(mode=Timer.PERIODIC, period=1*1000, callback=self.countdown)
         
 # Set-up a timer to constantly run for every second to count down using periodic.
     #def initialize(player_time):

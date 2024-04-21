@@ -14,7 +14,7 @@ import pcf8575
 
 #Server API Works
 Server_Conn.connWIFI('Chickennuggs','13221322')
-server1 = server('192.168.128.30','5000')
+server1 = server('192.168.91.30','5000')
 server1.connect()
 playtype = server1.waiting()
 
@@ -37,9 +37,10 @@ i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
 gpio_i2c_addr = 0x20
 pcf = pcf8575.PCF8575(i2c_set, 0x20)
 Stepper.pcf = pcf
-LCD = LCD_time(9,i2c_set)
+#LCD = LCD_time(9,i2c_set)
 
-if playtype == 'spectator_player':    
+if playtype == 'spectator_player':
+    print('starting spectator code')
     while True:
         recv = server1.spectator()
         move = recv[-1]

@@ -12,7 +12,7 @@ pcf = None
 
 # Define the GPIO pins for the H-bridge inputs
 #X
-
+'''
 IN1 = Pin(15, Pin.OUT)   # Replace 5 with your actual GPIO pin number
 IN2 = Pin(16, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 IN3 = Pin(18, Pin.OUT)   # Replace 0 with your actual GPIO pin number
@@ -24,9 +24,7 @@ IN6 = Pin(25, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 IN7 = Pin(26, Pin.OUT)   # Replace 0 with your actual GPIO pin number
 IN8 = Pin(27, Pin.OUT)   # Replace 2 with your actual GPIO pin number
 # Define steps for one revolution (200 for a 1.8 degree per step motor)
-
 '''
-
 IN1 = Pin(23, Pin.OUT)   # Replace 5 with your actual GPIO pin number
 IN2 = Pin(25, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 IN3 = Pin(26, Pin.OUT)   # Replace 0 with your actual GPIO pin number
@@ -38,7 +36,7 @@ IN6 = Pin(16, Pin.OUT)   # Replace 4 with your actual GPIO pin number
 IN7 = Pin(18, Pin.OUT)   # Replace 0 with your actual GPIO pin number
 IN8 = Pin(19, Pin.OUT)   # Replace 2 with your actual GPIO pin number
 # Define steps for one revolution (200 for a 1.8 degree per step motor)
-'''
+
 STEPS_PER_REVOLUTION = 750
 
 #Y
@@ -94,7 +92,12 @@ def move(motor,steps):
         pcf.pin(12,1)
 
     print('calling rotate: ',motor,steps)
-    rotate(motor,STEPS_PER_REVOLUTION*steps,5)
+    rotate(motor,STEPS_PER_REVOLUTION*steps,1000)
+    
+    if motor == 'y':
+        pcf.pin(13,0)
+    else:
+        pcf.pin(12,0)
 
 
 # Function to reverse the step sequence for changing direction
@@ -156,22 +159,22 @@ if __name__ == "__main__":
     #EN1.value(0)
     #EN2.value(0)
     #EN1.value(1)
-    pcf.pin(12,1)
+    pcf.pin(13,1)
     time.sleep(.1)
-    rotate("y", 750*.5, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("y", 750*-1, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     time.sleep(.1)
-    pcf.pin(12,0)
+    pcf.pin(13,0)
     time.sleep(1)
     #EN1.value(0)
     print("24 Volt Motor Start")
     #EN2.value(1)
-    pcf.pin(13,1)
+    pcf.pin(12,1)
     time.sleep(.1)
-    rotate("x", 750*.5, 1000)  # Rotate 200 steps (one revolution) at a faster speed
+    rotate("x", 750*-6, 1000)  # Rotate 200 steps (one revolution) at a faster speed
     time.sleep(.1)
-    pcf.pin(13,0)
+    pcf.pin(12,0)
     #EN2.value(0)
-    deactivate_electromagnet()
+    #deactivate_electromagnet()
     
 
 
