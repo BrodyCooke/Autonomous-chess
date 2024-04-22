@@ -6,12 +6,15 @@ import time
 
 
 # (row,col)
-def captured_piece(start,board):
+def captured_piece(start,board,sens):
     edges = [[(x, 0) for x in range(8)], [(7, y) for y in range(8)], [(x, 7) for x in range(8)], [(0, y) for y in range(8)]]
-    edges.remove(start) # removed self from edge list
-    end = edges
+    #edges.remove(start) # removed self from edge list
+    end = []
+    for edge in edges:
+        for e in edge:
+            end.append(e)
 
-    path = g.find_path(board,start,[end])
+    path = g.find_path(board,start,end)
     for piece in path:
         print('piece: ', piece)
         emag_prev = sens.get_emag_location() # pull previous emagnet location (From board.py code)
@@ -53,9 +56,11 @@ def move_piece(sens,move_api):
     hE_board = sens.get_current_board()
     start_loc = move_api[0]
     end_loc = move_api[1]
-
-    if hE_board[end_loc[0]][end_loc[1]] != " ":
-        hE_board = captured_piece(end_loc,hE_board)
+    
+    print(hE_board[end_loc[0]][end_loc[1]])
+    
+    if hE_board[end_loc[0]][end_loc[1]] != 0:
+        captured_piece(end_loc,hE_board,sens)
         
 
     print('Board at start: ',hE_board)

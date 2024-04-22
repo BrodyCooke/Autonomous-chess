@@ -114,12 +114,14 @@ class server:
         response = urequests.get(url)
         reply = response.text
         response.close()
+        #print(ujson.loads(reply))
         return ujson.loads(reply)['message'], ujson.loads(reply)['gametime']
     
     def waiting(self):
         print("waiting for game to start")
         playtype,gametime = self.waiting_message()
-        while ((playtype != 'white_player') and (playtype() != 'black_player') and (playtype != 'spectator_player')):
+        #print(playtype,gametime)
+        while ((playtype != 'white_player') and (playtype != 'black_player') and (playtype != 'spectator_player')):
             time.sleep(1)
             playtype,gametime = self.waiting_message()
         print("game has started")

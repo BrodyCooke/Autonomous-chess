@@ -109,7 +109,7 @@ def move_piece(motor,steps):
 
     print('calling rotate: ',motor,steps)
     rotate(motor,STEPS_PER_REVOLUTION*steps,1000)
-    if steps > 0:
+    if steps > 0: 
         direction = 1
     else:
         direction = -1

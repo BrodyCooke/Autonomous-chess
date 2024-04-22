@@ -132,7 +132,7 @@ def waiting():
             return jsonify({'status': 'Message received', 'message': 'black_player','gametime': game.get_gametime()})
         if(client in game.get_spectators()):
             return jsonify({'status': 'Message received', 'message': 'spectator_player','gametime': game.get_gametime()})
-        return jsonify({'status': 'Message received', 'message': 'Game not started yet'})
+        return jsonify({'status': 'Message received', 'message': 'Game not started yet','gametime': 'na'})
     # if client is not a chessboad, redirect to webpages as needed
     else:
         if client == game.get_white():
@@ -147,13 +147,13 @@ def waiting():
 # Route for the white player
 @app.route('/white_player')
 def white_player():
-    #return render_template('white_small.html')
+    #return render_template('white_nick.html')
     return render_template('white.html')   
 
 # Route for the black player
 @app.route('/black_player')
 def black_player():
-    #return render_template('black_small.html')
+    #return render_template('black_nick.html')
     return render_template('black.html')     
 
 # Route for the black player

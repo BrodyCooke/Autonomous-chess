@@ -6,11 +6,14 @@ from Server_Conn import server
 import Stepper
 import pathing as pth
 import graphshit as g
+import batterylife as bl
 
 import time
 import machine
-from machine import Pin, Timer, SoftI2C
-import pcf8575 
+from machine import Pin, Timer, SoftI2C, ADC
+import pcf8575
+
+
 
 #Server API Works
 Server_Conn.connWIFI('Chickennuggs','13221322')
@@ -22,7 +25,9 @@ playtype,gametime = server1.waiting()
 b_state = 0
 pir = Pin(34,Pin.IN) #Button Interrupt
 sens = brd.board()
-print(sens.read_halleffects_once())
+bl_adc_pin = Pin(32)
+bl_adc = ADC(bl_adc_pin)
+#print(sens.read_halleffects_once())
 sens.update_emag_location((0,0))
 maze = [[-1,-1,-1,-1,-1,-1,-1,-1],
             [-1,-1,-1,-1,-1,-1,-1,-1],
@@ -37,18 +42,30 @@ i2c_set = SoftI2C(scl=Pin(22), sda=Pin(21), freq=100000)
 gpio_i2c_addr = 0x20
 pcf = pcf8575.PCF8575(i2c_set, 0x20)
 Stepper.pcf = pcf
-#LCD = LCD_time(gametime,i2c_set)
+LCD = LCD_time(gametime,i2c_set)
+
+'''
+while True:
+    bl.battery_check(bl_adc,pcf)
+    time.sleep(1)
+    '''
 
 if playtype == 'spectator_player':
     print('starting spectator code')
     spec_move_list = []
     while True:
+        LCD.unpause()
         recv = server1.spectator()
+        LCD.pause()
+        bl.battery_check(bl_adc,pcf)
         for i in range(len(spec_move_list), len(recv)):
+            print(i)
             move = recv[i]
+            spec_move_list = recv
             move = Server_Conn.translate_fromUCI(move)
             print('UCI : ',move)
             pth.move_piece(sens,move)
+            
 
 
 def button_pressed(self,pcf):
