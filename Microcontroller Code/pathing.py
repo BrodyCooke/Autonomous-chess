@@ -6,12 +6,42 @@ import time
 
 
 # (row,col)
-def captured_piece():
+def captured_piece(start,board):
     edges = [[(x, 0) for x in range(8)], [(7, y) for y in range(8)], [(x, 7) for x in range(8)], [(0, y) for y in range(8)]]
     edges.remove(start) # removed self from edge list
     end = edges
 
-    find_path(maze,start,end)
+    path = g.find_path(board,start,[end])
+    for piece in path:
+        print('piece: ', piece)
+        emag_prev = sens.get_emag_location() # pull previous emagnet location (From board.py code)
+        Stepper.deactivate_electromagnet()
+        
+        emag_start = piece[0]
+        path_list = emag_path(emag_prev, emag_start) #previous emag location, move to location
+        print('Mag Path ',path_list)
+        move_motor_emag(path_list) # move emag to underneath desired piece to move\
+        sens.update_emag_location(emag_start) # update emag location
+        
+        #pick the polarity for mag
+        if (board[piece[0][0]][piece[0][1]] == 1):
+            Stepper.activate_electromagnet()
+        else:
+            Stepper.reverse_polarity()
+            
+        piecepath = []
+        for i in range(len(piece)-1):
+            piecepath.append((piece[i+1][0]-piece[i][0],piece[i+1][1]-piece[i][1]))
+        print('Piece Path ',piecepath)
+        time.sleep(.5)
+        move_motor_piece(piecepath) # Move the piece through the board
+        #time.sleep(.5)
+        sens.update_emag_location(piece[-1])
+        Stepper.deactivate_electromagnet()
+        tmp = board[piece[0][0]][piece[0][1]]
+        board[piece[0][0]][piece[0][1]] = 0
+        board[piece[-1][0]][piece[-1][1]] = tmp
+    return board
     
 def move_piece(sens,move_api):
     #already scanned
@@ -20,9 +50,14 @@ def move_piece(sens,move_api):
     # scan hall effect - call get_current_board()
     # move_api is a tuple with (start_loc,end_loc) where start and end are ordered pairs (5,1)
     #hE_board = sens.get_current_board() #from Hall Effect sensor Code
+    hE_board = sens.get_current_board()
     start_loc = move_api[0]
     end_loc = move_api[1]
-    hE_board = sens.get_current_board()
+
+    if hE_board[end_loc[0]][end_loc[1]] != " ":
+        hE_board = captured_piece(end_loc,hE_board)
+        
+
     print('Board at start: ',hE_board)
     
     path = g.find_path(hE_board,start_loc,[end_loc])
