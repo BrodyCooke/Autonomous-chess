@@ -127,11 +127,11 @@ def waiting():
     # If client is chessboard send text that the chessboard can interpret
     if(client.get_type() == 'chessboard'):
         if client == game.get_white():
-            return jsonify({'status': 'Message received', 'message': 'white_player'})
+            return jsonify({'status': 'Message received', 'message': 'white_player','gametime': game.get_gametime()})
         elif client == game.get_black():
-            return jsonify({'status': 'Message received', 'message': 'black_player'})
+            return jsonify({'status': 'Message received', 'message': 'black_player','gametime': game.get_gametime()})
         if(client in game.get_spectators()):
-            return jsonify({'status': 'Message received', 'message': 'spectator_player'})
+            return jsonify({'status': 'Message received', 'message': 'spectator_player','gametime': game.get_gametime()})
         return jsonify({'status': 'Message received', 'message': 'Game not started yet'})
     # if client is not a chessboad, redirect to webpages as needed
     else:
