@@ -14,7 +14,7 @@ class LCD_time:
         
         self.p2_sec 			= 0
         self.p2_min 			= int(player_time)
-        self.player_turn 		= 1
+        self.player_turn 		= 2
         
         self.zero_sec 			= "00"
         self.string_p1 			= str(self.p1_min) + ":" + self.zero_sec
