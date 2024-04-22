@@ -41,12 +41,14 @@ Stepper.pcf = pcf
 
 if playtype == 'spectator_player':
     print('starting spectator code')
+    spec_move_list = []
     while True:
         recv = server1.spectator()
-        move = recv[-1]
-        move = Server_Conn.translate_fromUCI(move)
-        print('UCI : ',move)
-        pth.move_piece(sens,move)
+        for i in range(len(spec_move_list), len(recv)):
+            move = recv[i]
+            move = Server_Conn.translate_fromUCI(move)
+            print('UCI : ',move)
+            pth.move_piece(sens,move)
 
 
 def button_pressed(self,pcf):
