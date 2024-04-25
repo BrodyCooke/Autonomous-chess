@@ -4,6 +4,8 @@ import Stepper
 import graphshit as g
 import time
 
+blackkingmove = 0
+whitekingmove = 0
 
 # (row,col)
 def captured_piece(start,board,sens):
@@ -46,59 +48,94 @@ def captured_piece(start,board,sens):
         board[piece[-1][0]][piece[-1][1]] = tmp
     return board
     
+def castle(sens,move):
+    global blackkingmove
+    global whitekingmove
+    if move == ((7,4),(7,6)) and whitekingmove == 0:    
+        move_piece(sens,((7,4),(7,6)))
+        move_piece(sens,((7,7),(7,5)))
+        whitekingmove = 1
+        return 1
+    elif move == ((7,4),(7,2)) and whitekingmove == 0:
+        move_piece(sens,((7,4),(7,2)))
+        move_piece(sens,((7,0),(7,3)))
+        whitekingmove = 1
+        return 1
+    elif move == ((0,4),(0,6))and blackkingmove == 0:
+        move_piece(sens,((0,4),(0,6)))
+        move_piece(sens,((0,7),(0,5)))
+        blackkingmove = 1
+        return 1
+    elif move == ((0,4),(0,2)) and blackkingmove == 0:
+        move_piece(sens,((0,4),(0,2)))
+        move_piece(sens,((0,0),(0,3)))
+        blackkingmove = 1
+        return 1
+    else:
+        return 0
+        
+
 def move_piece(sens,move_api):
+    global blackkingmove
+    global whitekingmove
     #already scanned
     # receive move from api 
     # server sends in format (start_loc,end_loc) (5,1)
     # scan hall effect - call get_current_board()
     # move_api is a tuple with (start_loc,end_loc) where start and end are ordered pairs (5,1)
     #hE_board = sens.get_current_board() #from Hall Effect sensor Code
-    hE_board = sens.get_current_board()
-    start_loc = move_api[0]
-    end_loc = move_api[1]
-    
-    print(hE_board[end_loc[0]][end_loc[1]])
-    
-    if hE_board[end_loc[0]][end_loc[1]] != 0:
-        captured_piece(end_loc,hE_board,sens)
+    if(castle(sens,move_api) == 1):
+        pass
+    else:
+        if(move_api[0] == (7,4)):
+            whitekingmove = 1
+        elif (move_api[0] == (0,4)):
+            blackkingmove = 1
+        hE_board = sens.get_current_board()
+        start_loc = move_api[0]
+        end_loc = move_api[1]
         
-
-    print('Board at start: ',hE_board)
-    
-    path = g.find_path(hE_board,start_loc,[end_loc])
-    print('Path: ',path)
-    for piece in path:
-        print('piece: ', piece)
-        emag_prev = sens.get_emag_location() # pull previous emagnet location (From board.py code)
-        Stepper.deactivate_electromagnet()
+        print(hE_board[end_loc[0]][end_loc[1]])
         
-        emag_start = piece[0]
-        path_list = emag_path(emag_prev, emag_start) #previous emag location, move to location
-        print('Mag Path ',path_list)
-        move_motor_emag(path_list) # move emag to underneath desired piece to move\
-        sens.update_emag_location(emag_start) # update emag location
-        
-        #pick the polarity for mag
-        if (hE_board[piece[0][0]][piece[0][1]] == 1):
-            Stepper.activate_electromagnet()
-        else:
-            Stepper.reverse_polarity()
+        if hE_board[end_loc[0]][end_loc[1]] != 0:
+            captured_piece(end_loc,hE_board,sens)
             
-        piecepath = []
-        for i in range(len(piece)-1):
-            piecepath.append((piece[i+1][0]-piece[i][0],piece[i+1][1]-piece[i][1]))
-        print('Piece Path ',piecepath)
-        time.sleep(.5)
-        move_motor_piece(piecepath) # Move the piece through the board
-        #time.sleep(.5)
-        sens.update_emag_location(piece[-1])
-        Stepper.deactivate_electromagnet()
-        tmp = hE_board[piece[0][0]][piece[0][1]]
-        hE_board[piece[0][0]][piece[0][1]] = 0
-        hE_board[piece[-1][0]][piece[-1][1]] = tmp
+        print('Board at start: ',hE_board)
+        
+        path = g.find_path(hE_board,start_loc,[end_loc])
+        print('Path: ',path)
+        for piece in path:
+            print('piece: ', piece)
+            emag_prev = sens.get_emag_location() # pull previous emagnet location (From board.py code)
+            Stepper.deactivate_electromagnet()
             
-    sens.update_board(hE_board)
-    print('Current Board: ',sens.get_current_board())
+            emag_start = piece[0]
+            path_list = emag_path(emag_prev, emag_start) #previous emag location, move to location
+            print('Mag Path ',path_list)
+            move_motor_emag(path_list) # move emag to underneath desired piece to move\
+            sens.update_emag_location(emag_start) # update emag location
+            
+            #pick the polarity for mag
+            if (hE_board[piece[0][0]][piece[0][1]] == 1):
+                Stepper.activate_electromagnet()
+            else:
+                Stepper.reverse_polarity()
+                
+            piecepath = []
+            for i in range(len(piece)-1):
+                piecepath.append((piece[i+1][0]-piece[i][0],piece[i+1][1]-piece[i][1]))
+            print('Piece Path ',piecepath)
+            time.sleep(.5)
+            move_motor_piece(piecepath) # Move the piece through the board
+            #time.sleep(.5)
+            sens.update_emag_location(piece[-1])
+            Stepper.deactivate_electromagnet()
+            tmp = hE_board[piece[0][0]][piece[0][1]]
+            hE_board[piece[0][0]][piece[0][1]] = 0
+            hE_board[piece[-1][0]][piece[-1][1]] = tmp
+                
+        sens.update_board(hE_board)
+        print('Current Board: ',sens.get_current_board())
         # Pass to player
         # Start Timer
 

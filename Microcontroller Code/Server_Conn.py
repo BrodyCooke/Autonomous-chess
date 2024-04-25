@@ -58,20 +58,6 @@ def translate_fromUCI(UCImove):
     # remove spaces
     UCImove = UCImove.replace(' ', '')
 
-    ###update for castle###
-    if UCImove == 'e1h1':
-        move = '5 7'
-        return move
-    elif UCImove == 'e1a1':
-        move = '5 3'
-        return move
-    elif UCImove == 'e8h8':
-        move = '61 63'
-        return move
-    elif UCImove == 'e8a8':
-        move = '61 59'
-        return move
-
     from_row = int(UCImove[1]) - 1
     from_col = ord(UCImove[0]) - 96 -1
     to_row = int(UCImove[3]) -1 
@@ -80,8 +66,6 @@ def translate_fromUCI(UCImove):
 
     move = ((abs(7-from_row),from_col),(abs(7-to_row),to_col))
     
-
-    ##### Need to handle promotions somehow #####
     return move
 
 

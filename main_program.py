@@ -17,7 +17,7 @@ import pcf8575
 
 #Server API Works
 Server_Conn.connWIFI('Chickennuggs','13221322')
-server1 = server('192.168.91.30','5000')
+server1 = server('192.168.104.30','5000')
 server1.connect()
 playtype,gametime = server1.waiting()
 
@@ -43,6 +43,8 @@ gpio_i2c_addr = 0x20
 pcf = pcf8575.PCF8575(i2c_set, 0x20)
 Stepper.pcf = pcf
 LCD = LCD_time(gametime,i2c_set)
+pcf.pin(13,0)
+pcf.pin(12,0)
 
 '''
 while True:
